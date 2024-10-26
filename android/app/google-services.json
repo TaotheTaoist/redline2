@@ -1,0 +1,118 @@
+{
+  "project_info": {
+    "project_number": "493653584594",
+    "project_id": "dating-app-18f5d",
+    "storage_bucket": "dating-app-18f5d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493653584594:android:eb177b7f6e6d90098c1b0b",
+        "android_client_info": {
+          "package_name": "com.example.dating_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "493653584594-h2l6pth7r7p3o6rngk1lib7o59vep8ud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGLkVD-hMAT_jr1xnCVBP9DDUA6oNOe_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "493653584594-h2l6pth7r7p3o6rngk1lib7o59vep8ud.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "493653584594-0b4eos34slmdb5l0rnneh3i84mt9ot5h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.datingApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493653584594:android:f92ea21723d5948a8c1b0b",
+        "android_client_info": {
+          "package_name": "com.example.datingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "493653584594-h2l6pth7r7p3o6rngk1lib7o59vep8ud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGLkVD-hMAT_jr1xnCVBP9DDUA6oNOe_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "493653584594-h2l6pth7r7p3o6rngk1lib7o59vep8ud.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "493653584594-0b4eos34slmdb5l0rnneh3i84mt9ot5h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.datingApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493653584594:android:bafb5c86386bd96e8c1b0b",
+        "android_client_info": {
+          "package_name": "com.example.redline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "493653584594-h2l6pth7r7p3o6rngk1lib7o59vep8ud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGLkVD-hMAT_jr1xnCVBP9DDUA6oNOe_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "493653584594-h2l6pth7r7p3o6rngk1lib7o59vep8ud.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "493653584594-0b4eos34slmdb5l0rnneh3i84mt9ot5h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.datingApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
