@@ -89,7 +89,7 @@ class Authenticationcontroller extends GetxController {
     String email,
     String password,
     String name,
-    String age,
+    // String age,
     String photoNo,
     String city,
     String country,
@@ -129,7 +129,7 @@ class Authenticationcontroller extends GetxController {
         password: password,
         name: name,
         photoNo: photoNo, // Assuming `photoNo` is already available
-        age: age,
+        // age: age,
         city: city,
         country: country,
         profileHeading: profileHeading,

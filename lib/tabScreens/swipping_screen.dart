@@ -200,7 +200,8 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
                                 SizedBox(height: 4),
                                 Text(
-                                  "${eachProfileInfo.age} ⦾ ${eachProfileInfo.city}",
+                                  "${eachProfileInfo.city}",
+                                  // "${eachProfileInfo.age} ⦾ ${eachProfileInfo.city}",
                                   style: TextStyle(
                                       fontSize: 14,
                                       letterSpacing: 2,

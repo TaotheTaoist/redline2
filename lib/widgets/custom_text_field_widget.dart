@@ -103,6 +103,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final IconData? iconData;
   final String? assetRef;
   final String? labelText;
+
   final bool isObscure; // Change to non-nullable
   final double borderRadius; // Add borderRadius parameter
 
@@ -122,7 +123,8 @@ class CustomTextFieldWidget extends StatelessWidget {
       controller: editingController,
       obscureText: isObscure, // Use the isObscure parameter
       decoration: InputDecoration(
-        labelText: labelText,
+        labelText: editingController?.text.isEmpty ?? true ? labelText : null,
+        // labelText: labelText,
         prefixIcon: iconData != null
             ? Icon(iconData)
             : Padding(

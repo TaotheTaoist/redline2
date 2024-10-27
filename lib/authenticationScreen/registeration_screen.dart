@@ -25,7 +25,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   TextEditingController passwordlTextEditingController =
       TextEditingController();
   TextEditingController nameTextEditingController = TextEditingController();
-  TextEditingController ageTextEditingController = TextEditingController();
+  // TextEditingController ageTextEditingController = TextEditingController();
   TextEditingController phoneNoTextEditingController = TextEditingController();
   TextEditingController cityTextEditingController = TextEditingController();
   TextEditingController countryTextEditingController = TextEditingController();
@@ -80,6 +80,48 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
   var authenticationcontroller =
       Authenticationcontroller.authenticationcontroller;
+
+  final List<String> interests = ["Football", "Basketball", "Tennis"];
+  final Set<String> selectedInterests = {};
+
+  String labelText = "Time (optional)";
+
+  // Toggle selection on tap
+  void toggleInterest(String interest) {
+    setState(() {
+      if (selectedInterests.contains(interest)) {
+        selectedInterests.remove(interest);
+      } else {
+        selectedInterests.add(interest);
+      }
+    });
+  }
+
+  // Function to register the user and save selected interests
+  Future<void> registerUser() async {
+    if (selectedInterests.isEmpty) {
+      // Optionally, show a warning if no interests are selected
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select at least one interest.')),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('users').add({
+        "interests": selectedInterests.toList(),
+        // Add other registration data here as needed
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration successful!')),
+      );
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to register.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,79 +204,122 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                 ],
               ),
 
-              const SizedBox(height: 20),
-              CustomTextFieldWidget(
-                editingController: nameTextEditingController,
-                labelText: "Name",
-                iconData: Icons.person,
-                borderRadius: 20.0,
-              ),
-              const SizedBox(height: 20),
-              CustomTextFieldWidget(
-                editingController: emailController,
-                labelText: "Email",
-                iconData: Icons.email_outlined,
-                borderRadius: 20.0,
-              ),
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () =>
-                    BirthdayCal.selectDate(context, birthdayController),
-                child: AbsorbPointer(
-                  child: CustomTextFieldWidget(
-                    editingController: birthdayController,
-                    labelText: "Birthday",
-                    iconData: Icons.cake,
-                    borderRadius: 20.0,
-                  ),
+              Container(
+                width: MediaQuery.of(context).size.width - 36,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    CustomTextFieldWidget(
+                      editingController: nameTextEditingController,
+                      labelText: "Name",
+                      iconData: Icons.person,
+                      borderRadius: 20.0,
+                    ),
+                    const SizedBox(height: 20),
+                    CustomTextFieldWidget(
+                      editingController: emailTextEditingController,
+                      labelText: "Email",
+                      iconData: Icons.email_outlined,
+                      borderRadius: 20.0,
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () =>
+                          BirthdayCal.selectDate(context, birthdayController),
+                      child: AbsorbPointer(
+                        child: CustomTextFieldWidget(
+                          editingController: birthdayController,
+                          labelText: "Birthday",
+                          iconData: Icons.cake,
+                          borderRadius: 20.0,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () async {
+                        await BirthdayCal.selectTime(context, timeController);
+                        setState(() {
+                          labelText = timeController.text.isEmpty
+                              ? "Time (optional)"
+                              : timeController
+                                  .text; // Update label text based on selection
+                        });
+                      },
+                      child: AbsorbPointer(
+                        child: CustomTextFieldWidget(
+                          editingController: timeController,
+                          labelText: labelText, // Use the updated label text
+                          iconData: Icons.access_time,
+                          borderRadius: 20.0,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    CustomTextFieldWidget(
+                      editingController: passwordlTextEditingController,
+                      labelText: "Password",
+                      iconData: Icons.person,
+                      isObscure: true,
+                      borderRadius: 20.0,
+                    ),
+                    const SizedBox(height: 20),
+                    CustomTextFieldWidget(
+                      editingController: passwordlTextEditingController,
+                      labelText: "Confirm your Password",
+                      iconData: Icons.person,
+                      isObscure: true,
+                      borderRadius: 20.0,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () =>
-                    BirthdayCal.selectTime(context, birthdayController),
-                child: AbsorbPointer(
-                  child: CustomTextFieldWidget(
-                    editingController: timeController,
-                    labelText: "Time (optional)",
-                    iconData: Icons.access_time,
-                    borderRadius: 20.0,
-                  ),
-                ),
+              Wrap(
+                spacing: 10,
+                children: interests.map((interest) {
+                  final isSelected = selectedInterests.contains(interest);
+                  return GestureDetector(
+                    onTap: () => toggleInterest(interest),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.blue : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        interest,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-              const SizedBox(height: 20),
 
-              SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: emailTextEditingController,
-                  labelText: "Email",
-                  iconData: Icons.email_outlined,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: passwordlTextEditingController,
-                  labelText: "Password",
-                  iconData: Icons.lock_outline,
-                  isObscure: false,
-                ),
-              ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   child: CustomTextFieldWidget(
+              //     editingController: passwordlTextEditingController,
+              //     labelText: "Password",
+              //     iconData: Icons.lock_outline,
+              //     isObscure: false,
+              //   ),
+              // ),
 
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: ageTextEditingController,
-                  labelText: "Age",
-                  iconData: Icons.numbers,
-                  isObscure: false,
-                ),
-              ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   child: CustomTextFieldWidget(
+              //     editingController: ageTextEditingController,
+              //     labelText: "Age",
+              //     iconData: Icons.numbers,
+              //     isObscure: false,
+              //   ),
+              // ),
               const SizedBox(height: 20),
               Container(
                 width: MediaQuery.of(context).size.width - 36,
@@ -541,107 +626,15 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                       if (passwordlTextEditingController.text.trim().isEmpty) {
                         missingFields += 'Password, ';
                       }
-                      if (ageTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Age, ';
-                      }
-                      if (phoneNoTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Phone Number, ';
-                      }
-                      if (cityTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'City, ';
-                      }
-                      if (countryTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Country, ';
-                      }
-                      if (profileHeadingTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Profile Heading, ';
-                      }
-                      if (lookingForInaPartnerTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Looking for in a Partner, ';
-                      }
-                      if (heightTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Height, ';
-                      }
-                      if (weighteTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Weight, ';
-                      }
-                      if (bodyTypeForInaPartnerTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Body Type, ';
-                      }
-                      if (drinkTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Drink, ';
-                      }
-                      if (smokeTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Smoke, ';
-                      }
-                      if (martialStatusTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Marital Status, ';
-                      }
-                      if (haveChildrenTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Have Children, ';
-                      }
-                      if (noOfChildrenNoTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Number of Children, ';
-                      }
-                      if (professionTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Profession, ';
-                      }
-                      if (employmentStatusTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Employment Status, ';
-                      }
-                      if (incomeTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Income, ';
-                      }
-                      if (livingSituationTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Living Situation, ';
-                      }
-                      if (willingtoRelocateTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Willing to Relocate, ';
-                      }
-                      if (relationshipYouAreLookingForTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Relationship Looking For, ';
-                      }
-                      if (nationalityTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Nationality, ';
-                      }
-                      if (educationTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Education, ';
-                      }
-                      if (lanaguageStatusTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Language, ';
-                      }
-                      if (religionTextEditingController.text.trim().isEmpty) {
-                        missingFields += 'Religion, ';
-                      }
-                      if (ethnicityChildrenNoTextEditingController.text
-                          .trim()
-                          .isEmpty) {
-                        missingFields += 'Ethnicity, ';
-                      }
+                      // if (ageTextEditingController.text.trim().isEmpty) {
+                      //   missingFields += 'Age, ';
+
+                      // if (cityTextEditingController.text.trim().isEmpty) {
+                      //   missingFields += 'City, ';
+                      // }
+                      // if (countryTextEditingController.text.trim().isEmpty) {
+                      //   missingFields += 'Country, ';
+                      // }
 
                       // Check if there are missing fields
                       if (missingFields.isNotEmpty) {
@@ -653,6 +646,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         Get.snackbar("Error",
                             "Please fill in the following fields: $missingFields");
                       } else {
+                        registerUser();
                         // All fields are filled, proceed to create new user
                         setState(() {
                           showProgressBar = true;
@@ -666,7 +660,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             passwordlTextEditingController.text
                                 .trim(), // Password
                             nameTextEditingController.text.trim(), // Name
-                            ageTextEditingController.text.trim(), // Age
+                            // ageTextEditingController.text.trim(), // Age
                             phoneNoTextEditingController.text
                                 .trim(), // Phone number
                             cityTextEditingController.text.trim(), // City
