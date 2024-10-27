@@ -84,54 +84,76 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   String urlImage6 =
       "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
 
+  // retrieveUserInfo() async {
+  //   FirebaseFirestore.instance
+  //       .collection("users")
+  //       .doc(widget.userID)
+  //       .get()
+  //       .then((snapshot) {
+  //     if (snapshot.exists) {
+  //       if (snapshot.data()!["urlImage1"] != null) {
+  //         urlImage1 = snapshot.data()!["urlImage1"];
+  //         urlImage2 = snapshot.data()!["urlImage2"];
+  //         urlImage3 = snapshot.data()!["urlImage3"];
+  //         urlImage4 = snapshot.data()!["urlImage4"];
+  //         urlImage5 = snapshot.data()!["urlImage5"];
+  //         urlImage6 = snapshot.data()!["urlImage6"];
+  //       }
+
+  //       setState(() {
+  //         name = snapshot.data()!["name"];
+
+  //         age = snapshot.data()!["age"];
+  //         photoNo = snapshot.data()!["photoNo"];
+  //         city = snapshot.data()!["city"];
+  //         country = snapshot.data()!["country"];
+  //         profileHeading = snapshot.data()!["profileHeading"];
+  //         lookingforInaPartner = snapshot.data()!["lookingforInaPartner"];
+  //         height = snapshot.data()!["height"];
+  //         weight = snapshot.data()!["weight"];
+  //         bodyType = snapshot.data()!["bodyType"];
+  //         drink = snapshot.data()!["drink"];
+  //         smoke = snapshot.data()!["smoke"];
+  //         maritalStatus = snapshot.data()!["maritalStatus"];
+  //         haveChildren = snapshot.data()!["haveChildren"];
+  //         noChildren = snapshot.data()!["noChildren"];
+  //         profession = snapshot.data()!["profession"];
+  //         employmentStatus = snapshot.data()!["employmentStatus"];
+  //         income = snapshot.data()!["income"];
+  //         livingSituation = snapshot.data()!["livingSituation"];
+  //         willingtoRelocate = snapshot.data()!["willingtoRelocate"];
+  //         relationshipYouAreLookingFor =
+  //             snapshot.data()!["relationshipYouAreLookingFor"];
+  //         nationality = snapshot.data()!["nationality"];
+  //         education = snapshot.data()!["education"];
+  //         language = snapshot.data()!["language"];
+  //         religion = snapshot.data()!["religion"];
+  //         ethnicity = snapshot.data()!["ethnicity"];
+  //       });
+  //     }
+  //   });
+  // }
+
   retrieveUserInfo() async {
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(widget.userID)
-        .get()
-        .then((snapshot) {
+    try {
+      var snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.userID)
+          .get();
+
       if (snapshot.exists) {
-        if (snapshot.data()!["urlImage1"] != null) {
-          urlImage1 = snapshot.data()!["urlImage1"];
-          urlImage2 = snapshot.data()!["urlImage2"];
-          urlImage3 = snapshot.data()!["urlImage3"];
-          urlImage4 = snapshot.data()!["urlImage4"];
-          urlImage5 = snapshot.data()!["urlImage5"];
-          urlImage6 = snapshot.data()!["urlImage6"];
-        }
-
+        // Cast snapshot.data() to Map<String, dynamic>
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
         setState(() {
-          name = snapshot.data()!["name"];
-
-          age = snapshot.data()!["age"];
-          photoNo = snapshot.data()!["photoNo"];
-          city = snapshot.data()!["city"];
-          country = snapshot.data()!["country"];
-          profileHeading = snapshot.data()!["profileHeading"];
-          lookingforInaPartner = snapshot.data()!["lookingforInaPartner"];
-          height = snapshot.data()!["height"];
-          weight = snapshot.data()!["weight"];
-          bodyType = snapshot.data()!["bodyType"];
-          drink = snapshot.data()!["drink"];
-          smoke = snapshot.data()!["smoke"];
-          maritalStatus = snapshot.data()!["maritalStatus"];
-          haveChildren = snapshot.data()!["haveChildren"];
-          noChildren = snapshot.data()!["noChildren"];
-          profession = snapshot.data()!["profession"];
-          employmentStatus = snapshot.data()!["employmentStatus"];
-          income = snapshot.data()!["income"];
-          livingSituation = snapshot.data()!["livingSituation"];
-          willingtoRelocate = snapshot.data()!["willingtoRelocate"];
-          relationshipYouAreLookingFor =
-              snapshot.data()!["relationshipYouAreLookingFor"];
-          nationality = snapshot.data()!["nationality"];
-          education = snapshot.data()!["education"];
-          language = snapshot.data()!["language"];
-          religion = snapshot.data()!["religion"];
-          ethnicity = snapshot.data()!["ethnicity"];
+          name = data["name"]; // Now you can access "name"
+          // ... other data retrieval
         });
+      } else {
+        print("No such document!");
       }
-    });
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
   }
 
   @override

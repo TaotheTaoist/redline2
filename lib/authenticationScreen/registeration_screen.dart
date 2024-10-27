@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/authenticationScreen/login_screen.dart';
 import 'package:redline/controller/authenticationController.dart';
 import 'package:redline/homeScreen/home_screen.dart';
@@ -32,6 +33,10 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
       TextEditingController();
   TextEditingController lookingForInaPartnerTextEditingController =
       TextEditingController();
+
+  TextEditingController birthdayController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   //Appearance
   TextEditingController heightTextEditingController = TextEditingController();
@@ -156,15 +161,49 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                   )
                 ],
               ),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: nameTextEditingController,
-                  labelText: "Name",
-                  iconData: Icons.email_outlined,
-                  isObscure: false,
+
+              const SizedBox(height: 20),
+              CustomTextFieldWidget(
+                editingController: nameTextEditingController,
+                labelText: "Name",
+                iconData: Icons.person,
+                borderRadius: 20.0,
+              ),
+              const SizedBox(height: 20),
+              CustomTextFieldWidget(
+                editingController: emailController,
+                labelText: "Email",
+                iconData: Icons.email_outlined,
+                borderRadius: 20.0,
+              ),
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () =>
+                    BirthdayCal.selectDate(context, birthdayController),
+                child: AbsorbPointer(
+                  child: CustomTextFieldWidget(
+                    editingController: birthdayController,
+                    labelText: "Birthday",
+                    iconData: Icons.cake,
+                    borderRadius: 20.0,
+                  ),
                 ),
               ),
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () =>
+                    BirthdayCal.selectTime(context, birthdayController),
+                child: AbsorbPointer(
+                  child: CustomTextFieldWidget(
+                    editingController: timeController,
+                    labelText: "Time (optional)",
+                    iconData: Icons.access_time,
+                    borderRadius: 20.0,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
               SizedBox(height: 20),
               Container(
                 width: MediaQuery.of(context).size.width - 36,
