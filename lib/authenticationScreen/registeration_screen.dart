@@ -82,7 +82,11 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
       Authenticationcontroller.authenticationcontroller;
 
   final List<String> interests = ["Football", "Basketball", "Tennis"];
-  final Set<String> selectedInterests = {};
+
+  final TextEditingController interestTextEditingController =
+      TextEditingController();
+
+  final List<String> selectedInterests = [];
 
   String labelText = "Time (optional)";
 
@@ -97,29 +101,13 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
     });
   }
 
-  // Function to register the user and save selected interests
-  Future<void> registerUser() async {
-    if (selectedInterests.isEmpty) {
-      // Optionally, show a warning if no interests are selected
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select at least one interest.')),
-      );
-      return;
-    }
-
-    try {
-      await FirebaseFirestore.instance.collection('users').add({
-        "interests": selectedInterests.toList(),
-        // Add other registration data here as needed
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration successful!')),
-      );
-    } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to register.')),
-      );
+  void addInterest() {
+    // Get the interest from the text controller and add it to the list if not empty
+    String newInterest = interestTextEditingController.text.trim();
+    if (newInterest.isNotEmpty && !interests.contains(newInterest)) {
+      interests.add(newInterest);
+      interestTextEditingController
+          .clear(); // Clear the text field after adding
     }
   }
 
@@ -275,6 +263,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                   ],
                 ),
               ),
+
               Wrap(
                 spacing: 10,
                 children: interests.map((interest) {
@@ -298,7 +287,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                   );
                 }).toList(),
               ),
-
               // const SizedBox(height: 20),
               // Container(
               //   width: MediaQuery.of(context).size.width - 36,
@@ -646,7 +634,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         Get.snackbar("Error",
                             "Please fill in the following fields: $missingFields");
                       } else {
-                        registerUser();
+                        // registerUser();
                         // All fields are filled, proceed to create new user
                         setState(() {
                           showProgressBar = true;
@@ -705,6 +693,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                 .trim(), // Religion
                             ethnicityChildrenNoTextEditingController.text
                                 .trim(), // Ethnicity
+                            selectedInterests,
                           );
 
                           // On success, hide progress bar and navigate to HomeScreen

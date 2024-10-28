@@ -133,6 +133,82 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   //     }
   //   });
   // }
+  // Start of confirmation dialog function
+
+  // Start of delete account function
+  // Function to prompt the user for confirmation before deletion
+  void _confirmDeleteAccount(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text(
+              'Are you sure you want to delete your account? This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _deleteAccount(); // Call the delete account function
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  } // End of confirmation dialog function
+
+  void _deleteAccount(BuildContext context) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        // Step 1: Delete user data from Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .delete();
+        print('User data deleted successfully');
+
+        // Step 2: Delete the user account from Firebase Authentication
+        await user.delete();
+        print('Account deleted successfully');
+
+        // Navigate to the login screen after deletion
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      } catch (e) {
+        print('Error deleting account: $e');
+
+        // Handle specific errors if needed
+        if (e is FirebaseAuthException) {
+          switch (e.code) {
+            case 'requires-recent-login':
+              // Inform the user to reauthenticate
+              print('User needs to reauthenticate.');
+              // Optionally prompt the user to re-enter their credentials here.
+              break;
+            default:
+              print('An unknown error occurred: ${e.message}');
+          }
+        } else if (e is FirebaseException) {
+          // Handle Firestore deletion errors if needed
+          print('Error deleting user data from Firestore: ${e.message}');
+        }
+      }
+    } else {
+      print('No user is currently signed in.');
+    }
+  } // End of delete account function
 
   retrieveUserInfo() async {
     try {
@@ -260,32 +336,43 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 _buildTableRow(
                     "Relationship Looking For", relationshipYouAreLookingFor),
               ]),
-              SizedBox(height: 20),
-              ElevatedButton(
-                //   onPressed: () {
-                //     // You can add logout or other actions here
-                //     setState(() {
-                //       FirebaseAuth.instance.signOut();
-                //     });
-                //   },
-                //   child: Text("Log Out"),
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut(); // Sign out the user
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.center, // Align buttons to center
+                children: [
+                  ElevatedButton(
+                    // Start of Log Out Button
+                    onPressed: () async {
+                      await FirebaseAuth.instance
+                          .signOut(); // Sign out the user
 
-                  setState(() {
-                    currentUserID =
-                        ""; // Clear the global or current user ID variable
-                  });
+                      setState(() {
+                        currentUserID =
+                            ""; // Clear the global or current user ID variable
+                      });
 
-                  // After sign out, navigate to a different page (optional)
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LoginScreen()), // Example
-                  );
-                },
-                child: Text("Log Out"),
-              ),
+                      // After sign out, navigate to a different page (optional)
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginScreen()), // Example
+                      );
+                    },
+                    child: Text("Log Out"),
+                  ), // End of Log Out Button
+
+                  SizedBox(width: 20), // Spacer between buttons
+
+                  ElevatedButton(
+                    // Start of Delete Account Button
+                    onPressed: () {
+                      _confirmDeleteAccount(
+                          context); // Call confirmation dialog
+                    },
+                    child: Text('Delete Account'),
+                  ), // End of Delete Account Button
+                ], // End of children in Row
+              ), // End of Row for buttons
             ],
           ),
         ),

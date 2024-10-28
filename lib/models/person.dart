@@ -40,6 +40,8 @@ class Person {
   String? religion;
   String? ethnicity;
 
+  List<String>? interests;
+
   Person({
     this.uid,
     this.imageProfile,
@@ -72,6 +74,7 @@ class Person {
     this.language,
     this.religion,
     this.ethnicity,
+    this.interests,
   });
 
   static Person fromDataSnapshot(DocumentSnapshot snapshot) {
@@ -109,6 +112,8 @@ class Person {
       language: dataSnapshot["language"],
       religion: dataSnapshot["religion"],
       ethnicity: dataSnapshot["ethnicity"],
+
+      interests: List<String>.from(dataSnapshot["interests"] ?? []),
     );
   }
 
@@ -144,5 +149,7 @@ class Person {
         "language": language,
         "religion": religion,
         "ethnicity": ethnicity,
+
+        "interests": interests,
       };
 }

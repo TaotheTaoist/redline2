@@ -117,6 +117,7 @@ class Authenticationcontroller extends GetxController {
     String language,
     String religion,
     String ethnicity,
+    List<String> interests,
   ) async {
     try {
       UserCredential credential = await FirebaseAuth.instance
@@ -155,6 +156,8 @@ class Authenticationcontroller extends GetxController {
         language: language,
         religion: religion,
         ethnicity: ethnicity,
+
+        interests: interests,
       );
       // await FirebaseFirestore.instance
       //   .collection('users')
