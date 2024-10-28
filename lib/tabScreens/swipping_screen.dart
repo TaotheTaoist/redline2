@@ -16,6 +16,9 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   List<SwipeItem> swipeItems = [];
   late MatchEngine matchEngine;
 
+  List<String> currentUserInterests = [];
+  Map<String, List<String>> interestsCache = {};
+
   readUserData() async {
     await FirebaseFirestore.instance
         .collection("users")
@@ -26,6 +29,62 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         senderName = dataSnapshot.data()!["name"].toString();
       });
     });
+  }
+
+  Future<List<String>> retrieveCurrentUserInterests(
+      String currentUserID) async {
+    List<String> interests = [];
+    DocumentSnapshot currentUserSnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUserID)
+        .get();
+
+    if (currentUserSnapshot.exists) {
+      // Explicitly cast the data to Map<String, dynamic>
+      Map<String, dynamic>? data =
+          currentUserSnapshot.data() as Map<String, dynamic>?;
+
+      interests = List<String>.from(data?['interests'] ?? []);
+      print("Current User Interests: $interests");
+    } else {
+      print("Current user document does not exist.");
+    }
+
+    return interests;
+  }
+
+  Future<List<String>> fetchProfileUserInterests(String profileUserId) async {
+    DocumentSnapshot profileUserSnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(profileUserId)
+        .get();
+
+    List<String> profileUserInterests = [];
+    if (profileUserSnapshot.exists) {
+      // Explicitly cast the data to Map<String, dynamic>
+      Map<String, dynamic>? data =
+          profileUserSnapshot.data() as Map<String, dynamic>?;
+
+      profileUserInterests = List<String>.from(data?['interests'] ?? []);
+      print("Profile User Interests for $profileUserId: $profileUserInterests");
+    } else {
+      print("Profile user document does not exist.");
+    }
+
+    return profileUserInterests;
+  }
+
+  Future<Map<String, List<String>>> retrieveBothInterests(
+      String currentUserID, String profileUserId) async {
+    List<String> currentUserInterests =
+        await retrieveCurrentUserInterests(currentUserID);
+    List<String> profileUserInterests =
+        await fetchProfileUserInterests(profileUserId);
+
+    return {
+      'currentUserInterests': currentUserInterests,
+      'profileUserInterests': profileUserInterests,
+    };
   }
 
   @override
@@ -116,6 +175,30 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                   itemBuilder: (context, index) {
                     final eachProfileInfo =
                         profileController.allUserProfileList[index];
+                    final profileUserId = eachProfileInfo.uid!;
+
+                    // Fetch interests for the currently displayed profile if not cached
+                    if (!interestsCache.containsKey(profileUserId)) {
+                      retrieveBothInterests(currentUserID, profileUserId)
+                          .then((interests) {
+                        setState(() {
+                          interestsCache[profileUserId] =
+                              interests['currentUserInterests'] ?? [];
+                        });
+                      });
+                    }
+
+                    final currentUserInterests =
+                        interestsCache[profileUserId] ?? [];
+                    final profileUserInterests = eachProfileInfo.interests ??
+                        []; // Assuming interests is a List<String>
+
+                    final commonInterests = currentUserInterests
+                        .where((interest) =>
+                            profileUserInterests.contains(interest))
+                        .toList();
+
+                    print("Common Interests: $commonInterests"); // Debug print
 
                     return Stack(
                       children: [

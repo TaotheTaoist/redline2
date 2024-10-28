@@ -155,7 +155,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
-                _deleteAccount(); // Call the delete account function
+                _deleteAccount(context); // Call the delete account function
               },
               child: Text('Delete'),
             ),
