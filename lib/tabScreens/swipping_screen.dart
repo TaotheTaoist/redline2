@@ -302,6 +302,30 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                   itemBuilder: (context, index) {
                     final eachProfileInfo =
                         profileController.allUserProfileList[index];
+                    // final profileUserId = eachProfileInfo.uid!;
+
+                    // // Fetch interests for the currently displayed profile if not cached
+                    // if (!interestsCache.containsKey(profileUserId)) {
+                    //   retrieveBothInterests(currentUserID, profileUserId)
+                    //       .then((interests) {
+                    //     setState(() {
+                    //       interestsCache[profileUserId] =
+                    //           interests['currentUserInterests'] ?? [];
+                    //     });
+                    //   });
+                    // }
+
+                    // final currentUserInterests =
+                    //     interestsCache[profileUserId] ?? [];
+                    // final profileUserInterests = eachProfileInfo.interests ??
+                    //     []; // Assuming interests is a List<String>
+
+                    // final commonInterests = currentUserInterests
+                    //     .where((interest) =>
+                    //         profileUserInterests.contains(interest))
+                    //     .toList();
+
+                    // print("Common Interests: $commonInterests"); // Debug print
 
                     return Stack(
                       children: [
@@ -461,6 +485,47 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                 //       [],
                                 // ),
 
+                                eachProfileInfo.interests!.isNotEmpty
+                                    ? Wrap(
+                                        spacing: 8.0,
+                                        runSpacing: 4.0,
+                                        children: eachProfileInfo.interests!
+                                            .map((interest) {
+                                          return ElevatedButton(
+                                            onPressed: () {
+                                              // Define your action here if needed
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.white.withOpacity(0.2),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 20, vertical: 10),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              interest,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                letterSpacing: 4,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      )
+                                    : Text(
+                                        "No interests available",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+
+                                SizedBox(height: 4),
                                 // Religion button
                                 ElevatedButton(
                                   onPressed: () {},

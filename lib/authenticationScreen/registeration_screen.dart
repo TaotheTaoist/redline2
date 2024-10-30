@@ -111,6 +111,14 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
     }
   }
 
+  Future<bool> _checkIfEmailExists(String email, String currentUserId) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+    return result.docs.isNotEmpty && result.docs.first.id != currentUserId;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
