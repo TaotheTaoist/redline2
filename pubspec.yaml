@@ -20,11 +20,11 @@ dependencies:
   cloud_firestore: ^5.4.4 # Ensure this version is compatible with firebase_core
   cupertino_icons: ^1.0.6 # This version supports null safety
   flutter_image_slider:
-  google_sign_in: ^6.2.1
   swipe_cards: ^2.0.0+1
   intl: ^0.19.0
 
   pub_updater: ^0.5.0
+  google_sign_in: ^6.2.1
   
 
 dev_dependencies:

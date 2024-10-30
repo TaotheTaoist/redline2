@@ -49,42 +49,6 @@ class Authenticationcontroller extends GetxController {
       return null;
     }
   }
-  // login with phone, might need to use it later
-  // void verifyPhoneNumber(String phoneNumber) async {
-  //   await _auth.verifyPhoneNumber(
-  //     phoneNumber: phoneNumber,
-  //     verificationCompleted: (PhoneAuthCredential credential) async {
-  //       // Automatically sign in the user with the credential
-  //       await _auth.signInWithCredential(credential);
-  //       Get.to(HomeScreen());
-  //     },
-  //     verificationFailed: (FirebaseAuthException e) {
-  //       Get.snackbar("Error", "Verification failed. ${e.message}");
-  //     },
-  //     codeSent: (String verificationId, int? resendToken) {
-  //       this.verificationId = verificationId;
-  //       // Navigate to the CodeEntryScreen to enter the verification code
-  //       Get.to(() => CodeEntryScreen(verificationId: verificationId));
-  //     },
-  //     codeAutoRetrievalTimeout: (String verificationId) {
-  //       this.verificationId = verificationId;
-  //     },
-  //   );
-  // }
-
-  // // Updated to just call signInWithPhoneNumber method
-  // void signInWithPhoneNumber(String smsCode) async {
-  //   try {
-  //     PhoneAuthCredential credential = PhoneAuthProvider.credential(
-  //       verificationId: verificationId!,
-  //       smsCode: smsCode,
-  //     );
-  //     await _auth.signInWithCredential(credential);
-  //     Get.to(HomeScreen());
-  //   } catch (e) {
-  //     Get.snackbar("Error", "Failed to sign in: ${e.toString()}");
-  //   }
-  // }
 
   pickImageFileFromGallery() async {
     imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
