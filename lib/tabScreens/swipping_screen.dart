@@ -27,8 +27,18 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         .get()
         .then((dataSnapshot) {
       setState(() {
-        senderName = dataSnapshot.data()!["name"].toString();
+        // Retrieve and set the sender's name
+        senderName = dataSnapshot.data()?["name"]?.toString() ?? "No name";
+
+        // Print the entire document data
+        print("readUserData() - Data snapshot: ${dataSnapshot.data()}");
+
+        // Print the specific field value (senderName)
+        print("Sender name: $senderName");
       });
+    }).catchError((error) {
+      // Handle potential errors (optional)
+      print("Error fetching data: $error");
     });
   }
 
@@ -207,21 +217,21 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   //   });
   // }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   readUserData();
+  @override
+  void initState() {
+    super.initState();
+    readUserData();
 
-  //   // Retrieve current user interests once, if not already done
-  //   retrieveCurrentUserInterests(currentUserID).then((interests) {
-  //     setState(() {
-  //       currentUserInterests = interests;
-  //     });
-  //   });
+    // Retrieve current user interests once, if not already done
+    // retrieveCurrentUserInterests(currentUserID).then((interests) {
+    //   setState(() {
+    //     currentUserInterests = interests;
+    //   });
+    // });
 
-  //   // Initialize swipeItems and matchEngine
-  //   matchEngine = MatchEngine(swipeItems: swipeItems);
-  // }
+    // // Initialize swipeItems and matchEngine
+    // matchEngine = MatchEngine(swipeItems: swipeItems);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -398,7 +408,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
                                 SizedBox(height: 4),
                                 Text(
-                                  "${eachProfileInfo.city}",
+                                  "${eachProfileInfo.photoNo}",
                                   // "${eachProfileInfo.age} ⦾ ${eachProfileInfo.city}",
                                   style: TextStyle(
                                       fontSize: 14,
@@ -406,15 +416,15 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Text(
-                                  "${eachProfileInfo.interests}",
-                                  // "${eachProfileInfo.age} ⦾ ${eachProfileInfo.city}",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      letterSpacing: 2,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                // Text(
+                                //   "${eachProfileInfo.interests}",
+                                //   // "${eachProfileInfo.age} ⦾ ${eachProfileInfo.city}",
+                                //   style: TextStyle(
+                                //       fontSize: 14,
+                                //       letterSpacing: 2,
+                                //       color: Colors.white,
+                                //       fontWeight: FontWeight.bold),
+                                // ),
 
                                 SizedBox(height: 4),
                                 eachProfileInfo.interests!.isNotEmpty
@@ -431,7 +441,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                               backgroundColor:
                                                   Colors.white.withOpacity(0.2),
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 20, vertical: 10),
+                                                  horizontal: 4, vertical: 4),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(18),
@@ -485,45 +495,45 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                 //       [],
                                 // ),
 
-                                eachProfileInfo.interests!.isNotEmpty
-                                    ? Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 4.0,
-                                        children: eachProfileInfo.interests!
-                                            .map((interest) {
-                                          return ElevatedButton(
-                                            onPressed: () {
-                                              // Define your action here if needed
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.white.withOpacity(0.2),
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 20, vertical: 10),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(18),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              interest,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                letterSpacing: 4,
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      )
-                                    : Text(
-                                        "No interests available",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
+                                // eachProfileInfo.interests!.isNotEmpty
+                                //     ? Wrap(
+                                //         spacing: 8.0,
+                                //         runSpacing: 4.0,
+                                //         children: eachProfileInfo.interests!
+                                //             .map((interest) {
+                                //           return ElevatedButton(
+                                //             onPressed: () {
+                                //               // Define your action here if needed
+                                //             },
+                                //             style: ElevatedButton.styleFrom(
+                                //               backgroundColor:
+                                //                   Colors.white.withOpacity(0.2),
+                                //               padding: EdgeInsets.symmetric(
+                                //                   horizontal: 20, vertical: 10),
+                                //               shape: RoundedRectangleBorder(
+                                //                 borderRadius:
+                                //                     BorderRadius.circular(18),
+                                //               ),
+                                //             ),
+                                //             child: Text(
+                                //               interest,
+                                //               style: TextStyle(
+                                //                 fontSize: 14,
+                                //                 letterSpacing: 4,
+                                //                 color: Colors.black,
+                                //               ),
+                                //             ),
+                                //           );
+                                //         }).toList(),
+                                //       )
+                                //     : Text(
+                                //         "No interests available",
+                                //         style: TextStyle(
+                                //           fontSize: 14,
+                                //           color: Colors.grey,
+                                //           fontStyle: FontStyle.italic,
+                                //         ),
+                                //       ),
 
                                 SizedBox(height: 4),
                                 // Religion button

@@ -90,40 +90,113 @@ class Profilecontroller extends GetxController {
   //   }
   // }
 
-  // version2 doesnt delete if click twice
   favoriteSentReceieved(String toUserID, String senderName) async {
-    var document = await FirebaseFirestore.instance
+    var receivedDocRef = FirebaseFirestore.instance
         .collection("users")
         .doc(toUserID)
         .collection("favoriteReceived")
+        .doc(currentUserID);
+
+    var sentDocRef = FirebaseFirestore.instance
+        .collection("users")
         .doc(currentUserID)
-        .get();
+        .collection("favoriteSent")
+        .doc(toUserID);
+
+    var receivedDoc = await receivedDocRef.get();
 
     // Check if the favorite already exists
-    if (!document.exists) {
-      // Mark as favorite and add to the database
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(toUserID)
-          .collection("favoriteReceived")
-          .doc(currentUserID)
-          .set({
+    if (receivedDoc.exists) {
+      // If the favorite exists, remove it from both locations
+      await receivedDocRef.delete();
+      await sentDocRef.delete();
+      print("Favorite removed for ${receivedDoc.id}");
+    } else {
+      // If the favorite does not exist, add it to both locations
+      await receivedDocRef.set({
         'senderName': senderName,
         'timestamp': FieldValue.serverTimestamp(),
       });
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(currentUserID)
-          .collection("favoriteSent")
-          .doc(toUserID)
-          .set({
+      await sentDocRef.set({
         'senderName': senderName,
         'timestamp': FieldValue.serverTimestamp(),
       });
+      print("Favorite added for ${receivedDocRef.id}");
     }
-    // If the document exists, do nothing (or provide feedback if desired)
   }
+
+// no delete version
+//   favoriteSentReceieved(String toUserID, String senderName) async {
+//     var receivedDocRef = FirebaseFirestore.instance
+//         .collection("users")
+//         .doc(toUserID)
+//         .collection("favoriteReceived")
+//         .doc(currentUserID);
+
+//     var sentDocRef = FirebaseFirestore.instance
+//         .collection("users")
+//         .doc(currentUserID)
+//         .collection("favoriteSent")
+//         .doc(toUserID);
+
+//     var receivedDoc = await receivedDocRef.get();
+
+//     // Check if the favorite already exists
+//     if (receivedDoc.exists) {
+//       // If the favorite exists, do nothing
+//       print("Favorite already exists for ${receivedDoc.id}");
+//       return;
+//     }
+
+//     // If the favorite does not exist, add it to both locations
+//     await receivedDocRef.set({
+//       'senderName': senderName,
+//       'timestamp': FieldValue.serverTimestamp(),
+//     });
+
+//     await sentDocRef.set({
+//       'senderName': senderName,
+//       'timestamp': FieldValue.serverTimestamp(),
+//     });
+
+//     print("Favorite added for ${receivedDocRef.id}");
+//   }
+
+  // version2 doesnt delete if click twice
+  // favoriteSentReceieved(String toUserID, String senderName) async {
+  //   var document = await FirebaseFirestore.instance
+  //       .collection("users")
+  //       .doc(toUserID)
+  //       .collection("favoriteReceived")
+  //       .doc(currentUserID)
+  //       .get();
+
+  //   // Check if the favorite already exists
+  //   if (!document.exists) {
+  //     // Mark as favorite and add to the database
+  //     await FirebaseFirestore.instance
+  //         .collection("users")
+  //         .doc(toUserID)
+  //         .collection("favoriteReceived")
+  //         .doc(currentUserID)
+  //         .set({
+  //       'senderName': senderName,
+  //       'timestamp': FieldValue.serverTimestamp(),
+  //     });
+
+  //     await FirebaseFirestore.instance
+  //         .collection("users")
+  //         .doc(currentUserID)
+  //         .collection("favoriteSent")
+  //         .doc(toUserID)
+  //         .set({
+  //       'senderName': senderName,
+  //       'timestamp': FieldValue.serverTimestamp(),
+  //     });
+  //   }
+  //   // If the document exists, do nothing (or provide feedback if desired)
+  // }
 
 // ================================================================================
 
@@ -178,38 +251,80 @@ class Profilecontroller extends GetxController {
   //   }
   // }
 
-  LikeSentReceieved(String toUserID, String senderName) async {
-    var document = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(toUserID)
-        .collection("LikeReceived")
-        .doc(currentUserID)
-        .get();
+  // LikeSentReceieved(String toUserID, String senderName) async {
+  //   var document = await FirebaseFirestore.instance
+  //       .collection("users")
+  //       .doc(toUserID)
+  //       .collection("LikeReceived")
+  //       .doc(currentUserID)
+  //       .get();
 
-    // If the like does not exist, add it
-    if (!document.exists) {
-      // Add like to the target user's `LikeReceived`
-      await FirebaseFirestore.instance
+  //   // If the like does not exist, add it
+  //   if (!document.exists) {
+  //     // Add like to the target user's `LikeReceived`
+  //     await FirebaseFirestore.instance
+  //         .collection("users")
+  //         .doc(toUserID)
+  //         .collection("LikeReceived")
+  //         .doc(currentUserID)
+  //         .set({
+  //       'senderName': senderName,
+  //       'timestamp': FieldValue.serverTimestamp(),
+  //     });
+
+  //     // Add like to the current user's `LikeSent`
+  //     await FirebaseFirestore.instance
+  //         .collection("users")
+  //         .doc(currentUserID)
+  //         .collection("LikeSent")
+  //         .doc(toUserID)
+  //         .set({
+  //       'senderName': senderName,
+  //       'timestamp': FieldValue.serverTimestamp(),
+  //     });
+  //   }
+  //   // If the like already exists, do nothing (or provide feedback if desired)
+  // }
+  Future<void> LikeSentReceieved(String toUserID, String senderName) async {
+    try {
+      // Check if the like already exists
+      var document = await FirebaseFirestore.instance
           .collection("users")
           .doc(toUserID)
           .collection("LikeReceived")
           .doc(currentUserID)
-          .set({
-        'senderName': senderName,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+          .get();
 
-      // Add like to the current user's `LikeSent`
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(currentUserID)
-          .collection("LikeSent")
-          .doc(toUserID)
-          .set({
-        'senderName': senderName,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+      // If the like does not exist, add it
+      if (!document.exists) {
+        // Add like to the target user's `LikeReceived`
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(toUserID)
+            .collection("LikeReceived")
+            .doc(currentUserID)
+            .set({
+          'senderName': senderName,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        // Add like to the current user's `LikeSent`
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(currentUserID)
+            .collection("LikeSent")
+            .doc(toUserID)
+            .set({
+          'senderName': senderName,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+      } else {
+        // Optionally, provide feedback that the like already exists
+        print("You have already liked this user.");
+      }
+    } catch (e) {
+      // Handle errors here (e.g., log the error)
+      print("Error while sending like: $e");
     }
-    // If the like already exists, do nothing (or provide feedback if desired)
   }
 }

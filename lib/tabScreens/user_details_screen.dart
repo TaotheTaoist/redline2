@@ -32,44 +32,44 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     retrieveUserInfo();
   }
 
-  // String uid = "";
-  // String imageProfile = "";
-  // String email = "";
-  // String password = "";
+  String uid = "";
+  String imageProfile = "";
+  String email = "";
+  String password = "";
   String name = "";
-  String age = "";
+  // String age = "";
   String photoNo = "";
-  String city = "";
-  String country = "";
-  String profileHeading = "";
-  String lookingforInaPartner = "";
+  // String city = "";
+  // String country = "";
+  // String profileHeading = "";
+  // String lookingforInaPartner = "";
 
   int publishedDateTime = 0;
 
 // appearance
-  String height = "";
-  String weight =
-      ""; // Changed from "Weight" to "weight" to follow camelCase convention
-  String bodyType = "";
-  String drink = "";
-  String smoke = "";
-  String maritalStatus =
-      ""; // Corrected spelling from "martialStatus" to "maritalStatus"
-  String haveChildren = "";
-  String noChildren = "";
-  String profession = "";
-  String employmentStatus = "";
-  String income = "";
-  String livingSituation = "";
-  String willingtoRelocate = "";
-  String relationshipYouAreLookingFor = "";
+//   String height = "";
+//   String weight =
+//       ""; // Changed from "Weight" to "weight" to follow camelCase convention
+//   String bodyType = "";
+//   String drink = "";
+//   String smoke = "";
+//   String maritalStatus =
+//       ""; // Corrected spelling from "martialStatus" to "maritalStatus"
+//   String haveChildren = "";
+//   String noChildren = "";
+//   String profession = "";
+//   String employmentStatus = "";
+//   String income = "";
+//   String livingSituation = "";
+//   String willingtoRelocate = "";
+//   String relationshipYouAreLookingFor = "";
 
-// background
-  String nationality = "";
-  String education = "";
-  String language = "";
-  String religion = "";
-  String ethnicity = "";
+// // background
+//   String nationality = "";
+//   String education = "";
+//   String language = "";
+//   String religion = "";
+//   String ethnicity = "";
 
   String urlImage1 =
       "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
@@ -84,6 +84,31 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   String urlImage6 =
       "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
 
+// // version 2 like and favor buton not wokring
+  retrieveUserInfo() async {
+    try {
+      var snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.userID)
+          .get();
+
+      if (snapshot.exists) {
+        // Cast snapshot.data() to Map<String, dynamic>
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        setState(() {
+          name = data["name"]; // Now you can access "name"
+          email = data["email"];
+          uid = data["uid"];
+        });
+      } else {
+        print("No such document!");
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
+  }
+
+  // version 1 like and favor buton works
   // retrieveUserInfo() async {
   //   FirebaseFirestore.instance
   //       .collection("users")
@@ -93,42 +118,46 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   //     if (snapshot.exists) {
   //       if (snapshot.data()!["urlImage1"] != null) {
   //         urlImage1 = snapshot.data()!["urlImage1"];
-  //         urlImage2 = snapshot.data()!["urlImage2"];
-  //         urlImage3 = snapshot.data()!["urlImage3"];
-  //         urlImage4 = snapshot.data()!["urlImage4"];
-  //         urlImage5 = snapshot.data()!["urlImage5"];
-  //         urlImage6 = snapshot.data()!["urlImage6"];
+  //         // urlImage2 = snapshot.data()!["urlImage2"];
+  //         // urlImage3 = snapshot.data()!["urlImage3"];
+  //         // urlImage4 = snapshot.data()!["urlImage4"];
+  //         // urlImage5 = snapshot.data()!["urlImage5"];
+  //         // urlImage6 = snapshot.data()!["urlImage6"];
   //       }
 
   //       setState(() {
   //         name = snapshot.data()!["name"];
 
-  //         age = snapshot.data()!["age"];
+  //         // age = snapshot.data()!["age"];
   //         photoNo = snapshot.data()!["photoNo"];
-  //         city = snapshot.data()!["city"];
-  //         country = snapshot.data()!["country"];
-  //         profileHeading = snapshot.data()!["profileHeading"];
-  //         lookingforInaPartner = snapshot.data()!["lookingforInaPartner"];
-  //         height = snapshot.data()!["height"];
-  //         weight = snapshot.data()!["weight"];
-  //         bodyType = snapshot.data()!["bodyType"];
-  //         drink = snapshot.data()!["drink"];
-  //         smoke = snapshot.data()!["smoke"];
-  //         maritalStatus = snapshot.data()!["maritalStatus"];
-  //         haveChildren = snapshot.data()!["haveChildren"];
-  //         noChildren = snapshot.data()!["noChildren"];
-  //         profession = snapshot.data()!["profession"];
-  //         employmentStatus = snapshot.data()!["employmentStatus"];
-  //         income = snapshot.data()!["income"];
-  //         livingSituation = snapshot.data()!["livingSituation"];
-  //         willingtoRelocate = snapshot.data()!["willingtoRelocate"];
-  //         relationshipYouAreLookingFor =
-  //             snapshot.data()!["relationshipYouAreLookingFor"];
-  //         nationality = snapshot.data()!["nationality"];
-  //         education = snapshot.data()!["education"];
-  //         language = snapshot.data()!["language"];
-  //         religion = snapshot.data()!["religion"];
-  //         ethnicity = snapshot.data()!["ethnicity"];
+
+  //         email = snapshot.data()!["email"];
+
+  //         // city = snapshot.data()!["city"];
+  //         // country = snapshot.data()!["country"];
+
+  //         // profileHeading = snapshot.data()!["profileHeading"];
+  //         // lookingforInaPartner = snapshot.data()!["lookingforInaPartner"];
+  //         // height = snapshot.data()!["height"];
+  //         // weight = snapshot.data()!["weight"];
+  //         // bodyType = snapshot.data()!["bodyType"];
+  //         // drink = snapshot.data()!["drink"];
+  //         // smoke = snapshot.data()!["smoke"];
+  //         // maritalStatus = snapshot.data()!["maritalStatus"];
+  //         // haveChildren = snapshot.data()!["haveChildren"];
+  //         // noChildren = snapshot.data()!["noChildren"];
+  //         // profession = snapshot.data()!["profession"];
+  //         // employmentStatus = snapshot.data()!["employmentStatus"];
+  //         // income = snapshot.data()!["income"];
+  //         // livingSituation = snapshot.data()!["livingSituation"];
+  //         // willingtoRelocate = snapshot.data()!["willingtoRelocate"];
+  //         // relationshipYouAreLookingFor =
+  //         //     snapshot.data()!["relationshipYouAreLookingFor"];
+  //         // nationality = snapshot.data()!["nationality"];
+  //         // education = snapshot.data()!["education"];
+  //         // language = snapshot.data()!["language"];
+  //         // religion = snapshot.data()!["religion"];
+  //         // ethnicity = snapshot.data()!["ethnicity"];
   //       });
   //     }
   //   });
@@ -210,28 +239,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   } // End of delete account function
 
-  retrieveUserInfo() async {
-    try {
-      var snapshot = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(widget.userID)
-          .get();
-
-      if (snapshot.exists) {
-        // Cast snapshot.data() to Map<String, dynamic>
-        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        setState(() {
-          name = data["name"]; // Now you can access "name"
-          // ... other data retrieval
-        });
-      } else {
-        print("No such document!");
-      }
-    } catch (e) {
-      print("Error fetching user data: $e");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -303,38 +310,41 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
               SizedBox(height: 30),
 
               // Section: Appearance
-              _buildSectionTitle("Appearance"),
+              _buildSectionTitle("Section 1"),
               _buildTable([
                 _buildTableRow("name", name),
-                _buildTableRow("Height", height),
-                _buildTableRow("Weight", weight),
-                _buildTableRow("Body Type", bodyType),
-                _buildTableRow("Drink", drink),
-                _buildTableRow("Smoke", smoke),
-                _buildTableRow("Marital Status", maritalStatus),
-                _buildTableRow("Have Children", haveChildren),
+                _buildTableRow("uid", widget.userID!),
+
+                _buildTableRow("email", email),
+                // _buildTableRow("Height", height),
+                // _buildTableRow("Weight", weight),
+                // _buildTableRow("Body Type", bodyType),
+                // _buildTableRow("Drink", drink),
+                // _buildTableRow("Smoke", smoke),
+                // _buildTableRow("Marital Status", maritalStatus),
+                // _buildTableRow("Have Children", haveChildren),
               ]),
 
               // Section: Background
-              _buildSectionTitle("Background"),
+              // _buildSectionTitle("Background"),
               _buildTable([
-                _buildTableRow("Nationality", nationality),
-                _buildTableRow("Education", education),
-                _buildTableRow("Language", language),
-                _buildTableRow("Religion", religion),
-                _buildTableRow("Ethnicity", ethnicity),
+                // _buildTableRow("Nationality", nationality),
+                // _buildTableRow("Education", education),
+                // _buildTableRow("Language", language),
+                // _buildTableRow("Religion", religion),
+                // _buildTableRow("Ethnicity", ethnicity),
               ]),
 
               // Section: Lifestyle
-              _buildSectionTitle("Lifestyle"),
+              // _buildSectionTitle("Lifestyle"),
               _buildTable([
-                _buildTableRow("Profession", profession),
-                _buildTableRow("Employment Status", employmentStatus),
-                _buildTableRow("Income", income),
-                _buildTableRow("Living Situation", livingSituation),
-                _buildTableRow("Willing to Relocate", willingtoRelocate),
-                _buildTableRow(
-                    "Relationship Looking For", relationshipYouAreLookingFor),
+                // _buildTableRow("Profession", profession),
+                // _buildTableRow("Employment Status", employmentStatus),
+                // _buildTableRow("Income", income),
+                // _buildTableRow("Living Situation", livingSituation),
+                // _buildTableRow("Willing to Relocate", willingtoRelocate),
+                // _buildTableRow(
+                //     "Relationship Looking For", relationshipYouAreLookingFor),
               ]),
               Row(
                 mainAxisAlignment:
@@ -349,8 +359,17 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       setState(() {
                         currentUserID =
                             ""; // Clear the global or current user ID variable
-                      });
+                        widget.userID = "";
+                        name = "";
+                        uid = "";
+                        imageProfile = "";
+                        email = "";
+                        password = "";
 
+                        // String age = "";
+                      });
+                      await FirebaseFirestore.instance.clearPersistence();
+                      await FirebaseFirestore.instance.terminate();
                       // After sign out, navigate to a different page (optional)
                       Navigator.pushReplacement(
                         context,

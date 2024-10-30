@@ -26,62 +26,68 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
       TextEditingController();
   TextEditingController nameTextEditingController = TextEditingController();
   // TextEditingController ageTextEditingController = TextEditingController();
-  TextEditingController phoneNoTextEditingController = TextEditingController();
-  TextEditingController cityTextEditingController = TextEditingController();
-  TextEditingController countryTextEditingController = TextEditingController();
-  TextEditingController profileHeadingTextEditingController =
-      TextEditingController();
-  TextEditingController lookingForInaPartnerTextEditingController =
-      TextEditingController();
+  // TextEditingController phoneNoTextEditingController = TextEditingController();
+  // TextEditingController cityTextEditingController = TextEditingController();
+  // TextEditingController countryTextEditingController = TextEditingController();
+  // TextEditingController profileHeadingTextEditingController =
+  //     TextEditingController();
+  // TextEditingController lookingForInaPartnerTextEditingController =
+  //     TextEditingController();
 
   TextEditingController birthdayController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
   //Appearance
-  TextEditingController heightTextEditingController = TextEditingController();
-  TextEditingController weighteTextEditingController = TextEditingController();
-  TextEditingController bodyTypeForInaPartnerTextEditingController =
-      TextEditingController();
+  // TextEditingController heightTextEditingController = TextEditingController();
+  // TextEditingController weighteTextEditingController = TextEditingController();
+  // TextEditingController bodyTypeForInaPartnerTextEditingController =
+  //     TextEditingController();
 
   // LifyStyle
-  TextEditingController drinkTextEditingController = TextEditingController();
-  TextEditingController smokeTextEditingController = TextEditingController();
-  TextEditingController martialStatusTextEditingController =
-      TextEditingController();
-  TextEditingController haveChildrenTextEditingController =
-      TextEditingController();
-  TextEditingController noOfChildrenNoTextEditingController =
-      TextEditingController();
-  TextEditingController employmentStatusTextEditingController =
-      TextEditingController();
-  TextEditingController professionTextEditingController =
-      TextEditingController();
-  TextEditingController incomeTextEditingController = TextEditingController();
-  TextEditingController livingSituationTextEditingController =
-      TextEditingController();
-  TextEditingController willingtoRelocateTextEditingController =
-      TextEditingController();
-  TextEditingController relationshipYouAreLookingForTextEditingController =
-      TextEditingController();
+  // TextEditingController drinkTextEditingController = TextEditingController();
+  // TextEditingController smokeTextEditingController = TextEditingController();
+  // TextEditingController martialStatusTextEditingController =
+  //     TextEditingController();
+  // TextEditingController haveChildrenTextEditingController =
+  //     TextEditingController();
+  // TextEditingController noOfChildrenNoTextEditingController =
+  //     TextEditingController();
+  // TextEditingController employmentStatusTextEditingController =
+  //     TextEditingController();
+  // TextEditingController professionTextEditingController =
+  //     TextEditingController();
+  // TextEditingController incomeTextEditingController = TextEditingController();
+  // TextEditingController livingSituationTextEditingController =
+  //     TextEditingController();
+  // TextEditingController willingtoRelocateTextEditingController =
+  //     TextEditingController();
+  // TextEditingController relationshipYouAreLookingForTextEditingController =
+  //     TextEditingController();
 
   // LifyStyle
-  TextEditingController nationalityTextEditingController =
-      TextEditingController();
-  TextEditingController educationTextEditingController =
-      TextEditingController();
-  TextEditingController lanaguageStatusTextEditingController =
-      TextEditingController();
-  TextEditingController religionTextEditingController = TextEditingController();
-  TextEditingController ethnicityChildrenNoTextEditingController =
-      TextEditingController();
+  // TextEditingController nationalityTextEditingController =
+  //     TextEditingController();
+  // TextEditingController educationTextEditingController =
+  //     TextEditingController();
+  // TextEditingController lanaguageStatusTextEditingController =
+  //     TextEditingController();
+  // TextEditingController religionTextEditingController = TextEditingController();
+  // TextEditingController ethnicityChildrenNoTextEditingController =
+  //     TextEditingController();
 
   bool showProgressBar = false;
 
   var authenticationcontroller =
       Authenticationcontroller.authenticationcontroller;
 
-  final List<String> interests = ["Football", "Basketball", "Tennis"];
+  final List<String> interests = [
+    "Football",
+    "Basketball",
+    "Tennis",
+    "Gun",
+    "sex"
+  ];
 
   final TextEditingController interestTextEditingController =
       TextEditingController();
@@ -317,286 +323,286 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
               //   ),
               // ),
               const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: phoneNoTextEditingController,
-                  labelText: "Phone",
-                  iconData: Icons.phone_outlined,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: cityTextEditingController,
-                  labelText: "City",
-                  iconData: Icons.location_city,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: countryTextEditingController,
-                  labelText: "country",
-                  iconData: Icons.location_city,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: profileHeadingTextEditingController,
-                  labelText: "Profile Heading",
-                  iconData: Icons.text_fields,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width - 36,
-                child: CustomTextFieldWidget(
-                  editingController: lookingForInaPartnerTextEditingController,
-                  labelText: "What are your looking for",
-                  iconData: Icons.face,
-                  isObscure: false,
-                ),
-              ),
-              const Text(
-                "Appearance",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: heightTextEditingController,
-                  labelText: "Height",
-                  iconData: Icons.insert_chart,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: weighteTextEditingController,
-                  labelText: "Weight",
-                  iconData: Icons.table_chart,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: bodyTypeForInaPartnerTextEditingController,
-                  labelText: "Body Type",
-                  iconData: Icons.type_specimen,
-                  isObscure: false,
-                ),
-              ),
-              const Text(
-                "Life Style ",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: drinkTextEditingController,
-                  labelText: "Drink",
-                  iconData: Icons.local_drink,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: smokeTextEditingController,
-                  labelText: "Smoking",
-                  iconData: Icons.smoking_rooms,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: martialStatusTextEditingController,
-                  labelText: "Martial Status",
-                  iconData: CupertinoIcons.person_2,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: haveChildrenTextEditingController,
-                  labelText: "have children",
-                  iconData: CupertinoIcons.person_3_fill,
-                  isObscure: false,
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: noOfChildrenNoTextEditingController,
-                  labelText: "No. Children",
-                  iconData: CupertinoIcons.person_3_fill,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: employmentStatusTextEditingController,
-                  labelText: "Employment Status",
-                  iconData: CupertinoIcons.rectangle_stack_person_crop_fill,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: professionTextEditingController,
-                  labelText: "Profession",
-                  iconData: Icons.business_center,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: incomeTextEditingController,
-                  labelText: "Income",
-                  iconData: CupertinoIcons.money_dollar_circle,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: livingSituationTextEditingController,
-                  labelText: "living Situation",
-                  iconData: CupertinoIcons.person_2_square_stack,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: willingtoRelocateTextEditingController,
-                  labelText: "Willing to Relocate?",
-                  iconData: CupertinoIcons.person_2,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController:
-                      relationshipYouAreLookingForTextEditingController,
-                  labelText: "What relationship you are looking for?",
-                  iconData: CupertinoIcons.person_2,
-                  isObscure: false,
-                ),
-              ),
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   child: CustomTextFieldWidget(
+              //     editingController: phoneNoTextEditingController,
+              //     labelText: "Phone",
+              //     iconData: Icons.phone_outlined,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   child: CustomTextFieldWidget(
+              //     editingController: cityTextEditingController,
+              //     labelText: "City",
+              //     iconData: Icons.location_city,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   child: CustomTextFieldWidget(
+              //     editingController: countryTextEditingController,
+              //     labelText: "country",
+              //     iconData: Icons.location_city,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   child: CustomTextFieldWidget(
+              //     editingController: profileHeadingTextEditingController,
+              //     labelText: "Profile Heading",
+              //     iconData: Icons.text_fields,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   child: CustomTextFieldWidget(
+              //     editingController: lookingForInaPartnerTextEditingController,
+              //     labelText: "What are your looking for",
+              //     iconData: Icons.face,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const Text(
+              //   "Appearance",
+              //   style: TextStyle(
+              //       color: Colors.white,
+              //       fontSize: 20,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: heightTextEditingController,
+              //     labelText: "Height",
+              //     iconData: Icons.insert_chart,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: weighteTextEditingController,
+              //     labelText: "Weight",
+              //     iconData: Icons.table_chart,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: bodyTypeForInaPartnerTextEditingController,
+              //     labelText: "Body Type",
+              //     iconData: Icons.type_specimen,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const Text(
+              //   "Life Style ",
+              //   style: TextStyle(
+              //       color: Colors.white,
+              //       fontSize: 20,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: drinkTextEditingController,
+              //     labelText: "Drink",
+              //     iconData: Icons.local_drink,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: smokeTextEditingController,
+              //     labelText: "Smoking",
+              //     iconData: Icons.smoking_rooms,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: martialStatusTextEditingController,
+              //     labelText: "Martial Status",
+              //     iconData: CupertinoIcons.person_2,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: haveChildrenTextEditingController,
+              //     labelText: "have children",
+              //     iconData: CupertinoIcons.person_3_fill,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: noOfChildrenNoTextEditingController,
+              //     labelText: "No. Children",
+              //     iconData: CupertinoIcons.person_3_fill,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: employmentStatusTextEditingController,
+              //     labelText: "Employment Status",
+              //     iconData: CupertinoIcons.rectangle_stack_person_crop_fill,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: professionTextEditingController,
+              //     labelText: "Profession",
+              //     iconData: Icons.business_center,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: incomeTextEditingController,
+              //     labelText: "Income",
+              //     iconData: CupertinoIcons.money_dollar_circle,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: livingSituationTextEditingController,
+              //     labelText: "living Situation",
+              //     iconData: CupertinoIcons.person_2_square_stack,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: willingtoRelocateTextEditingController,
+              //     labelText: "Willing to Relocate?",
+              //     iconData: CupertinoIcons.person_2,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController:
+              //         relationshipYouAreLookingForTextEditingController,
+              //     labelText: "What relationship you are looking for?",
+              //     iconData: CupertinoIcons.person_2,
+              //     isObscure: false,
+              //   ),
+              // ),
 
-              const Text(
-                "Background",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: nationalityTextEditingController,
-                  labelText: "Nationality",
-                  iconData: Icons.flag_circle_outlined,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: educationTextEditingController,
-                  labelText: "Education",
-                  iconData: Icons.history_edu,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: lanaguageStatusTextEditingController,
-                  labelText: "language",
-                  iconData: CupertinoIcons.person_badge_plus_fill,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: religionTextEditingController,
-                  labelText: "Religion",
-                  iconData: CupertinoIcons.checkmark_seal_fill,
-                  isObscure: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 36,
-                height: 55,
-                child: CustomTextFieldWidget(
-                  editingController: ethnicityChildrenNoTextEditingController,
-                  labelText: "Ethincity",
-                  iconData: CupertinoIcons.eye,
-                  isObscure: false,
-                ),
-              ),
+              // const Text(
+              //   "Background",
+              //   style: TextStyle(
+              //       color: Colors.white,
+              //       fontSize: 20,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: nationalityTextEditingController,
+              //     labelText: "Nationality",
+              //     iconData: Icons.flag_circle_outlined,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: educationTextEditingController,
+              //     labelText: "Education",
+              //     iconData: Icons.history_edu,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: lanaguageStatusTextEditingController,
+              //     labelText: "language",
+              //     iconData: CupertinoIcons.person_badge_plus_fill,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: religionTextEditingController,
+              //     labelText: "Religion",
+              //     iconData: CupertinoIcons.checkmark_seal_fill,
+              //     isObscure: false,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   height: 55,
+              //   child: CustomTextFieldWidget(
+              //     editingController: ethnicityChildrenNoTextEditingController,
+              //     labelText: "Ethincity",
+              //     iconData: CupertinoIcons.eye,
+              //     isObscure: false,
+              //   ),
+              // ),
               const SizedBox(height: 20),
               Container(
                 width: MediaQuery.of(context).size.width - 36,
@@ -656,52 +662,53 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             passwordlTextEditingController.text
                                 .trim(), // Password
                             nameTextEditingController.text.trim(), // Name
-                            // ageTextEditingController.text.trim(), // Age
-                            phoneNoTextEditingController.text
-                                .trim(), // Phone number
-                            cityTextEditingController.text.trim(), // City
-                            countryTextEditingController.text.trim(), // Country
-                            profileHeadingTextEditingController.text
-                                .trim(), // Profile Heading
-                            lookingForInaPartnerTextEditingController.text
-                                .trim(), // Looking for in a Partner
-                            DateTime.now()
-                                .millisecondsSinceEpoch, // Published date and time as an int
-                            heightTextEditingController.text.trim(), // Height
-                            weighteTextEditingController.text.trim(), // Weight
-                            bodyTypeForInaPartnerTextEditingController.text
-                                .trim(), // Body Type
-                            drinkTextEditingController.text.trim(), // Drink
-                            smokeTextEditingController.text.trim(), // Smoke
-                            martialStatusTextEditingController.text
-                                .trim(), // Marital Status
-                            haveChildrenTextEditingController.text
-                                .trim(), // Have children
-                            noOfChildrenNoTextEditingController.text
-                                .trim(), // Number of children
-                            professionTextEditingController.text
-                                .trim(), // Profession
-                            employmentStatusTextEditingController.text
-                                .trim(), // Employment status
-                            incomeTextEditingController.text.trim(), // Income
-                            livingSituationTextEditingController.text
-                                .trim(), // Living situation
-                            willingtoRelocateTextEditingController.text
-                                .trim(), // Willing to relocate
-                            relationshipYouAreLookingForTextEditingController
-                                .text
-                                .trim(), // Relationship you're looking for
-                            nationalityTextEditingController.text
-                                .trim(), // Nationality
-                            educationTextEditingController.text
-                                .trim(), // Education
-                            lanaguageStatusTextEditingController.text
-                                .trim(), // Language
-                            religionTextEditingController.text
-                                .trim(), // Religion
-                            ethnicityChildrenNoTextEditingController.text
-                                .trim(), // Ethnicity
                             selectedInterests,
+                            // ageTextEditingController.text.trim(), // Age
+                            // phoneNoTextEditingController.text
+                            //     .trim(), // Phone number
+                            // cityTextEditingController.text.trim(), // City
+                            // countryTextEditingController.text.trim(), // Country
+                            // profileHeadingTextEditingController.text
+                            //     .trim(), // Profile Heading
+                            // lookingForInaPartnerTextEditingController.text
+                            //     .trim(), // Looking for in a Partner
+                            // DateTime.now()
+                            //     .millisecondsSinceEpoch, // Published date and time as an int
+                            // heightTextEditingController.text.trim(), // Height
+                            // weighteTextEditingController.text.trim(), // Weight
+                            // bodyTypeForInaPartnerTextEditingController.text
+                            //     .trim(), // Body Type
+                            // drinkTextEditingController.text.trim(), // Drink
+                            // smokeTextEditingController.text.trim(), // Smoke
+                            // martialStatusTextEditingController.text
+                            //     .trim(), // Marital Status
+                            // haveChildrenTextEditingController.text
+                            //     .trim(), // Have children
+                            // noOfChildrenNoTextEditingController.text
+                            //     .trim(), // Number of children
+                            // professionTextEditingController.text
+                            //     .trim(), // Profession
+                            // employmentStatusTextEditingController.text
+                            //     .trim(), // Employment status
+                            // incomeTextEditingController.text.trim(), // Income
+                            // livingSituationTextEditingController.text
+                            //     .trim(), // Living situation
+                            // willingtoRelocateTextEditingController.text
+                            //     .trim(), // Willing to relocate
+                            // relationshipYouAreLookingForTextEditingController
+                            //     .text
+                            //     .trim(), // Relationship you're looking for
+                            // nationalityTextEditingController.text
+                            //     .trim(), // Nationality
+                            // educationTextEditingController.text
+                            //     .trim(), // Education
+                            // lanaguageStatusTextEditingController.text
+                            //     .trim(), // Language
+                            // religionTextEditingController.text
+                            //     .trim(), // Religion
+                            // ethnicityChildrenNoTextEditingController.text
+                            //     .trim(), // Ethnicity
+                            // selectedInterests,
                           );
 
                           // On success, hide progress bar and navigate to HomeScreen

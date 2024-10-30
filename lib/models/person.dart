@@ -8,37 +8,37 @@ class Person {
   String? name;
   // String? age;
   String? photoNo;
-  String? city;
-  String? country;
-  String? profileHeading;
-  String? lookingforInaPartner;
+  // String? city;
+  // String? country;
+  // String? profileHeading;
+  // String? lookingforInaPartner;
 
   int? publishedDateTime;
 
   // appearance
-  String? height;
-  String?
-      weight; // Changed from "Weight" to "weight" to follow camelCase convention
-  String? bodyType;
-  String? drink;
-  String? smoke;
-  String?
-      maritalStatus; // Corrected spelling from "martialStatus" to "maritalStatus"
-  String? haveChildren;
-  String? noChildren;
-  String? profession;
-  String? employmentStatus;
-  String? income;
-  String? livingSituation;
-  String? willingtoRelocate;
-  String? relationshipYouAreLookingFor;
+  // String? height;
+  // String?
+  //     weight; // Changed from "Weight" to "weight" to follow camelCase convention
+  // String? bodyType;
+  // String? drink;
+  // String? smoke;
+  // String?
+  //     maritalStatus; // Corrected spelling from "martialStatus" to "maritalStatus"
+  // String? haveChildren;
+  // String? noChildren;
+  // String? profession;
+  // String? employmentStatus;
+  // String? income;
+  // String? livingSituation;
+  // String? willingtoRelocate;
+  // String? relationshipYouAreLookingFor;
 
-  // background
-  String? nationality;
-  String? education;
-  String? language;
-  String? religion;
-  String? ethnicity;
+  // // background
+  // String? nationality;
+  // String? education;
+  // String? language;
+  // String? religion;
+  // String? ethnicity;
 
   List<String>? interests;
 
@@ -50,30 +50,30 @@ class Person {
     this.name,
     // this.age,
     this.photoNo,
-    this.city,
-    this.country,
-    this.profileHeading,
-    this.lookingforInaPartner,
+    // this.city,
+    // this.country,
+    // this.profileHeading,
+    // this.lookingforInaPartner,
     this.publishedDateTime,
-    this.height,
-    this.weight, // Corrected here too
-    this.bodyType,
-    this.drink,
-    this.smoke,
-    this.maritalStatus, // Corrected spelling here
-    this.haveChildren,
-    this.noChildren,
-    this.profession,
-    this.employmentStatus,
-    this.income,
-    this.livingSituation,
-    this.willingtoRelocate,
-    this.relationshipYouAreLookingFor,
-    this.nationality,
-    this.education,
-    this.language,
-    this.religion,
-    this.ethnicity,
+    // this.height,
+    // this.weight, // Corrected here too
+    // this.bodyType,
+    // this.drink,
+    // this.smoke,
+    // this.maritalStatus, // Corrected spelling here
+    // this.haveChildren,
+    // this.noChildren,
+    // this.profession,
+    // this.employmentStatus,
+    // this.income,
+    // this.livingSituation,
+    // this.willingtoRelocate,
+    // this.relationshipYouAreLookingFor,
+    // this.nationality,
+    // this.education,
+    // this.language,
+    // this.religion,
+    // this.ethnicity,
     this.interests,
   });
 
@@ -87,31 +87,31 @@ class Person {
       imageProfile: dataSnapshot["imageProfile"],
       // age: dataSnapshot["age"],
       photoNo: dataSnapshot["photoNo"],
-      city: dataSnapshot["city"],
-      country: dataSnapshot["country"],
-      profileHeading: dataSnapshot["profileHeading"],
-      lookingforInaPartner: dataSnapshot["lookingforInaPartner"],
+      // city: dataSnapshot["city"],
+      // country: dataSnapshot["country"],
+      // profileHeading: dataSnapshot["profileHeading"],
+      // lookingforInaPartner: dataSnapshot["lookingforInaPartner"],
       publishedDateTime: dataSnapshot["publishedDateTime"],
-      height: dataSnapshot["height"],
-      weight: dataSnapshot["weight"], // Corrected spelling
-      bodyType: dataSnapshot["bodyType"],
-      drink: dataSnapshot["drink"],
-      smoke: dataSnapshot["smoke"],
-      maritalStatus: dataSnapshot["maritalStatus"], // Corrected spelling
-      haveChildren: dataSnapshot["haveChildren"],
-      noChildren: dataSnapshot["noChildren"],
-      profession: dataSnapshot["profession"],
-      employmentStatus: dataSnapshot["employmentStatus"],
-      income: dataSnapshot["income"],
-      livingSituation: dataSnapshot["livingSituation"],
-      willingtoRelocate: dataSnapshot["willingtoRelocate"],
-      relationshipYouAreLookingFor:
-          dataSnapshot["relationshipYouAreLookingFor"],
-      nationality: dataSnapshot["nationality"],
-      education: dataSnapshot["education"],
-      language: dataSnapshot["language"],
-      religion: dataSnapshot["religion"],
-      ethnicity: dataSnapshot["ethnicity"],
+      // height: dataSnapshot["height"],
+      // weight: dataSnapshot["weight"], // Corrected spelling
+      // bodyType: dataSnapshot["bodyType"],
+      // drink: dataSnapshot["drink"],
+      // smoke: dataSnapshot["smoke"],
+      // maritalStatus: dataSnapshot["maritalStatus"], // Corrected spelling
+      // haveChildren: dataSnapshot["haveChildren"],
+      // noChildren: dataSnapshot["noChildren"],
+      // profession: dataSnapshot["profession"],
+      // employmentStatus: dataSnapshot["employmentStatus"],
+      // income: dataSnapshot["income"],
+      // livingSituation: dataSnapshot["livingSituation"],
+      // willingtoRelocate: dataSnapshot["willingtoRelocate"],
+      // relationshipYouAreLookingFor:
+      //     dataSnapshot["relationshipYouAreLookingFor"],
+      // nationality: dataSnapshot["nationality"],
+      // education: dataSnapshot["education"],
+      // language: dataSnapshot["language"],
+      // religion: dataSnapshot["religion"],
+      // ethnicity: dataSnapshot["ethnicity"],
 
       interests: List<String>.from(dataSnapshot["interests"] ?? []),
     );
@@ -125,30 +125,30 @@ class Person {
         "name": name,
         // "age": age,
         "photoNo": photoNo,
-        "city": city,
-        "country": country,
-        "profileHeading": profileHeading,
-        "lookingforInaPartner": lookingforInaPartner,
+        // "city": city,
+        // "country": country,
+        // "profileHeading": profileHeading,
+        // "lookingforInaPartner": lookingforInaPartner,
         "publishedDateTime": publishedDateTime,
-        "height": height,
-        "weight": weight, // Corrected spelling
-        "bodyType": bodyType,
-        "drink": drink,
-        "smoke": smoke,
-        "maritalStatus": maritalStatus, // Corrected spelling
-        "haveChildren": haveChildren,
-        "noChildren": noChildren,
-        "profession": profession,
-        "employmentStatus": employmentStatus,
-        "income": income,
-        "livingSituation": livingSituation,
-        "willingtoRelocate": willingtoRelocate,
-        "relationshipYouAreLookingFor": relationshipYouAreLookingFor,
-        "nationality": nationality,
-        "education": education,
-        "language": language,
-        "religion": religion,
-        "ethnicity": ethnicity,
+        // "height": height,
+        // "weight": weight, // Corrected spelling
+        // "bodyType": bodyType,
+        // "drink": drink,
+        // "smoke": smoke,
+        // "maritalStatus": maritalStatus, // Corrected spelling
+        // "haveChildren": haveChildren,
+        // "noChildren": noChildren,
+        // "profession": profession,
+        // "employmentStatus": employmentStatus,
+        // "income": income,
+        // "livingSituation": livingSituation,
+        // "willingtoRelocate": willingtoRelocate,
+        // "relationshipYouAreLookingFor": relationshipYouAreLookingFor,
+        // "nationality": nationality,
+        // "education": education,
+        // "language": language,
+        // "religion": religion,
+        // "ethnicity": ethnicity,
 
         "interests": interests,
       };
