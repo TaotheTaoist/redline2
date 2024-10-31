@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.grey,
         selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white12,
+        unselectedItemColor: Colors.white54,
         currentIndex: screenIndex,
         items: const [
           BottomNavigationBarItem(

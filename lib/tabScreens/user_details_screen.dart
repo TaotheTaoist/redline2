@@ -72,17 +72,17 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 //   String ethnicity = "";
 
   String urlImage1 =
-      "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
+      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
   String urlImage2 =
-      "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
+      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
   String urlImage3 =
-      "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
+      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
   String urlImage4 =
-      "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
+      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
   String urlImage5 =
-      "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
+      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
   String urlImage6 =
-      "https://firebasestorage.googleapis.com/v0/b/datingapp-f1d4d.appspot.com/o/Profile%20Images%2FPlace%20Holder%2FprofileAvatar.png?alt=media&token=f5977e15-f648-454e-9e6b-b3e94e75fdc8";
+      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
 
 // // version 2 like and favor buton not wokring
   retrieveUserInfo() async {
@@ -273,6 +273,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         ],
       ),
       body: SingleChildScrollView(
+        controller: ScrollController(),
         child: Padding(
           padding: const EdgeInsets.all(30),
           child: Column(

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/controller/authenticationController.dart';
+import 'package:redline/tabScreens/swipping_screen.dart';
 import 'package:redline/widgets/custom_text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +37,55 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
     final String userID = widget.user.uid;
     final String userEmail = widget.user.email ?? "";
 
+    Future<void> checkProfileCompletion() async {
+      try {
+        var snapshot = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(widget.user.uid)
+            .get();
+
+        if (snapshot.exists) {
+          Map<String, dynamic>? data = snapshot.data();
+          if (data != null &&
+              data['name'] != null &&
+              data['email'] != null &&
+              data['uid'] != null &&
+              data['birthday'] != null) {
+            // All required fields are filled
+            if (mounted) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => SwipeableProfiles()),
+              );
+            }
+          } else {
+            print("Some fields are missing.");
+            // You could show a Snackbar here for testing
+          }
+        } else {
+          print("No such document!");
+        }
+      } catch (e) {
+        print("Error checking profile completion: $e");
+      }
+    }
+
+    @override
+    void initState() {
+      super.initState();
+      // checkProfileCompletion();
+    }
+
+    @override
+    void dispose() {
+      nameController.dispose();
+      locationController.dispose();
+      timeController.dispose();
+      birthdayController.dispose();
+      emailController.dispose();
+      super.dispose();
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Complete Your Profile')),
       body:
@@ -44,11 +94,11 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
           //   padding: const EdgeInsets.all(20.0),
           //   child: Column(
           //     children: [
-          //       Text("Logged in as: $userEmail"),
-          //       Text(
-          //         "User ID: $userID",
-          //         style: const TextStyle(fontSize: 16),
-          //       ),
+          // Text("Logged in as: $userEmail"),
+          // Text(
+          //   "User ID: $userID",
+          //   style: const TextStyle(fontSize: 16),
+          // ),
           //       authenticationcontroller.imageFile == null
           //           ? CircleAvatar(
           //               radius: 80,
@@ -317,7 +367,8 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
                     .doc(userID)
                     .set({
                   'name': nameController.text.trim(),
-                  // 'email': emailController.text.trim(),
+                  'email': widget.user.email,
+                  'uid': userID,
                   'birthday': birthdayController.text.trim(),
                   'location': locationController.text.trim(),
                   'imageProfile': widget.user.photoURL ?? '',

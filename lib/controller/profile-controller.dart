@@ -285,8 +285,54 @@ class Profilecontroller extends GetxController {
   //   }
   //   // If the like already exists, do nothing (or provide feedback if desired)
   // }
+  // Future<void> LikeSentReceieved(String toUserID, String senderName) async {
+  //   try {
+  //     // Check if the like already exists
+  //     var document = await FirebaseFirestore.instance
+  //         .collection("users")
+  //         .doc(toUserID)
+  //         .collection("LikeReceived")
+  //         .doc(currentUserID)
+  //         .get();
+
+  //     // If the like does not exist, add it
+  //     if (!document.exists) {
+  //       // Add like to the target user's `LikeReceived`
+  //       await FirebaseFirestore.instance
+  //           .collection("users")
+  //           .doc(toUserID)
+  //           .collection("LikeReceived")
+  //           .doc(currentUserID)
+  //           .set({
+  //         'senderName': senderName,
+  //         'timestamp': FieldValue.serverTimestamp(),
+  //       });
+
+  //       // Add like to the current user's `LikeSent`
+  //       await FirebaseFirestore.instance
+  //           .collection("users")
+  //           .doc(currentUserID)
+  //           .collection("LikeSent")
+  //           .doc(toUserID)
+  //           .set({
+  //         'senderName': senderName,
+  //         'timestamp': FieldValue.serverTimestamp(),
+  //       });
+  //     } else {
+  //       // Optionally, provide feedback that the like already exists
+  //       print("You have already liked this user.");
+  //     }
+  //   } catch (e) {
+  //     // Handle errors here (e.g., log the error)
+  //     print("Error while sending like: $e");
+  //   }
+  // }
   Future<void> LikeSentReceieved(String toUserID, String senderName) async {
     try {
+      // Check if toUserID and currentUserID are not empty
+      assert(toUserID.isNotEmpty, "toUserID is empty");
+      assert(currentUserID.isNotEmpty, "currentUserID is empty");
+
       // Check if the like already exists
       var document = await FirebaseFirestore.instance
           .collection("users")

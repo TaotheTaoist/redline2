@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:redline/global.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -220,7 +221,22 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   @override
   void initState() {
     super.initState();
-    readUserData();
+
+    // the function below solves this issue
+// Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
+// I/flutter (11412): Like icon tapped!
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user != null) {
+        // User is logged in
+        currentUserID = user.uid; // Set the global variable
+        readUserData(); // Fetch user data after login
+      } else {
+        // User is logged out
+        currentUserID = ''; // Clear the current user ID
+      }
+    });
+    print("Current User ID: $currentUserID");
+    // readUserData();
 
     // Retrieve current user interests once, if not already done
     // retrieveCurrentUserInterests(currentUserID).then((interests) {
@@ -458,14 +474,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                           );
                                         }).toList(),
                                       )
-                                    : Text(
-                                        "No interests available",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
+                                    : SizedBox(),
 
                                 // Wrap(
                                 //   spacing: 6,

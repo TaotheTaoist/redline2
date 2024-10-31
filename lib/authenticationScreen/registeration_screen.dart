@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:redline/constants/interests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/authenticationScreen/login_screen.dart';
@@ -23,6 +24,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   // personal info
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordlTextEditingController =
+      TextEditingController();
+  final TextEditingController confirmPasswordController =
       TextEditingController();
   TextEditingController nameTextEditingController = TextEditingController();
   // TextEditingController ageTextEditingController = TextEditingController();
@@ -81,13 +84,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   var authenticationcontroller =
       Authenticationcontroller.authenticationcontroller;
 
-  final List<String> interests = [
-    "Football",
-    "Basketball",
-    "Tennis",
-    "Gun",
-    "sex"
-  ];
+  final List<String> myInterests = interests;
 
   final TextEditingController interestTextEditingController =
       TextEditingController();
@@ -123,6 +120,39 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
         .where('email', isEqualTo: email)
         .get();
     return result.docs.isNotEmpty && result.docs.first.id != currentUserId;
+  }
+
+  void _register() {
+    String password = passwordlTextEditingController.text;
+    String confirmPassword = confirmPasswordController.text;
+
+    // Check if passwords match
+    if (password != confirmPassword) {
+      // Show Snackbar if they do not match
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Passwords do not match!"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return; // Stop further execution
+    }
+
+    // Proceed with registration logic here, e.g., Firebase Auth
+  }
+
+  @override
+  void dispose() {
+    // Dispose of controllers to free up resources
+    emailTextEditingController.dispose();
+    passwordlTextEditingController.dispose();
+    confirmPasswordController.dispose();
+    nameTextEditingController.dispose();
+    birthdayController.dispose();
+    timeController.dispose();
+    emailController.dispose();
+    interestTextEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -261,15 +291,15 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     CustomTextFieldWidget(
                       editingController: passwordlTextEditingController,
                       labelText: "Password",
-                      iconData: Icons.person,
+                      iconData: Icons.lock_outline,
                       isObscure: true,
                       borderRadius: 20.0,
                     ),
                     const SizedBox(height: 20),
                     CustomTextFieldWidget(
-                      editingController: passwordlTextEditingController,
+                      editingController: confirmPasswordController,
                       labelText: "Confirm your Password",
-                      iconData: Icons.person,
+                      iconData: Icons.lock_outline,
                       isObscure: true,
                       borderRadius: 20.0,
                     ),
@@ -286,10 +316,10 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     onTap: () => toggleInterest(interest),
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: isSelected ? Colors.blue : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
                         interest,
@@ -752,7 +782,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Don't have an account",
+                    "Don't have an account ",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.green,

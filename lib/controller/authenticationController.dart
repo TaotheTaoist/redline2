@@ -120,8 +120,9 @@ class Authenticationcontroller extends GetxController {
     List<String> interests,
   ) async {
     try {
-      UserCredential credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+      // is this code being used?
+      // UserCredential credential = await FirebaseAuth.instance
+      //     .createUserWithEmailAndPassword(email: email, password: password);
       String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
       personModel.Person personInstance = personModel.Person(
         uid: FirebaseAuth.instance.currentUser!.uid,
@@ -192,10 +193,12 @@ class Authenticationcontroller extends GetxController {
   checkIfUserIsLoggedIn(User? currentUser) {
     if (currentUser != null) {
       // If the user is logged in, navigate to HomeScreen
-      Get.offAll(HomeScreen());
+      // Get.offAll(HomeScreen());
+      Get.offAll(() => HomeScreen());
     } else {
       // If no user is logged in, navigate to LoginScreen
-      Get.offAll(LoginScreen());
+      // Get.offAll(LoginScreen());
+      Get.offAll(() => LoginScreen());
     }
   }
 
