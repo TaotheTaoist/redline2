@@ -70,12 +70,14 @@ class Authenticationcontroller extends GetxController {
     }
     pickedFile = Rx<File?>(File(imageFile!.path));
   }
+// original version
 
   Future<String> uploadImageToStorage(File imageFile) async {
     Reference referenceStorage = FirebaseStorage.instance
         .ref()
         .child("Profile Images")
         .child(FirebaseAuth.instance.currentUser!.uid);
+
     UploadTask task = referenceStorage.putFile(imageFile);
     TaskSnapshot snapshot = await task;
 
@@ -120,9 +122,11 @@ class Authenticationcontroller extends GetxController {
     List<String> interests,
   ) async {
     try {
-      // is this code being used?
-      // UserCredential credential = await FirebaseAuth.instance
-      //     .createUserWithEmailAndPassword(email: email, password: password);
+      // is this code being used? Yes, it need for usercreation
+      UserCredential credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      //changed String to String? but original was String, to fit a new version of uploadImageToStorage
       String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
       personModel.Person personInstance = personModel.Person(
         uid: FirebaseAuth.instance.currentUser!.uid,

@@ -32,6 +32,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     retrieveUserInfo();
   }
 
+  final List<String> imageUrls = [
+    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
+    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
+    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
+    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
+    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
+    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
+  ];
+
   String uid = "";
   String imageProfile = "";
   String email = "";
@@ -194,6 +203,50 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     );
   } // End of confirmation dialog function
 
+  // void _deleteAccount(BuildContext context) async {
+  //   User? user = FirebaseAuth.instance.currentUser;
+
+  //   if (user != null) {
+  //     try {
+  //       // Step 1: Delete user data from Firestore
+  //       await FirebaseFirestore.instance
+  //           .collection('users')
+  //           .doc(user.uid)
+  //           .delete();
+  //       print('User data deleted successfully');
+
+  //       // Step 2: Delete the user account from Firebase Authentication
+  //       await user.delete();
+  //       print('Account deleted successfully');
+
+  //       // Navigate to the login screen after deletion
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => LoginScreen()),
+  //       );
+  //     } catch (e) {
+  //       print('Error deleting account: $e');
+
+  //       // Handle specific errors if needed
+  //       if (e is FirebaseAuthException) {
+  //         switch (e.code) {
+  //           case 'requires-recent-login':
+  //             // Inform the user to reauthenticate
+  //             print('User needs to reauthenticate.');
+  //             // Optionally prompt the user to re-enter their credentials here.
+  //             break;
+  //           default:
+  //             print('An unknown error occurred: ${e.message}');
+  //         }
+  //       } else if (e is FirebaseException) {
+  //         // Handle Firestore deletion errors if needed
+  //         print('Error deleting user data from Firestore: ${e.message}');
+  //       }
+  //     }
+  //   } else {
+  //     print('No user is currently signed in.');
+  //   }
+  // } // End of delete account function
   void _deleteAccount(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -210,34 +263,31 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         await user.delete();
         print('Account deleted successfully');
 
-        // Navigate to the login screen after deletion
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
+        // Use `Future.microtask` to delay navigation after widget disposal
+        Future.microtask(() {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        });
       } catch (e) {
         print('Error deleting account: $e');
 
-        // Handle specific errors if needed
         if (e is FirebaseAuthException) {
-          switch (e.code) {
-            case 'requires-recent-login':
-              // Inform the user to reauthenticate
-              print('User needs to reauthenticate.');
-              // Optionally prompt the user to re-enter their credentials here.
-              break;
-            default:
-              print('An unknown error occurred: ${e.message}');
+          if (e.code == 'requires-recent-login') {
+            print('User needs to reauthenticate.');
+            // Optionally handle reauthentication here.
+          } else {
+            print('An unknown error occurred: ${e.message}');
           }
         } else if (e is FirebaseException) {
-          // Handle Firestore deletion errors if needed
           print('Error deleting user data from Firestore: ${e.message}');
         }
       }
     } else {
       print('No user is currently signed in.');
     }
-  } // End of delete account function
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +302,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           },
           icon: const Icon(
             Icons.arrow_back_outlined,
-            size: 30,
+            size: 40,
           ),
         ),
         actions: [
@@ -265,7 +315,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 },
                 icon: const Icon(
                   Icons.settings,
-                  size: 30,
+                  size: 40,
                 ),
               ),
             ],
@@ -315,38 +365,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
               _buildTable([
                 _buildTableRow("name", name),
                 _buildTableRow("uid", widget.userID!),
-
                 _buildTableRow("email", email),
-                // _buildTableRow("Height", height),
-                // _buildTableRow("Weight", weight),
-                // _buildTableRow("Body Type", bodyType),
-                // _buildTableRow("Drink", drink),
-                // _buildTableRow("Smoke", smoke),
-                // _buildTableRow("Marital Status", maritalStatus),
-                // _buildTableRow("Have Children", haveChildren),
               ]),
 
-              // Section: Background
-              // _buildSectionTitle("Background"),
-              _buildTable([
-                // _buildTableRow("Nationality", nationality),
-                // _buildTableRow("Education", education),
-                // _buildTableRow("Language", language),
-                // _buildTableRow("Religion", religion),
-                // _buildTableRow("Ethnicity", ethnicity),
-              ]),
-
-              // Section: Lifestyle
-              // _buildSectionTitle("Lifestyle"),
-              _buildTable([
-                // _buildTableRow("Profession", profession),
-                // _buildTableRow("Employment Status", employmentStatus),
-                // _buildTableRow("Income", income),
-                // _buildTableRow("Living Situation", livingSituation),
-                // _buildTableRow("Willing to Relocate", willingtoRelocate),
-                // _buildTableRow(
-                //     "Relationship Looking For", relationshipYouAreLookingFor),
-              ]),
               Row(
                 mainAxisAlignment:
                     MainAxisAlignment.center, // Align buttons to center
@@ -369,7 +390,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
                         // String age = "";
                       });
-                      await FirebaseFirestore.instance.clearPersistence();
+                      // await FirebaseFirestore.instance.clearPersistence();
                       await FirebaseFirestore.instance.terminate();
                       // After sign out, navigate to a different page (optional)
                       Navigator.pushReplacement(
@@ -460,7 +481,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             style: const TextStyle(
               fontWeight: FontWeight.bold, // Bold for row labels
               color: Colors.white70, // Slightly off-white color
-              fontSize: 12, // Smaller font for row labels
+              fontSize: 15, // Smaller font for row labels
             ),
           ),
         ),
@@ -470,7 +491,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             value.isNotEmpty ? value : "N/A",
             style: const TextStyle(
               color: Colors.white, // White for values
-              fontSize: 12, // Smaller font for row values
+              fontSize: 15, // Smaller font for row values
             ),
           ),
         ),

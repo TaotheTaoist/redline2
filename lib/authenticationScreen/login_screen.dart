@@ -334,10 +334,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     } else {
                       Get.snackbar("Error", "Google login failed.");
                     }
-
-                    setState(() {
-                      showProgressBar = false; // Hide progress bar after login
-                    });
+                    if (mounted) {
+                      setState(() {
+                        showProgressBar = false; // Hide progress bar af
+                      });
+                    }
+                    // setState(() {
+                    //   showProgressBar = false; // Hide progress bar after login
+                    // });
                   },
                   child: const Center(
                     child: Text(
