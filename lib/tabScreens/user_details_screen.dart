@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:redline/accountSettingScreen/account_settings_screen.dart';
 import 'package:redline/authenticationScreen/login_screen.dart';
@@ -21,25 +22,7 @@ class UserDetailsScreen extends StatefulWidget {
 }
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Print userID to ensure it's available
-    print('User UID widget.userID: ${widget.userID}');
-    print('currentUserId:${FirebaseAuth.instance.currentUser!.uid}');
-
-    // Fetch user information when the screen is initialized
-    retrieveUserInfo();
-  }
-
-  final List<String> imageUrls = [
-    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
-    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
-    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
-    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
-    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
-    "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3",
-  ];
+  // }
 
   String uid = "";
   String imageProfile = "";
@@ -55,30 +38,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   int publishedDateTime = 0;
 
-// appearance
-//   String height = "";
-//   String weight =
-//       ""; // Changed from "Weight" to "weight" to follow camelCase convention
-//   String bodyType = "";
-//   String drink = "";
-//   String smoke = "";
-//   String maritalStatus =
-//       ""; // Corrected spelling from "martialStatus" to "maritalStatus"
-//   String haveChildren = "";
-//   String noChildren = "";
-//   String profession = "";
-//   String employmentStatus = "";
-//   String income = "";
-//   String livingSituation = "";
-//   String willingtoRelocate = "";
-//   String relationshipYouAreLookingFor = "";
-
-// // background
-//   String nationality = "";
-//   String education = "";
-//   String language = "";
-//   String religion = "";
-//   String ethnicity = "";
+  List<String> urlsList = [];
 
   String urlImage1 =
       "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
@@ -93,7 +53,27 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   String urlImage6 =
       "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
 
-// // version 2 like and favor buton not wokring
+  final List<String> placeholderUrls = [
+    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3',
+    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3',
+    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3',
+    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3',
+    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3',
+    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3',
+  ];
+  @override
+  void initState() {
+    super.initState();
+    print('User UID widget.userID: ${widget.userID}');
+    print('currentUserId:${FirebaseAuth.instance.currentUser!.uid}');
+
+    retrieveUserInfo().then((_) {
+      retrieveUserImages(); // Load images after user info is retrieved
+    }).catchError((e) {
+      print("Error during user info retrieval: $e");
+    });
+  }
+
   retrieveUserInfo() async {
     try {
       var snapshot = await FirebaseFirestore.instance
@@ -117,61 +97,47 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
-  // version 1 like and favor buton works
-  // retrieveUserInfo() async {
-  //   FirebaseFirestore.instance
-  //       .collection("users")
-  //       .doc(widget.userID)
-  //       .get()
-  //       .then((snapshot) {
-  //     if (snapshot.exists) {
-  //       if (snapshot.data()!["urlImage1"] != null) {
-  //         urlImage1 = snapshot.data()!["urlImage1"];
-  //         // urlImage2 = snapshot.data()!["urlImage2"];
-  //         // urlImage3 = snapshot.data()!["urlImage3"];
-  //         // urlImage4 = snapshot.data()!["urlImage4"];
-  //         // urlImage5 = snapshot.data()!["urlImage5"];
-  //         // urlImage6 = snapshot.data()!["urlImage6"];
-  //       }
+  retrieveUserImages() async {
+    print("Starting to fetch user images..."); // Add this line
 
-  //       setState(() {
-  //         name = snapshot.data()!["name"];
+    try {
+      print("Fetching user images for user ID: ${widget.userID}");
+      var snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.userID)
+          .get();
 
-  //         // age = snapshot.data()!["age"];
-  //         photoNo = snapshot.data()!["photoNo"];
+      if (snapshot.exists) {
+        print("Snapshot exists for user ID: ${widget.userID}");
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        List<String> imageUrls = List<String>.from(data["imageUrls"] ?? []);
 
-  //         email = snapshot.data()!["email"];
+        print("Fetched image URLs: $imageUrls");
 
-  //         // city = snapshot.data()!["city"];
-  //         // country = snapshot.data()!["country"];
+        setState(() {
+          // Add placeholders if less than 6 images
+          urlsList = imageUrls.length >= 6 ? imageUrls : List.from(imageUrls)
+            ..addAll(placeholderUrls.sublist(0, 6 - imageUrls.length));
 
-  //         // profileHeading = snapshot.data()!["profileHeading"];
-  //         // lookingforInaPartner = snapshot.data()!["lookingforInaPartner"];
-  //         // height = snapshot.data()!["height"];
-  //         // weight = snapshot.data()!["weight"];
-  //         // bodyType = snapshot.data()!["bodyType"];
-  //         // drink = snapshot.data()!["drink"];
-  //         // smoke = snapshot.data()!["smoke"];
-  //         // maritalStatus = snapshot.data()!["maritalStatus"];
-  //         // haveChildren = snapshot.data()!["haveChildren"];
-  //         // noChildren = snapshot.data()!["noChildren"];
-  //         // profession = snapshot.data()!["profession"];
-  //         // employmentStatus = snapshot.data()!["employmentStatus"];
-  //         // income = snapshot.data()!["income"];
-  //         // livingSituation = snapshot.data()!["livingSituation"];
-  //         // willingtoRelocate = snapshot.data()!["willingtoRelocate"];
-  //         // relationshipYouAreLookingFor =
-  //         //     snapshot.data()!["relationshipYouAreLookingFor"];
-  //         // nationality = snapshot.data()!["nationality"];
-  //         // education = snapshot.data()!["education"];
-  //         // language = snapshot.data()!["language"];
-  //         // religion = snapshot.data()!["religion"];
-  //         // ethnicity = snapshot.data()!["ethnicity"];
-  //       });
-  //     }
-  //   });
-  // }
-  // Start of confirmation dialog function
+          print("Updated urlsList: $urlsList");
+        });
+      } else {
+        print("No document found for user ID: ${widget.userID}");
+        // Use placeholders if no images available
+        setState(() {
+          urlsList = placeholderUrls;
+          print("Using placeholder URLs: $urlsList");
+        });
+      }
+    } catch (e) {
+      print("Error fetching images: $e");
+      // Use placeholders in case of error
+      setState(() {
+        urlsList = placeholderUrls;
+        print("Using placeholder URLs due to error: $urlsList");
+      });
+    }
+  }
 
   // Start of delete account function
   // Function to prompt the user for confirmation before deletion
@@ -203,50 +169,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     );
   } // End of confirmation dialog function
 
-  // void _deleteAccount(BuildContext context) async {
-  //   User? user = FirebaseAuth.instance.currentUser;
-
-  //   if (user != null) {
-  //     try {
-  //       // Step 1: Delete user data from Firestore
-  //       await FirebaseFirestore.instance
-  //           .collection('users')
-  //           .doc(user.uid)
-  //           .delete();
-  //       print('User data deleted successfully');
-
-  //       // Step 2: Delete the user account from Firebase Authentication
-  //       await user.delete();
-  //       print('Account deleted successfully');
-
-  //       // Navigate to the login screen after deletion
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => LoginScreen()),
-  //       );
-  //     } catch (e) {
-  //       print('Error deleting account: $e');
-
-  //       // Handle specific errors if needed
-  //       if (e is FirebaseAuthException) {
-  //         switch (e.code) {
-  //           case 'requires-recent-login':
-  //             // Inform the user to reauthenticate
-  //             print('User needs to reauthenticate.');
-  //             // Optionally prompt the user to re-enter their credentials here.
-  //             break;
-  //           default:
-  //             print('An unknown error occurred: ${e.message}');
-  //         }
-  //       } else if (e is FirebaseException) {
-  //         // Handle Firestore deletion errors if needed
-  //         print('Error deleting user data from Firestore: ${e.message}');
-  //       }
-  //     }
-  //   } else {
-  //     print('No user is currently signed in.');
-  //   }
-  // } // End of delete account function
   void _deleteAccount(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -335,26 +257,29 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: Padding(
                   padding: const EdgeInsets.all(2),
-                  child: Carousel(
-                    indicatorBarColor: Colors.black.withOpacity(0.3),
-                    autoScrollDuration: Duration(seconds: 3),
-                    animationPageDuration: Duration(milliseconds: 500),
-                    activateIndicatorColor: Colors.black,
-                    animationPageCurve: Curves.easeIn,
-                    indicatorBarHeight: 30,
-                    indicatorHeight: 10,
-                    indicatorWidth: 10,
-                    unActivatedIndicatorColor: Colors.grey,
-                    stopAtEnd: false,
-                    autoScroll: true,
-                    items: [
-                      Image.network(urlImage1, fit: BoxFit.cover),
-                      Image.network(urlImage2, fit: BoxFit.cover),
-                      Image.network(urlImage3, fit: BoxFit.cover),
-                      Image.network(urlImage4, fit: BoxFit.cover),
-                      Image.network(urlImage5, fit: BoxFit.cover),
-                      Image.network(urlImage6, fit: BoxFit.cover),
-                    ],
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      autoPlay: false,
+                      enlargeCenterPage: true,
+                      aspectRatio: 16 / 9,
+                      onPageChanged: (index, reason) {
+                        // Optionally handle page change if needed
+                      },
+                    ),
+                    items: urlsList.map((url) {
+                      // Filter out any empty URLs
+                      return url.isNotEmpty
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.network(
+                                url,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            )
+                          : Container(); // Placeholder for empty URL
+                    }).toList(),
                   ),
                 ),
               ),
