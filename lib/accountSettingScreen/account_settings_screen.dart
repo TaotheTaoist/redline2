@@ -397,7 +397,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       uploading = false;
     });
 
-    Navigator.pop(context); // Close the upload dialog
+    Navigator.pop(context, true);
   }
 
   _showUploadDialog() {
@@ -433,32 +433,37 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     });
   }
 
-  // saveProfileData() {
-  //   FirebaseFirestore.instance.collection("users").doc(currentUserID).update({
-  //     "email": emailTextEditingController.text,
-  //     "name": nameTextEditingController.text,
-  //     "password": passwordTextEditingController.text,
-  //     "profileImages": urlsList, // Save all image URLs in Firestore
-  //   }).then((_) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text("Profile updated successfully!")));
-  //   }).catchError((error) {
-  //     print("Error updating profile: $error");
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text("Failed to update profile.")));
-  //   });
-  // }
   // saveProfileData() async {
   //   setState(() {
   //     uploading = true;
   //     val = 0;
   //   });
 
-  //   // Upload images and collect URLs
+  //   // Retrieve and delete previous images
+  //   final userDoc =
+  //       FirebaseFirestore.instance.collection("users").doc(currentUserID);
+  //   final docSnapshot = await userDoc.get();
+
+  //   if (docSnapshot.exists) {
+  //     List<String> previousUrls =
+  //         List<String>.from(docSnapshot.data()?["imageUrls"] ?? []);
+
+  //     for (String url in previousUrls) {
+  //       try {
+  //         // Get the reference from the URL
+  //         await FirebaseStorage.instance.refFromURL(url).delete();
+  //       } catch (e) {
+  //         print("Error deleting previous image: $e");
+  //       }
+  //     }
+  //   }
+
+  //   // Upload new images and collect URLs
   //   int uploadedCount = 0;
+  //   urlsList = List<String>.filled(_images.length, ""); // Reset urlsList
+
   //   for (int i = 0; i < _images.length; i++) {
   //     if (_images[i] != null) {
-  //       // Update progress
   //       setState(() {
   //         val = (uploadedCount + 1) / _images.length;
   //       });
@@ -469,24 +474,26 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   //       await ref.putFile(_images[i]!).whenComplete(() async {
   //         String downloadUrl = await ref.getDownloadURL();
-  //         urlsList[i] = downloadUrl; // Store each URL in the list
+  //         urlsList[i] = downloadUrl; // Save each new image URL
   //       });
 
   //       uploadedCount++;
   //     }
   //   }
 
-  //   // Update uploading state
   //   setState(() {
   //     uploading = false;
   //   });
 
-  //   // Save profile data to Firestore, including image URLs
-  //   FirebaseFirestore.instance.collection("users").doc(currentUserID).update({
+  //   // Remove empty entries from urlsList before saving to Firestore
+  //   urlsList = urlsList.where((url) => url.isNotEmpty).toList();
+
+  //   // Save profile data to Firestore, including new image URLs
+  //   userDoc.update({
   //     "email": emailTextEditingController.text,
   //     "name": nameTextEditingController.text,
   //     "password": passwordTextEditingController.text,
-  //     "imageUrls": urlsList, // Save URLs list if needed
+  //     "imageUrls": urlsList, // Store new image URLs in Firestore
   //   }).then((_) {
   //     ScaffoldMessenger.of(context).showSnackBar(
   //       const SnackBar(content: Text("Profile updated successfully!")),
@@ -498,7 +505,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   //     );
   //   });
   // }
-
   saveProfileData() async {
     setState(() {
       uploading = true;
@@ -525,13 +531,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     }
 
     // Upload new images and collect URLs
-    int uploadedCount = 0;
-    urlsList = List<String>.filled(_images.length, ""); // Reset urlsList
+    urlsList = []; // Start with an empty list
 
     for (int i = 0; i < _images.length; i++) {
       if (_images[i] != null) {
         setState(() {
-          val = (uploadedCount + 1) / _images.length;
+          val = (i + 1) / _images.length;
         });
 
         var ref = FirebaseStorage.instance
@@ -540,10 +545,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
         await ref.putFile(_images[i]!).whenComplete(() async {
           String downloadUrl = await ref.getDownloadURL();
-          urlsList[i] = downloadUrl; // Save each new image URL
+          urlsList.add(downloadUrl); // Add each new image URL directly
         });
-
-        uploadedCount++;
       }
     }
 
@@ -556,7 +559,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       "email": emailTextEditingController.text,
       "name": nameTextEditingController.text,
       "password": passwordTextEditingController.text,
-      "imageUrls": urlsList, // Store new image URLs in Firestore
+      "imageUrls": urlsList, // Store only the new image URLs in Firestore
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Profile updated successfully!")),
