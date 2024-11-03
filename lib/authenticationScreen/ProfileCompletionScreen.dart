@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/controller/authenticationController.dart';
+import 'package:redline/homeScreen/home_screen.dart';
 import 'package:redline/tabScreens/swipping_screen.dart';
 import 'package:redline/widgets/custom_text_field_widget.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
             if (mounted) {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => SwipeableProfiles()),
+                MaterialPageRoute(builder: (context) => HomeScreen()),
               );
             }
           } else {
