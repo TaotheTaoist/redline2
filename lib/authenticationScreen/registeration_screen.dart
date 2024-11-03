@@ -155,7 +155,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                   topRight: Radius.circular(12),
                 ),
               ),
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -163,7 +163,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     Text(
                       "Select More Exercise",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
                       ),
@@ -624,7 +624,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             // Show success message and navigate
                             Get.snackbar(
                                 "Success", "Account created successfully");
-                            Get.to(HomeScreen());
+                            // Get.to(HomeScreen());
+                            Get.offAll(() => HomeScreen());
                           }
                         } catch (e) {
                           // Handle the error (e.g., display error message)
@@ -666,6 +667,10 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                   ),
                   InkWell(
                     onTap: () {
+                      print(Get.routing.current);
+                      print(Get.routing.current);
+
+                      print("Tapped!");
                       Get.back();
                     },
                     child: const Text(

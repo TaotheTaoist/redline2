@@ -505,11 +505,85 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   //     );
   //   });
   // }
-  saveProfileData() async {
+  // saveProfileData() async {
+  //   setState(() {
+  //     uploading = true;
+  //     val = 0;
+  //   });
+
+  //   // Retrieve and delete previous images
+  //   final userDoc =
+  //       FirebaseFirestore.instance.collection("users").doc(currentUserID);
+  //   final docSnapshot = await userDoc.get();
+
+  //   if (docSnapshot.exists) {
+  //     List<String> previousUrls =
+  //         List<String>.from(docSnapshot.data()?["imageUrls"] ?? []);
+
+  //     for (String url in previousUrls) {
+  //       try {
+  //         // Get the reference from the URL
+  //         await FirebaseStorage.instance.refFromURL(url).delete();
+  //       } catch (e) {
+  //         print("Error deleting previous image: $e");
+  //       }
+  //     }
+  //   }
+
+  //   // Upload new images and collect URLs
+  //   urlsList = []; // Start with an empty list
+
+  //   for (int i = 0; i < _images.length; i++) {
+  //     if (_images[i] != null) {
+  //       setState(() {
+  //         val = (i + 1) / _images.length;
+  //       });
+
+  //       var ref = FirebaseStorage.instance
+  //           .ref()
+  //           .child("images/${DateTime.now().millisecondsSinceEpoch}_$i.jpg");
+
+  //       await ref.putFile(_images[i]!).whenComplete(() async {
+  //         String downloadUrl = await ref.getDownloadURL();
+  //         urlsList.add(downloadUrl); // Add each new image URL directly
+  //       });
+  //     }
+  //   }
+
+  //   setState(() {
+  //     uploading = false;
+  //   });
+
+  //   // Save profile data to Firestore, including new image URLs
+  //   userDoc.update({
+  //     "email": emailTextEditingController.text,
+  //     "name": nameTextEditingController.text,
+  //     "password": passwordTextEditingController.text,
+  //     "imageUrls": urlsList, // Store only the new image URLs in Firestore
+  //   }).then((_) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text("Profile updated successfully!")),
+  //     );
+  //   }).catchError((error) {
+  //     print("Error updating profile: $error");
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text("Failed to update profile.")),
+  //     );
+  //   });
+  // }
+  Future<void> saveProfileData() async {
     setState(() {
       uploading = true;
       val = 0;
     });
+
+    // Show loading dialog
+    final loadingDialog = showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevents closing the dialog by tapping outside
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
 
     // Retrieve and delete previous images
     final userDoc =
@@ -549,6 +623,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         });
       }
     }
+
+    // Close loading dialog
+    Navigator.of(context).pop(); // This will dismiss the loading dialog
 
     setState(() {
       uploading = false;

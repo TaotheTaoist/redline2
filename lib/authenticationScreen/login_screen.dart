@@ -377,7 +377,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   InkWell(
                     onTap: () {
                       Get.to(RegisterationScreen());
-                      Get.offAll(() => RegisterationScreen());
+                      // Get.offAll(() => RegisterationScreen());
                     },
                     child: const Text(
                       "Create an account",
