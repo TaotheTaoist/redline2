@@ -170,7 +170,7 @@ class CustomTextFieldWidget extends StatelessWidget {
     return TextField(
       controller: editingController,
       obscureText: isObscure, // Use the isObscure parameter
-      style: const TextStyle(color: Colors.black), // Set text color to black
+      style: const TextStyle(color: Colors.white), // Set text color to black
       decoration: InputDecoration(
         labelText: editingController?.text.isEmpty ?? true ? labelText : null,
         prefixIcon: iconData != null

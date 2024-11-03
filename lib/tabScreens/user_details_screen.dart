@@ -159,7 +159,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
-                _deleteAccount(context); // Call the delete account function
+                _deleteAccount(); // Call the delete account function
               },
               child: Text('Delete'),
             ),
@@ -169,47 +169,75 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     );
   } // End of confirmation dialog function
 
-  void _deleteAccount(BuildContext context) async {
-    User? user = FirebaseAuth.instance.currentUser;
+  Future<void> _deleteAccount() async {
+    try {
+      // Assuming the user is already authenticated
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Delete the user from Firebase Auth
+        await user.delete();
 
-    if (user != null) {
-      try {
-        // Step 1: Delete user data from Firestore
+        // Optionally delete user data from Firestore
         await FirebaseFirestore.instance
-            .collection('users')
+            .collection("users")
             .doc(user.uid)
             .delete();
-        print('User data deleted successfully');
 
-        // Step 2: Delete the user account from Firebase Authentication
-        await user.delete();
-        print('Account deleted successfully');
+        // Log out the user
+        await FirebaseAuth.instance.signOut();
 
-        // Use `Future.microtask` to delay navigation after widget disposal
-        Future.microtask(() {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => LoginScreen()),
-          );
-        });
-      } catch (e) {
-        print('Error deleting account: $e');
-
-        if (e is FirebaseAuthException) {
-          if (e.code == 'requires-recent-login') {
-            print('User needs to reauthenticate.');
-            // Optionally handle reauthentication here.
-          } else {
-            print('An unknown error occurred: ${e.message}');
-          }
-        } else if (e is FirebaseException) {
-          print('Error deleting user data from Firestore: ${e.message}');
-        }
+        // Navigate to LoginScreen after deletion
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+        );
       }
-    } else {
-      print('No user is currently signed in.');
+    } catch (e) {
+      // Handle errors (e.g., user not logged in, etc.)
+      print("Error deleting account: $e");
     }
   }
+  // void _deleteAccount(BuildContext context) async {
+  //   User? user = FirebaseAuth.instance.currentUser;
+
+  //   if (user != null) {
+  //     try {
+  //       // Step 1: Delete user data from Firestore
+  //       await FirebaseFirestore.instance
+  //           .collection('users')
+  //           .doc(user.uid)
+  //           .delete();
+  //       print('User data deleted successfully');
+
+  //       // Step 2: Delete the user account from Firebase Authentication
+  //       await user.delete();
+  //       print('Account deleted successfully');
+
+  //       // Use `Future.microtask` to delay navigation after widget disposal
+  //       Future.microtask(() {
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => LoginScreen()),
+  //         );
+  //       });
+  //     } catch (e) {
+  //       print('Error deleting account: $e');
+
+  //       if (e is FirebaseAuthException) {
+  //         if (e.code == 'requires-recent-login') {
+  //           print('User needs to reauthenticate.');
+  //           // Optionally handle reauthentication here.
+  //         } else {
+  //           print('An unknown error occurred: ${e.message}');
+  //         }
+  //       } else if (e is FirebaseException) {
+  //         print('Error deleting user data from Firestore: ${e.message}');
+  //       }
+  //     }
+  //   } else {
+  //     print('No user is currently signed in.');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -323,6 +351,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                         MaterialPageRoute(
                             builder: (context) => LoginScreen()), // Example
                       );
+
+                      // Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (BuildContext context) => LoginScreen()));
                     },
                     child: Text("Log Out"),
                   ), // End of Log Out Button
