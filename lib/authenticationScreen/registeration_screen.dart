@@ -605,14 +605,14 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
                         try {
                           await authenticationcontroller.creatNewUserAccount(
-                            authenticationcontroller
-                                .profileImage!, // Image file
-                            emailTextEditingController.text.trim(), // Email
-                            passwordlTextEditingController.text
-                                .trim(), // Password
-                            nameTextEditingController.text.trim(), // Name
-                            selectedInterests, // Selected interests
-                          );
+                              authenticationcontroller
+                                  .profileImage!, // Image file
+                              emailTextEditingController.text.trim(), // Email
+                              passwordlTextEditingController.text
+                                  .trim(), // Password
+                              nameTextEditingController.text.trim(), // Name
+                              selectedInterests,
+                              []);
 
                           // On success, hide progress bar and navigate to HomeScreen
                           if (mounted) {

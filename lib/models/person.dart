@@ -12,6 +12,7 @@ class Person {
   int? publishedDateTime;
 
   List<String>? interests;
+  List<String>? imageUrls;
 
   Person({
     this.uid,
@@ -22,6 +23,7 @@ class Person {
     this.photoNo,
     this.publishedDateTime,
     this.interests,
+    this.imageUrls,
   });
 
   static Person fromDataSnapshot(DocumentSnapshot snapshot) {
@@ -35,6 +37,7 @@ class Person {
       photoNo: dataSnapshot["photoNo"],
       publishedDateTime: dataSnapshot["publishedDateTime"],
       interests: List<String>.from(dataSnapshot["interests"] ?? []),
+      imageUrls: List<String>.from(dataSnapshot["imageUrls"] ?? []),
     );
   }
 
@@ -47,5 +50,6 @@ class Person {
         "photoNo": photoNo,
         "publishedDateTime": publishedDateTime,
         "interests": interests,
+        "imageUrls": imageUrls,
       };
 }

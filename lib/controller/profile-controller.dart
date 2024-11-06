@@ -41,47 +41,47 @@ class Profilecontroller extends GetxController {
     }));
   }
 
-  Future<void> changeProfileImage(String uid) async {
-    try {
-      // Retrieve the user's data from Firestore
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(uid).get();
+  // Future<void> changeProfileImage(String uid) async {
+  //   try {
+  //     // Retrieve the user's data from Firestore
+  //     DocumentSnapshot userDoc =
+  //         await _firestore.collection('users').doc(uid).get();
 
-      if (userDoc.exists) {
-        // Log the entire user document
-        Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
-        print('User document fields: $data');
+  //     if (userDoc.exists) {
+  //       // Log the entire user document
+  //       Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
+  //       print('User document fields: $data');
 
-        // Check if the imageUrls field exists and is a list
-        List<dynamic> imageUrls = data['imageUrls'] ?? [];
-        if (imageUrls.isEmpty) {
-          print('No images found for this user.');
-          return;
-        }
+  //       // Check if the imageUrls field exists and is a list
+  //       List<dynamic> imageUrls = data['imageUrls'] ?? [];
+  //       if (imageUrls.isEmpty) {
+  //         print('No images found for this user.');
+  //         return;
+  //       }
 
-        // Access currentIndex safely
-        int currentIndex =
-            data['currentIndex'] ?? 0; // Default to 0 if it doesn't exist
-        print('Current index: $currentIndex');
+  //       // Access currentIndex safely
+  //       int currentIndex =
+  //           data['currentIndex'] ?? 0; // Default to 0 if it doesn't exist
+  //       print('Current index: $currentIndex');
 
-        // Calculate the next index
-        int nextIndex = (currentIndex + 1) % imageUrls.length;
-        String nextImageUrl = imageUrls[nextIndex];
+  //       // Calculate the next index
+  //       int nextIndex = (currentIndex + 1) % imageUrls.length;
+  //       String nextImageUrl = imageUrls[nextIndex];
 
-        // Update the current index in Firestore
-        await _firestore.collection('users').doc(uid).update({
-          'currentIndex': nextIndex,
-        });
+  //       // Update the current index in Firestore
+  //       await _firestore.collection('users').doc(uid).update({
+  //         'currentIndex': nextIndex,
+  //       });
 
-        // Display the new profile image URL
-        print('Next Profile Image URL: $nextImageUrl');
-      } else {
-        print('User does not exist.');
-      }
-    } catch (e) {
-      print('Error changing profile image: $e');
-    }
-  }
+  //       // Display the new profile image URL
+  //       print('Next Profile Image URL: $nextImageUrl');
+  //     } else {
+  //       print('User does not exist.');
+  //     }
+  //   } catch (e) {
+  //     print('Error changing profile image: $e');
+  //   }
+  // }
 
   // version 1, if click twice, it deletes
   // favoriteSentReceieved(String toUserID, String senderName) async {
