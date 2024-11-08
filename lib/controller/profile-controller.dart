@@ -41,98 +41,64 @@ class Profilecontroller extends GetxController {
     }));
   }
 
-  // Future<void> changeProfileImage(String uid) async {
-  //   try {
-  //     // Retrieve the user's data from Firestore
-  //     DocumentSnapshot userDoc =
-  //         await _firestore.collection('users').doc(uid).get();
+  Future<Map<String, List<String>>> generateUserImageUrlsMap(
+      Profilecontroller profileController) async {
+    // Initialize an empty map to store UIDs and corresponding image URLs
+    Map<String, List<String>> userImageUrlsMap = {};
 
-  //     if (userDoc.exists) {
-  //       // Log the entire user document
-  //       Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
-  //       print('User document fields: $data');
+    if (profileController.allUserProfileList.isEmpty) {
+      print("No user profiles found in the list.");
+      return userImageUrlsMap; // Return early if the list is empty
+    }
 
-  //       // Check if the imageUrls field exists and is a list
-  //       List<dynamic> imageUrls = data['imageUrls'] ?? [];
-  //       if (imageUrls.isEmpty) {
-  //         print('No images found for this user.');
-  //         return;
-  //       }
+    // Iterate over all profiles in allUserProfileList
+    for (var user in profileController.allUserProfileList) {
+      if (user.uid != null) {
+        print("Fetching user images for user ID: ${user.uid}");
 
-  //       // Access currentIndex safely
-  //       int currentIndex =
-  //           data['currentIndex'] ?? 0; // Default to 0 if it doesn't exist
-  //       print('Current index: $currentIndex');
+        try {
+          // Fetch the user's data from Firestore
+          var snapshot = await FirebaseFirestore.instance
+              .collection("users")
+              .doc(user.uid)
+              .get();
 
-  //       // Calculate the next index
-  //       int nextIndex = (currentIndex + 1) % imageUrls.length;
-  //       String nextImageUrl = imageUrls[nextIndex];
+          if (snapshot.exists) {
+            print("Snapshot exists for user ID: ${user.uid}");
 
-  //       // Update the current index in Firestore
-  //       await _firestore.collection('users').doc(uid).update({
-  //         'currentIndex': nextIndex,
-  //       });
+            Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
-  //       // Display the new profile image URL
-  //       print('Next Profile Image URL: $nextImageUrl');
-  //     } else {
-  //       print('User does not exist.');
-  //     }
-  //   } catch (e) {
-  //     print('Error changing profile image: $e');
-  //   }
-  // }
+            // Log the entire data to see its structure
+            print("Data for user ID ${user.uid}: $data");
 
-  // version 1, if click twice, it deletes
-  // favoriteSentReceieved(String toUserID, String senderName) async {
-  //   var document = await FirebaseFirestore.instance
-  //       .collection("users")
-  //       .doc(toUserID)
-  //       .collection("favoriteReceived")
-  //       .doc(currentUserID)
-  //       .get();
+            // Ensure the imageUrls field exists and is a non-empty array
+            if (data["imageUrls"] is List &&
+                (data["imageUrls"] as List).isNotEmpty) {
+              List<String> imageUrls =
+                  List<String>.from(data["imageUrls"] ?? []);
 
-  //   //remove the favorite from database
-  //   if (document.exists) {
-  //     //remove currentId from the favoriteReceieve List of that profile person [toUserID]
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(toUserID)
-  //         .collection("favoriteReceived")
-  //         .doc(currentUserID)
-  //         .delete();
+              // Log the retrieved imageUrls
+              print("Image URLs for user ID ${user.uid}: $imageUrls");
 
-  //     //remove profile person [toUserID] from the favoriteReceieve List of the currentUser
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(currentUserID)
-  //         .collection("favoriteSent")
-  //         .doc(toUserID)
-  //         .delete();
-  //   } else
-  //   // mark  as favorite // add favorite in database
-  //   {
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(toUserID)
-  //         .collection("favoriteReceived")
-  //         .doc(currentUserID)
-  //         .set({
-  //       'senderName': senderName,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
+              // Update the map only if imageUrls is not empty
+              userImageUrlsMap[user.uid!] = imageUrls;
+            } else {
+              print("No image URLs found for user ID: ${user.uid}");
+            }
+          } else {
+            print("No data found for user ID: ${user.uid}");
+          }
+        } catch (e) {
+          print("Error fetching user data for ${user.uid}: $e");
+        }
+      }
+    }
 
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(currentUserID)
-  //         .collection("favoriteSent")
-  //         .doc(toUserID)
-  //         .set({
-  //       'senderName': senderName,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-  //   }
-  // }
+    // Log the final userImageUrlsMap for debugging
+    print("Final userImageUrlsMap: $userImageUrlsMap");
+
+    return userImageUrlsMap;
+  }
 
   favoriteSentReceieved(String toUserID, String senderName) async {
     var receivedDocRef = FirebaseFirestore.instance
@@ -170,207 +136,6 @@ class Profilecontroller extends GetxController {
     }
   }
 
-// no delete version
-//   favoriteSentReceieved(String toUserID, String senderName) async {
-//     var receivedDocRef = FirebaseFirestore.instance
-//         .collection("users")
-//         .doc(toUserID)
-//         .collection("favoriteReceived")
-//         .doc(currentUserID);
-
-//     var sentDocRef = FirebaseFirestore.instance
-//         .collection("users")
-//         .doc(currentUserID)
-//         .collection("favoriteSent")
-//         .doc(toUserID);
-
-//     var receivedDoc = await receivedDocRef.get();
-
-//     // Check if the favorite already exists
-//     if (receivedDoc.exists) {
-//       // If the favorite exists, do nothing
-//       print("Favorite already exists for ${receivedDoc.id}");
-//       return;
-//     }
-
-//     // If the favorite does not exist, add it to both locations
-//     await receivedDocRef.set({
-//       'senderName': senderName,
-//       'timestamp': FieldValue.serverTimestamp(),
-//     });
-
-//     await sentDocRef.set({
-//       'senderName': senderName,
-//       'timestamp': FieldValue.serverTimestamp(),
-//     });
-
-//     print("Favorite added for ${receivedDocRef.id}");
-//   }
-
-  // version2 doesnt delete if click twice
-  // favoriteSentReceieved(String toUserID, String senderName) async {
-  //   var document = await FirebaseFirestore.instance
-  //       .collection("users")
-  //       .doc(toUserID)
-  //       .collection("favoriteReceived")
-  //       .doc(currentUserID)
-  //       .get();
-
-  //   // Check if the favorite already exists
-  //   if (!document.exists) {
-  //     // Mark as favorite and add to the database
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(toUserID)
-  //         .collection("favoriteReceived")
-  //         .doc(currentUserID)
-  //         .set({
-  //       'senderName': senderName,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(currentUserID)
-  //         .collection("favoriteSent")
-  //         .doc(toUserID)
-  //         .set({
-  //       'senderName': senderName,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-  //   }
-  //   // If the document exists, do nothing (or provide feedback if desired)
-  // }
-
-// ================================================================================
-
-  //version1 it deletes if click twice
-  // LikeSentReceieved(String toUserID, String senderName) async {
-  //   var document = await FirebaseFirestore.instance
-  //       .collection("users")
-  //       .doc(toUserID)
-  //       .collection("LikeReceived")
-  //       .doc(currentUserID)
-  //       .get();
-
-  //   // If the user has already liked, remove the like
-  //   if (document.exists) {
-  //     // Remove the like from `LikeReceived` of the target user
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(toUserID)
-  //         .collection("LikeReceived")
-  //         .doc(currentUserID)
-  //         .delete();
-
-  //     // Remove the like from `LikeSent` of the current user
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(currentUserID)
-  //         .collection("LikeSent")
-  //         .doc(toUserID)
-  //         .delete();
-  //   } else {
-  //     // Add like to the target user's `LikeReceived`
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(toUserID)
-  //         .collection("LikeReceived")
-  //         .doc(currentUserID)
-  //         .set({
-  //       'senderName': senderName,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-
-  //     // Add like to the current user's `LikeSent`
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(currentUserID)
-  //         .collection("LikeSent")
-  //         .doc(toUserID)
-  //         .set({
-  //       'senderName': senderName,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-  //   }
-  // }
-
-  // LikeSentReceieved(String toUserID, String senderName) async {
-  //   var document = await FirebaseFirestore.instance
-  //       .collection("users")
-  //       .doc(toUserID)
-  //       .collection("LikeReceived")
-  //       .doc(currentUserID)
-  //       .get();
-
-  //   // If the like does not exist, add it
-  //   if (!document.exists) {
-  //     // Add like to the target user's `LikeReceived`
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(toUserID)
-  //         .collection("LikeReceived")
-  //         .doc(currentUserID)
-  //         .set({
-  //       'senderName': senderName,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-
-  //     // Add like to the current user's `LikeSent`
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(currentUserID)
-  //         .collection("LikeSent")
-  //         .doc(toUserID)
-  //         .set({
-  //       'senderName': senderName,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-  //   }
-  //   // If the like already exists, do nothing (or provide feedback if desired)
-  // }
-  // Future<void> LikeSentReceieved(String toUserID, String senderName) async {
-  //   try {
-  //     // Check if the like already exists
-  //     var document = await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(toUserID)
-  //         .collection("LikeReceived")
-  //         .doc(currentUserID)
-  //         .get();
-
-  //     // If the like does not exist, add it
-  //     if (!document.exists) {
-  //       // Add like to the target user's `LikeReceived`
-  //       await FirebaseFirestore.instance
-  //           .collection("users")
-  //           .doc(toUserID)
-  //           .collection("LikeReceived")
-  //           .doc(currentUserID)
-  //           .set({
-  //         'senderName': senderName,
-  //         'timestamp': FieldValue.serverTimestamp(),
-  //       });
-
-  //       // Add like to the current user's `LikeSent`
-  //       await FirebaseFirestore.instance
-  //           .collection("users")
-  //           .doc(currentUserID)
-  //           .collection("LikeSent")
-  //           .doc(toUserID)
-  //           .set({
-  //         'senderName': senderName,
-  //         'timestamp': FieldValue.serverTimestamp(),
-  //       });
-  //     } else {
-  //       // Optionally, provide feedback that the like already exists
-  //       print("You have already liked this user.");
-  //     }
-  //   } catch (e) {
-  //     // Handle errors here (e.g., log the error)
-  //     print("Error while sending like: $e");
-  //   }
-  // }
   Future<void> LikeSentReceieved(String toUserID, String senderName) async {
     try {
       // Check if toUserID and currentUserID are not empty
