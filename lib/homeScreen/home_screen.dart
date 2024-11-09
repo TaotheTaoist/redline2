@@ -110,13 +110,15 @@
 //     );
 //   }
 // }
+
+import 'package:redline/controller/profile-controller.dart';
 import 'package:redline/tabScreens/favorite_sent_receieved_screen.dart';
 import 'package:redline/tabScreens/like_sent_like_recieved_screen.dart';
 import 'package:redline/tabScreens/swipping_screen.dart';
 import 'package:redline/tabScreens/user_details_screen.dart';
 import 'package:redline/tabScreens/view_sent_view_received_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -132,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // List of tab screens
   List<Widget> tabScreensList = [
     // SwippingScreen(),
+    // SwipeableProfiles(key: PageStorageKey('SwipeableProfiles')),
     SwipeableProfiles(),
     ViewSentViewReceivedScreen(),
     FavoriteSentReceivedScreen(),
@@ -169,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Favorites',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, size: 30),
+            icon: Icon(Icons.chat, size: 30),
             label: 'Likes',
           ),
           BottomNavigationBarItem(

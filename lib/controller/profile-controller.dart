@@ -16,45 +16,6 @@ class Profilecontroller extends GetxController {
 
   Rx<Map<String, List<String>>> userImageUrlsMap =
       Rx<Map<String, List<String>>>({});
-  Future<void> fetchUserImageUrlsMap() async {
-    // isLoading.value = true;
-    Map<String, List<String>> resultMap = {};
-
-    try {
-      if (allUserProfileList.isEmpty) {
-        usersProfileList.bindStream(_firestore
-            .collection("users")
-            .where("uid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
-            .snapshots()
-            .map((QuerySnapshot query) {
-          print("profile exists");
-          return query.docs.map((doc) => Person.fromDataSnapshot(doc)).toList();
-        }));
-      }
-
-      for (var user in allUserProfileList) {
-        if (user.uid != null) {
-          var snapshot =
-              await _firestore.collection("users").doc(user.uid).get();
-          if (snapshot.exists) {
-            Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-            if (data["imageUrls"] is List &&
-                (data["imageUrls"] as List).isNotEmpty) {
-              resultMap[user.uid!] = List<String>.from(data["imageUrls"] ?? []);
-            }
-          }
-        }
-      }
-      userImageUrlsMap.value = resultMap;
-      print(
-          "userImageUrlsMap from profilecontroller original func ${userImageUrlsMap}");
-      // print("userImageUrlsMap.value: ${userImageUrlsMap.value}");
-    } catch (e) {
-      print("Error fetching profiles: $e");
-    } finally {
-      // isLoading.value = false;
-    }
-  }
 
   @override
   void onInit() {
@@ -96,6 +57,45 @@ class Profilecontroller extends GetxController {
     // SwipeableProfiles().selectedUserUid = profileController.userImageUrlsMap.value[0] as String;
   }
 
+  Future<void> fetchUserImageUrlsMap() async {
+    // isLoading.value = true;
+    Map<String, List<String>> resultMap = {};
+
+    try {
+      if (allUserProfileList.isEmpty) {
+        usersProfileList.bindStream(_firestore
+            .collection("users")
+            .where("uid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .snapshots()
+            .map((QuerySnapshot query) {
+          print("profile exists");
+          return query.docs.map((doc) => Person.fromDataSnapshot(doc)).toList();
+        }));
+      }
+
+      for (var user in allUserProfileList) {
+        if (user.uid != null) {
+          var snapshot =
+              await _firestore.collection("users").doc(user.uid).get();
+          if (snapshot.exists) {
+            Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+            if (data["imageUrls"] is List &&
+                (data["imageUrls"] as List).isNotEmpty) {
+              resultMap[user.uid!] = List<String>.from(data["imageUrls"] ?? []);
+            }
+          }
+        }
+      }
+      userImageUrlsMap.value = resultMap;
+      print(
+          "userImageUrlsMap from profilecontroller original func ${userImageUrlsMap}");
+      // print("userImageUrlsMap.value: ${userImageUrlsMap.value}");
+    } catch (e) {
+      print("Error fetching profiles: $e");
+    } finally {
+      // isLoading.value = false;
+    }
+  }
   // Future<Map<String, List<String>>> generateUserImageUrlsMap() async {
   //   // Initialize an empty map to store UIDs and corresponding image URLs
   //   Map<String, List<String>> userImageUrlsMap = {};

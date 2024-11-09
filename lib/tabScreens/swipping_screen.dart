@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class SwipeableProfiles extends StatefulWidget {
+  const SwipeableProfiles({Key? key}) : super(key: key);
   @override
   _SwipeableProfilesState createState() => _SwipeableProfilesState();
 }
@@ -54,6 +55,72 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   // String selectedUserUid = 'rpiyJZaCVnfhmb0W5SbKl0ptzSz1';
   String selectedUserUid = "";
   List<String> images = [];
+
+  String? lastFetchedUserID;
+  PageController pageController = PageController();
+  CarouselController carouselController = CarouselController();
+
+  readUserData() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUserID)
+        .get()
+        .then((dataSnapshot) {
+      setState(() {
+        // Retrieve and set the sender's name
+        senderName = dataSnapshot.data()?["name"]?.toString() ?? "No name";
+
+        // Print the entire document data
+        print("readUserData() - Data snapshot: ${dataSnapshot.data()}");
+
+        // Print the specific field value (senderName)
+        print("Sender name: $senderName");
+      });
+    }).catchError((error) {
+      // Handle potential errors (optional)
+      print("Error fetching data: $error");
+    });
+  }
+
+// =============
+
+//   Future<void> updateSwipeItemsInitonly() async {
+//     Profilecontroller profileController = Get.put(Profilecontroller());
+//     ever(profileController.usersProfileList, (_) async {
+//       if (profileController.allUserProfileList.isNotEmpty) {
+//         await generateUserImageUrlsMap(profileController);
+//         if (userImageUrlsMap.isNotEmpty) {
+//           setState(() {
+//             selectedUserUid = userImageUrlsMap.keys.first;
+//             profileKeys = userImageUrlsMap.keys.toList();
+//             isLoading = false;
+//           });
+//           print("selectedUserUid assigned to ${userImageUrlsMap.keys.first}");
+//         } else {
+//           print("userImageUrlsMap is empty");
+//         }
+//       }
+//     });
+
+//     //this function makes sure urlsList are generated and the currentIndex must be 0
+// // =========================================================================
+// //     if (profileController.allUserProfileList.isNotEmpty) {
+// //       print(
+// //           'First Profile ID: ${profileController.allUserProfileList[0].uid} in updateSwipeItemsInitonly()');
+
+// //       print(
+// //           'profileController.allUserProfileList: ${profileController.allUserProfileList[0]} in updateSwipeItemsInitonly()');
+
+// //       await generateUserImageUrlsMap(profileController);
+// //       print("userImageUrlsMap:$userImageUrlsMap updateSwipeItemsInitonly() ");
+
+// //       // await updateSwipeItems();
+// //       print(
+// //           "swipeItems1 content after updateSwipeItems1: ${swipeItems1.map((item) => item.content).toList()}");
+// //       // updateSwipeItems1();
+// // // =========================================================================
+// //     }
+//   }
 
   Future<Map<String, List<String>>> generateUserImageUrlsMap(
       Profilecontroller profileController) async {
@@ -106,53 +173,28 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     return userImageUrlsMap;
   }
 
-  String? lastFetchedUserID;
-  PageController pageController = PageController();
-  CarouselController carouselController = CarouselController();
-
-  readUserData() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(currentUserID)
-        .get()
-        .then((dataSnapshot) {
-      setState(() {
-        // Retrieve and set the sender's name
-        senderName = dataSnapshot.data()?["name"]?.toString() ?? "No name";
-
-        // Print the entire document data
-        print("readUserData() - Data snapshot: ${dataSnapshot.data()}");
-
-        // Print the specific field value (senderName)
-        print("Sender name: $senderName");
-      });
-    }).catchError((error) {
-      // Handle potential errors (optional)
-      print("Error fetching data: $error");
-    });
-  }
-
-// =============
-
   Future<void> updateSwipeItemsInitonly() async {
-    //this function makes sure urlsList are generated and the currentIndex must be 0
-// =========================================================================
+    Profilecontroller profileController = Get.find<Profilecontroller>();
+
+    // ever(profileController.usersProfileList, (_) async {
     if (profileController.allUserProfileList.isNotEmpty) {
-      print(
-          'First Profile ID: ${profileController.allUserProfileList[0].uid} in updateSwipeItemsInitonly()');
-
-      print(
-          'profileController.allUserProfileList: ${profileController.allUserProfileList[0]} in updateSwipeItemsInitonly()');
-
       await generateUserImageUrlsMap(profileController);
-      print("userImageUrlsMap:$userImageUrlsMap updateSwipeItemsInitonly() ");
 
-      // await updateSwipeItems();
+      if (userImageUrlsMap.isNotEmpty) {
+        setState(() {
+          selectedUserUid = userImageUrlsMap.keys.first;
+          profileKeys = userImageUrlsMap.keys.toList();
+          isLoading = false;
+        });
+        print("selectedUserUid assigned to ${userImageUrlsMap.keys.first}");
+      } else {
+        print("userImageUrlsMap is empty");
+      }
+    } else {
       print(
-          "swipeItems1 content after updateSwipeItems1: ${swipeItems1.map((item) => item.content).toList()}");
-      // updateSwipeItems1();
-// =========================================================================
+          "profileController.allUserProfileList.isNotEmpty${profileController.allUserProfileList.isNotEmpty} updateSwipeItemsInitonly()");
     }
+    // });
   }
 
   // void loadData() async {
@@ -186,46 +228,21 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     // updateSwipeItemsInitonly();
     // loadData();
 
-    Profilecontroller profileController = Get.put(Profilecontroller());
-    ever(profileController.usersProfileList, (_) async {
-      if (profileController.allUserProfileList.isNotEmpty) {
-        await generateUserImageUrlsMap(profileController);
-        if (userImageUrlsMap.isNotEmpty) {
-          setState(() {
-            selectedUserUid = userImageUrlsMap.keys.first;
-            profileKeys = userImageUrlsMap.keys.toList();
-            isLoading = false;
-          });
-          print("selectedUserUid assigned to ${userImageUrlsMap.keys.first}");
-        } else {
-          print("userImageUrlsMap is empty");
-        }
-      }
-    });
-
-    // ever(profileController.usersProfileList, (_) {
+    // Profilecontroller profileController = Get.put(Profilecontroller());
+    // ever(profileController.usersProfileList, (_) async {
     //   if (profileController.allUserProfileList.isNotEmpty) {
-    //     updateSwipeItemsInitonly();
-    //     // images =
-    //     //     profileController.userImageUrlsMap.value[selectedUserUid] ?? [];
-    //     // selectedUserUid = (userImageUrlsMap..entries.first) as String;
-
+    //     await generateUserImageUrlsMap(profileController);
     //     if (userImageUrlsMap.isNotEmpty) {
-    //       selectedUserUid =
-    //           userImageUrlsMap.entries.first.key; // Get the first key (UID)
-
-    //       // Now selectedUserUid is correctly assigned
-    //       print("$selectedUserUid assigned from userImageUrlsMap.first.key");
+    //       setState(() {
+    //         selectedUserUid = userImageUrlsMap.keys.first;
+    //         profileKeys = userImageUrlsMap.keys.toList();
+    //         isLoading = false;
+    //       });
+    //       print("selectedUserUid assigned to ${userImageUrlsMap.keys.first}");
     //     } else {
     //       print("userImageUrlsMap is empty");
     //     }
-
-    //     print("Function finished at: ${DateTime.now()} swipping_screen init");
     //   }
-
-    //   // print(
-    //   //     "profileController.userImageUrlsMap.value[selectedUserUid]${profileController.userImageUrlsMap}");
-    //   // selectedUserUid = profileController.userImageUrlsMap.value[0] as String;
     // });
 
     // the function below solves this issue
@@ -236,9 +253,15 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         // User is logged in
         currentUserID = user.uid; // Set the global variable
         readUserData(); // Fetch user data after login
+        setState(() {
+          updateSwipeItemsInitonly(); //
+        });
       } else {
         // User is logged out
         currentUserID = ''; // Clear the current user ID
+        setState(() {
+          print("User logged out. Current User ID cleared.");
+        });
       }
     });
     print("Current User ID: $currentUserID");
@@ -250,6 +273,21 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         isLoading = false; // Set loading to false after 3 seconds
       });
     });
+    // print(
+    //     "profileController.userImageUrlsMap.value ${profileController.userImageUrlsMap.value}");
+    // print("userImageUrlsMap ?${userImageUrlsMap}");
+  }
+
+// ----------- dont use Ever in init, this didchangeDependecies fix the tab change issue
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Profilecontroller profileController = Get.find<Profilecontroller>();
+
+    // Set up the listener after the widget dependencies are ready
+    ever(profileController.usersProfileList, (_) {
+      updateSwipeItemsInitonly(); // Perform action when data changes
+    });
   }
 
   @override
@@ -259,7 +297,13 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     // List<String> images = userImageUrlsMap[selectedUserUid] ?? [];
     // List<String>
     images = profileController.userImageUrlsMap.value[selectedUserUid] ?? [];
-
+    // images = (selectedUserUid.isNotEmpty &&
+    //         userImageUrlsMap[selectedUserUid] != null)
+    //     ? userImageUrlsMap[selectedUserUid] ?? []
+    //     : [];
+    // images = userImageUrlsMap[selectedUserUid] ?? [];
+    // print(
+    //     "profileController.userImageUrlsMap.value[selectedUserUid] ${profileController.userImageUrlsMap.value}");
     print("Function finished at: ${DateTime.now()} build, swipping_screen");
 
     // print(profileController.userImageUrlsMap.value[selectedUserUid]);
@@ -268,28 +312,29 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Profile Carousel")),
-      body: SingleChildScrollView(
-        // Allow scrolling for overflow
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                const Color.fromARGB(255, 255, 255, 255),
-                const Color.fromARGB(255, 0, 119, 255),
-                const Color.fromARGB(255, 75, 0, 145),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          padding: EdgeInsets.zero,
-          margin: EdgeInsets.zero,
-          child: Padding(
-            padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 15),
-            child: Center(
-              child: isLoading
-                  ? CircularProgressIndicator()
-                  : Column(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              // Allow scrolling for overflow
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color.fromARGB(255, 255, 255, 255),
+                      const Color.fromARGB(255, 0, 119, 255),
+                      const Color.fromARGB(255, 75, 0, 145),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                padding: EdgeInsets.zero,
+                margin: EdgeInsets.zero,
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 15),
+                  child: Center(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if (images.isNotEmpty)
@@ -553,10 +598,10 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                         ),
                       ],
                     ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
