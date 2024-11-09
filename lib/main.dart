@@ -36,6 +36,7 @@
 //     );
 //   }
 // }
+import 'package:get_storage/get_storage.dart';
 import 'package:redline/authenticationScreen/login_screen.dart';
 import 'package:redline/controller/authenticationController.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -54,6 +55,8 @@ void main() async {
 
   // Put your AuthenticationController into the GetX controller hierarchy
   Get.put(Authenticationcontroller());
+
+  await GetStorage.init();
 
   // Start the Flutter app
   runApp(const MyApp());

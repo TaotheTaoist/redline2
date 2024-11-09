@@ -52,4 +52,19 @@ class Person {
         "interests": interests,
         "imageUrls": imageUrls,
       };
+
+  // Convert a map to a Person object
+  factory Person.fromJson(Map<String, dynamic> json) {
+    return Person(
+      uid: json["uid"],
+      name: json["name"],
+      email: json["email"],
+      password: json["password"],
+      imageProfile: json["imageProfile"],
+      photoNo: json["photoNo"],
+      publishedDateTime: json["publishedDateTime"],
+      interests: List<String>.from(json["interests"] ?? []),
+      imageUrls: List<String>.from(json["imageUrls"] ?? []),
+    );
+  }
 }

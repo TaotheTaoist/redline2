@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:redline/global.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +24,7 @@ class SwipeableProfiles extends StatefulWidget {
 class _SwipeableProfilesState extends State<SwipeableProfiles> {
   // for images
   // =============================================================================================
-  List<String> urlsList = [];
+  List<String> interestList = [];
 
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
@@ -35,28 +36,17 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   List<SwipeItem> swipeItems1 = [];
 
   bool isLoading = true;
-  String nowImage = '';
-  String lateImage = '';
+
   // =============================================================================================
-  String stableUID = "";
-  // Map<String, int> profilePhotoIndexes = {};
+
   List<String> profileKeys = [];
 
   String senderName = "";
   Profilecontroller profileController = Get.put(Profilecontroller());
 
-  // List<SwipeItem> swipeItems = [];
-  // List<SwipeItem> swipeItemsuid = [];
-
-  List<String> currentUserInterests = [];
-  // Map<String, List<String>> interestsCache = {};
-  // List<String> commonInterests = [];
-
-  // String selectedUserUid = 'rpiyJZaCVnfhmb0W5SbKl0ptzSz1';
   String selectedUserUid = "";
   List<String> images = [];
 
-  String? lastFetchedUserID;
   PageController pageController = PageController();
   CarouselController carouselController = CarouselController();
 
@@ -71,7 +61,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         senderName = dataSnapshot.data()?["name"]?.toString() ?? "No name";
 
         // Print the entire document data
-        print("readUserData() - Data snapshot: ${dataSnapshot.data()}");
+        // print("readUserData() - Data snapshot: ${dataSnapshot.data()}");
 
         // Print the specific field value (senderName)
         print("Sender name: $senderName");
@@ -82,68 +72,29 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     });
   }
 
-// =============
-
-//   Future<void> updateSwipeItemsInitonly() async {
-//     Profilecontroller profileController = Get.put(Profilecontroller());
-//     ever(profileController.usersProfileList, (_) async {
-//       if (profileController.allUserProfileList.isNotEmpty) {
-//         await generateUserImageUrlsMap(profileController);
-//         if (userImageUrlsMap.isNotEmpty) {
-//           setState(() {
-//             selectedUserUid = userImageUrlsMap.keys.first;
-//             profileKeys = userImageUrlsMap.keys.toList();
-//             isLoading = false;
-//           });
-//           print("selectedUserUid assigned to ${userImageUrlsMap.keys.first}");
-//         } else {
-//           print("userImageUrlsMap is empty");
-//         }
-//       }
-//     });
-
-//     //this function makes sure urlsList are generated and the currentIndex must be 0
-// // =========================================================================
-// //     if (profileController.allUserProfileList.isNotEmpty) {
-// //       print(
-// //           'First Profile ID: ${profileController.allUserProfileList[0].uid} in updateSwipeItemsInitonly()');
-
-// //       print(
-// //           'profileController.allUserProfileList: ${profileController.allUserProfileList[0]} in updateSwipeItemsInitonly()');
-
-// //       await generateUserImageUrlsMap(profileController);
-// //       print("userImageUrlsMap:$userImageUrlsMap updateSwipeItemsInitonly() ");
-
-// //       // await updateSwipeItems();
-// //       print(
-// //           "swipeItems1 content after updateSwipeItems1: ${swipeItems1.map((item) => item.content).toList()}");
-// //       // updateSwipeItems1();
-// // // =========================================================================
-// //     }
-//   }
+//
 
   Future<Map<String, List<String>>> generateUserImageUrlsMap(
       Profilecontroller profileController) async {
     // Initialize an empty map to store UIDs and corresponding image URLs
 
     if (profileController.allUserProfileList.isEmpty) {
-      print("No user profiles found in the list. generateUserImageUrlsMap");
+      // print("No user profiles found in the list. generateUserImageUrlsMap");
       return userImageUrlsMap; // Return early if the list is empty
     }
 
-    // Iterate over all profiles in allUserProfileList
     for (var user in profileController.allUserProfileList) {
       if (user.uid != null) {
-        print(
-            "Fetching user images for user ID: ${user.uid}  generateUserImageUrlsMap");
+        // print(
+        // "Fetching user images for user ID: ${user.uid}  generateUserImageUrlsMap");
         var snapshot = await FirebaseFirestore.instance
             .collection("users")
             .doc(user.uid)
             .get();
 
         if (snapshot.exists) {
-          print(
-              "Snapshot exists for user ID: ${user.uid} generateUserImageUrlsMap");
+          // print(
+          //     "Snapshot exists for user ID: ${user.uid} generateUserImageUrlsMap");
           Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
           // Log the entire data to see its structure
@@ -160,23 +111,22 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
             // Update the map only if imageUrls is not empty
             userImageUrlsMap[user.uid!] = imageUrls;
           } else {
-            print("No image URLs found for user ID: ${user.uid}");
+            // print("No image URLs found for user ID: ${user.uid}");
           }
         } else {
-          print(
-              "No data found for user ID: ${user.uid} generateUserImageUrlsMap");
+          // print(
+          // "No data found for user ID: ${user.uid} generateUserImageUrlsMap");
         }
       }
     }
 
-    print("Final userImageUrlsMap: $userImageUrlsMap generateUserImageUrlsMap");
+    // print("Final userImageUrlsMap: $userImageUrlsMap generateUserImageUrlsMap");
     return userImageUrlsMap;
   }
 
   Future<void> updateSwipeItemsInitonly() async {
     Profilecontroller profileController = Get.find<Profilecontroller>();
 
-    // ever(profileController.usersProfileList, (_) async {
     if (profileController.allUserProfileList.isNotEmpty) {
       await generateUserImageUrlsMap(profileController);
 
@@ -194,58 +144,12 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
       print(
           "profileController.allUserProfileList.isNotEmpty${profileController.allUserProfileList.isNotEmpty} updateSwipeItemsInitonly()");
     }
-    // });
   }
-
-  // void loadData() async {
-  //   // Declare and assign SharedPreferences at the top inside the async function
-
-  //   Stopwatch stopwatch = Stopwatch()..start();
-  //   print("Calling loadData...");
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //   if (prefs.containsKey('userImageUrlsMap')) {
-  //     String? storedData = prefs.getString('userImageUrlsMap');
-  //     if (storedData != null) {
-  //       setState(() {
-  //         userImageUrlsMap =
-  //             Map<String, List<String>>.from(jsonDecode(storedData));
-  //       });
-  //     }
-  //     print("prefs.containsKey('userImageUrlsMap' ");
-  //   } else {
-  //     print("encoding to pref ");
-  //     await profileController.generateUserImageUrlsMap();
-  //     prefs.setString('userImageUrlsMap', jsonEncode(userImageUrlsMap));
-  //   }
-  //   print('Async function took: ${stopwatch.elapsedMilliseconds}ms');
-  // }
 
   @override
   void initState() {
     super.initState();
 
-    // updateSwipeItemsInitonly();
-    // loadData();
-
-    // Profilecontroller profileController = Get.put(Profilecontroller());
-    // ever(profileController.usersProfileList, (_) async {
-    //   if (profileController.allUserProfileList.isNotEmpty) {
-    //     await generateUserImageUrlsMap(profileController);
-    //     if (userImageUrlsMap.isNotEmpty) {
-    //       setState(() {
-    //         selectedUserUid = userImageUrlsMap.keys.first;
-    //         profileKeys = userImageUrlsMap.keys.toList();
-    //         isLoading = false;
-    //       });
-    //       print("selectedUserUid assigned to ${userImageUrlsMap.keys.first}");
-    //     } else {
-    //       print("userImageUrlsMap is empty");
-    //     }
-    //   }
-    // });
-
-    // the function below solves this issue
 // Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
 // I/flutter (11412): Like icon tapped!
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
@@ -273,9 +177,10 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         isLoading = false; // Set loading to false after 3 seconds
       });
     });
-    // print(
-    //     "profileController.userImageUrlsMap.value ${profileController.userImageUrlsMap.value}");
-    // print("userImageUrlsMap ?${userImageUrlsMap}");
+    final storage = GetStorage();
+    print("storage.getValues()${storage.getValues()}");
+    loadCachedProfiles();
+    print("cachedProfiles: ${cachedProfiles[0].name}");
   }
 
 // ----------- dont use Ever in init, this didchangeDependecies fix the tab change issue
@@ -288,6 +193,24 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     ever(profileController.usersProfileList, (_) {
       updateSwipeItemsInitonly(); // Perform action when data changes
     });
+  }
+
+  List<Person> cachedProfiles = [];
+  void loadCachedProfiles() {
+    final storage = GetStorage();
+    List<dynamic> cachedProfilesData = storage.read('cachedProfiles') ?? [];
+
+    // If there are cached profiles, map them to Person objects
+    if (cachedProfilesData.isNotEmpty) {
+      setState(() {
+        cachedProfiles = cachedProfilesData
+            .map((profileData) => Person.fromJson(profileData))
+            .toList();
+      });
+      print('Loaded ${cachedProfiles.length} profiles from cache.');
+    } else {
+      print('No cached profiles found.');
+    }
   }
 
   @override
@@ -305,6 +228,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     // print(
     //     "profileController.userImageUrlsMap.value[selectedUserUid] ${profileController.userImageUrlsMap.value}");
     print("Function finished at: ${DateTime.now()} build, swipping_screen");
+    // print("User image URLs for $selectedUserUid: $images");
 
     // print(profileController.userImageUrlsMap.value[selectedUserUid]);
 
