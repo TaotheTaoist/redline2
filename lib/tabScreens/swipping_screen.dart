@@ -1,10 +1,18 @@
+import 'dart:convert';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:redline/global.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:redline/models/person.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 import 'package:redline/controller/profile-controller.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class SwipeableProfiles extends StatefulWidget {
   @override
@@ -12,23 +20,95 @@ class SwipeableProfiles extends StatefulWidget {
 }
 
 class _SwipeableProfilesState extends State<SwipeableProfiles> {
-  Map<String, int> profilePhotoIndexes = {};
+  // for images
+  // =============================================================================================
+  List<String> urlsList = [];
+
+  Future<SharedPreferences> prefs = SharedPreferences.getInstance();
+
+  Map<String, List<String>> userImageUrlsMap = {};
+
+  int currentIndex = 0;
+  int carouselIndex = 0;
+
+  List<SwipeItem> swipeItems1 = [];
+
+  bool isLoading = true;
+  String nowImage = '';
+  String lateImage = '';
+  // =============================================================================================
+  String stableUID = "";
+  // Map<String, int> profilePhotoIndexes = {};
+  List<String> profileKeys = [];
 
   String senderName = "";
   Profilecontroller profileController = Get.put(Profilecontroller());
-  List<SwipeItem> swipeItems = [];
-  late MatchEngine matchEngine;
+
+  // List<SwipeItem> swipeItems = [];
+  // List<SwipeItem> swipeItemsuid = [];
 
   List<String> currentUserInterests = [];
-  Map<String, List<String>> interestsCache = {};
-  List<String> commonInterests = [];
+  // Map<String, List<String>> interestsCache = {};
+  // List<String> commonInterests = [];
 
-  void _nextPhoto(String profileId, List<String> photos) {
-    setState(() {
-      int currentIndex = profilePhotoIndexes[profileId] ?? 0;
-      profilePhotoIndexes[profileId] = (currentIndex + 1) % photos.length;
-    });
+  // String selectedUserUid = 'rpiyJZaCVnfhmb0W5SbKl0ptzSz1';
+  String selectedUserUid = "";
+  List<String> images = [];
+
+  Future<Map<String, List<String>>> generateUserImageUrlsMap(
+      Profilecontroller profileController) async {
+    // Initialize an empty map to store UIDs and corresponding image URLs
+
+    if (profileController.allUserProfileList.isEmpty) {
+      print("No user profiles found in the list. generateUserImageUrlsMap");
+      return userImageUrlsMap; // Return early if the list is empty
+    }
+
+    // Iterate over all profiles in allUserProfileList
+    for (var user in profileController.allUserProfileList) {
+      if (user.uid != null) {
+        print(
+            "Fetching user images for user ID: ${user.uid}  generateUserImageUrlsMap");
+        var snapshot = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .get();
+
+        if (snapshot.exists) {
+          print(
+              "Snapshot exists for user ID: ${user.uid} generateUserImageUrlsMap");
+          Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+          // Log the entire data to see its structure
+          // print("Data for user ID ${user.uid}: $data");
+
+          // Ensure the imageUrls field exists and is a non-empty array
+          if (data["imageUrls"] is List &&
+              (data["imageUrls"] as List).isNotEmpty) {
+            List<String> imageUrls = List<String>.from(data["imageUrls"] ?? []);
+
+            // Log the retrieved imageUrls
+            print("Image URLs for user ID ${user.uid}: $imageUrls");
+
+            // Update the map only if imageUrls is not empty
+            userImageUrlsMap[user.uid!] = imageUrls;
+          } else {
+            print("No image URLs found for user ID: ${user.uid}");
+          }
+        } else {
+          print(
+              "No data found for user ID: ${user.uid} generateUserImageUrlsMap");
+        }
+      }
+    }
+
+    print("Final userImageUrlsMap: $userImageUrlsMap generateUserImageUrlsMap");
+    return userImageUrlsMap;
   }
+
+  String? lastFetchedUserID;
+  PageController pageController = PageController();
+  CarouselController carouselController = CarouselController();
 
   readUserData() async {
     await FirebaseFirestore.instance
@@ -53,92 +133,100 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   }
 
 // =============
-  Future<List<String>> retrieveCurrentUserInterests() async {
-    List<String> interests = [];
-    DocumentSnapshot currentUserSnapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(currentUserID)
-        .get();
 
-    if (currentUserSnapshot.exists) {
-      Map<String, dynamic>? data =
-          currentUserSnapshot.data() as Map<String, dynamic>?;
+  Future<void> updateSwipeItemsInitonly() async {
+    //this function makes sure urlsList are generated and the currentIndex must be 0
+// =========================================================================
+    if (profileController.allUserProfileList.isNotEmpty) {
+      print(
+          'First Profile ID: ${profileController.allUserProfileList[0].uid} in updateSwipeItemsInitonly()');
 
-      interests = List<String>.from(data?['interests'] ?? []);
-      print("Current User Interests: $interests");
-    } else {
-      print("Current user document does not exist.");
+      print(
+          'profileController.allUserProfileList: ${profileController.allUserProfileList[0]} in updateSwipeItemsInitonly()');
+
+      await generateUserImageUrlsMap(profileController);
+      print("userImageUrlsMap:$userImageUrlsMap updateSwipeItemsInitonly() ");
+
+      // await updateSwipeItems();
+      print(
+          "swipeItems1 content after updateSwipeItems1: ${swipeItems1.map((item) => item.content).toList()}");
+      // updateSwipeItems1();
+// =========================================================================
     }
-
-    return interests;
   }
 
-  Future<List<String>> fetchProfileUserInterests(String profileUserId) async {
-    DocumentSnapshot profileUserSnapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(profileUserId)
-        .get();
+  // void loadData() async {
+  //   // Declare and assign SharedPreferences at the top inside the async function
 
-    List<String> profileUserInterests = [];
-    if (profileUserSnapshot.exists) {
-      Map<String, dynamic>? data =
-          profileUserSnapshot.data() as Map<String, dynamic>?;
+  //   Stopwatch stopwatch = Stopwatch()..start();
+  //   print("Calling loadData...");
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      profileUserInterests = List<String>.from(data?['interests'] ?? []);
-      print("Profile User Interests for $profileUserId: $profileUserInterests");
-    } else {
-      print("Profile user document does not exist.");
-    }
-
-    return profileUserInterests;
-  }
-
-//probably not in use
-  // Future<void> preloadProfileUserInterests() async {
-  //   // Preload interests for all profiles
-  //   for (var profile in profileController.allUserProfileList) {
-  //     String profileUserId = profile.uid.toString();
-  //     if (!interestsCache.containsKey(profileUserId)) {
-  //       List<String> profileInterests =
-  //           await fetchProfileUserInterests(profileUserId);
-  //       interestsCache[profileUserId] = profileInterests;
+  //   if (prefs.containsKey('userImageUrlsMap')) {
+  //     String? storedData = prefs.getString('userImageUrlsMap');
+  //     if (storedData != null) {
+  //       setState(() {
+  //         userImageUrlsMap =
+  //             Map<String, List<String>>.from(jsonDecode(storedData));
+  //       });
   //     }
+  //     print("prefs.containsKey('userImageUrlsMap' ");
+  //   } else {
+  //     print("encoding to pref ");
+  //     await profileController.generateUserImageUrlsMap();
+  //     prefs.setString('userImageUrlsMap', jsonEncode(userImageUrlsMap));
   //   }
-
-  //   // After preloading, update swipeItems and commonInterests
-  //   updateSwipeItems();
+  //   print('Async function took: ${stopwatch.elapsedMilliseconds}ms');
   // }
-
-  void updateSwipeItems() {
-    swipeItems = profileController.allUserProfileList.map((profile) {
-      return SwipeItem(
-        content: profile,
-        likeAction: () {
-          print('Liked ${profile.name}');
-          profileController.LikeSentReceieved(
-            profile.uid.toString(),
-            senderName,
-          );
-        },
-        nopeAction: () {
-          print('Disliked ${profile.name}');
-        },
-        superlikeAction: () {
-          print('Superliked ${profile.name}');
-          profileController.favoriteSentReceieved(
-            profile.uid.toString(),
-            senderName,
-          );
-        },
-      );
-    }).toList();
-
-    matchEngine = MatchEngine(swipeItems: swipeItems);
-  }
 
   @override
   void initState() {
     super.initState();
+
+    // updateSwipeItemsInitonly();
+    // loadData();
+
+    Profilecontroller profileController = Get.put(Profilecontroller());
+    ever(profileController.usersProfileList, (_) async {
+      if (profileController.allUserProfileList.isNotEmpty) {
+        await generateUserImageUrlsMap(profileController);
+        if (userImageUrlsMap.isNotEmpty) {
+          setState(() {
+            selectedUserUid = userImageUrlsMap.keys.first;
+            profileKeys = userImageUrlsMap.keys.toList();
+            isLoading = false;
+          });
+          print("selectedUserUid assigned to ${userImageUrlsMap.keys.first}");
+        } else {
+          print("userImageUrlsMap is empty");
+        }
+      }
+    });
+
+    // ever(profileController.usersProfileList, (_) {
+    //   if (profileController.allUserProfileList.isNotEmpty) {
+    //     updateSwipeItemsInitonly();
+    //     // images =
+    //     //     profileController.userImageUrlsMap.value[selectedUserUid] ?? [];
+    //     // selectedUserUid = (userImageUrlsMap..entries.first) as String;
+
+    //     if (userImageUrlsMap.isNotEmpty) {
+    //       selectedUserUid =
+    //           userImageUrlsMap.entries.first.key; // Get the first key (UID)
+
+    //       // Now selectedUserUid is correctly assigned
+    //       print("$selectedUserUid assigned from userImageUrlsMap.first.key");
+    //     } else {
+    //       print("userImageUrlsMap is empty");
+    //     }
+
+    //     print("Function finished at: ${DateTime.now()} swipping_screen init");
+    //   }
+
+    //   // print(
+    //   //     "profileController.userImageUrlsMap.value[selectedUserUid]${profileController.userImageUrlsMap}");
+    //   // selectedUserUid = profileController.userImageUrlsMap.value[0] as String;
+    // });
 
     // the function below solves this issue
 // Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
@@ -156,607 +244,319 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     print("Current User ID: $currentUserID");
     // readUserData();
 
-    // Retrieve current user interests once, if not already done
-    // retrieveCurrentUserInterests(currentUserID).then((interests) {
-    //   setState(() {
-    //     currentUserInterests = interests;
-    //   });
-    // });
-
-    // // Initialize swipeItems and matchEngine
-    // matchEngine = MatchEngine(swipeItems: swipeItems);
+    print("currentIndex$currentIndex at init");
+    Future.delayed(Duration(seconds: 3), () {
+      setState(() {
+        isLoading = false; // Set loading to false after 3 seconds
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    // double screenWidth = MediaQuery.of(context).size.width;
+    // List<String> images = userImageUrlsMap[selectedUserUid] ?? [];
+    // List<String>
+    images = profileController.userImageUrlsMap.value[selectedUserUid] ?? [];
+
+    print("Function finished at: ${DateTime.now()} build, swipping_screen");
+
+    // print(profileController.userImageUrlsMap.value[selectedUserUid]);
+
+    // print("images:$images");
+
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.grey,
-              Colors.grey.shade100,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      appBar: AppBar(title: Text("Profile Carousel")),
+      body: SingleChildScrollView(
+        // Allow scrolling for overflow
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color.fromARGB(255, 255, 255, 255),
+                const Color.fromARGB(255, 0, 119, 255),
+                const Color.fromARGB(255, 75, 0, 145),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
-        ),
-        child: Obx(() {
-          if (profileController.allUserProfileList.isEmpty) {
-            return Center(
-              child: Text(
-                'No profiles found',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-              ),
-            );
-          } else {
-            swipeItems = profileController.allUserProfileList.map((profile) {
-              return SwipeItem(
-                content: profile,
-                likeAction: () {
-                  print('Liked ${profile.name}');
-                  profileController.LikeSentReceieved(
-                    profile.uid.toString(),
-                    senderName,
-                  );
-                },
-                nopeAction: () {
-                  print('Disliked ${profile.name}');
-                },
-                superlikeAction: () {
-                  print('Superliked ${profile.name}');
-                  profileController.favoriteSentReceieved(
-                    profile.uid.toString(),
-                    senderName,
-                  );
-                },
-              );
-            }).toList();
-
-            matchEngine = MatchEngine(swipeItems: swipeItems);
-
-            return Container(
-              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
-                child: SwipeCards(
-                  matchEngine: matchEngine,
-                  itemBuilder: (context, index) {
-                    final eachProfileInfo =
-                        profileController.allUserProfileList[index];
-
-                    return Stack(
+          padding: EdgeInsets.zero,
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 15),
+            child: Center(
+              child: isLoading
+                  ? CircularProgressIndicator()
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Positioned.fill(
-                          child: GestureDetector(
-                            onTap: () {
-                              // Change the image when the right side of the card is tapped
-                              profileController
-                                  .changeProfileImage(eachProfileInfo.uid!);
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(25),
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        eachProfileInfo.imageProfile ?? ''),
-                                    fit: BoxFit.cover,
+                        if (images.isNotEmpty)
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: SmoothPageIndicator(
+                                  controller: pageController,
+                                  count: images.length,
+                                  effect: WormEffect(
+                                    dotHeight: 12,
+                                    dotWidth: 12,
+                                    activeDotColor: Colors.blue,
+                                    dotColor: Colors.grey,
                                   ),
                                 ),
                               ),
-                            ),
+                              CarouselSlider(
+                                options: CarouselOptions(
+                                  height: screenHeight * 0.65,
+                                  autoPlay: false,
+                                  enlargeCenterPage: true,
+                                  enableInfiniteScroll: true,
+                                  autoPlayInterval: Duration(seconds: 2),
+                                  viewportFraction: 1.0,
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      carouselIndex = index;
+                                      // pageController.animateToPage(index,
+                                      //     duration: Duration(milliseconds: 300),
+                                      //     curve: Curves.ease);
+                                    });
+                                  },
+                                ),
+                                items: images.map((imageUrl) {
+                                  return Builder(
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        margin: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.2),
+                                              spreadRadius: 5,
+                                              blurRadius: 2,
+                                              offset: Offset(4, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              child: Image.network(
+                                                imageUrl,
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
+                                                height: screenHeight * 0.65,
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 435,
+                                              left: 0,
+                                              right: 0,
+                                              bottom: 0,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  ElevatedButton(
+                                                    child: Text(
+                                                      'YeongHee',
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .white, // Set the text color here
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      profileController
+                                                          .LikeSentReceieved(
+                                                        "eachProfileInfo.uid.toString()",
+                                                        senderName,
+                                                      );
+                                                      print(
+                                                          'Like icon tapped!');
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      shape: StadiumBorder(),
+                                                      padding:
+                                                          EdgeInsets.all(10),
+                                                      backgroundColor:
+                                                          Color.fromARGB(255,
+                                                                  58, 225, 164)
+                                                              .withOpacity(1),
+                                                      shadowColor: Colors.black
+                                                          .withOpacity(0.3),
+                                                      elevation: 5,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  ElevatedButton(
+                                                    child: Text(
+                                                      '26',
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .white, // Set the text color here
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      profileController
+                                                          .LikeSentReceieved(
+                                                        "eachProfileInfo.uid.toString()",
+                                                        senderName,
+                                                      );
+                                                      print(
+                                                          'Like icon tapped!');
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      shape: StadiumBorder(),
+                                                      padding:
+                                                          EdgeInsets.all(10),
+                                                      backgroundColor:
+                                                          Color.fromARGB(255,
+                                                                  58, 225, 164)
+                                                              .withOpacity(1),
+                                                      shadowColor: Colors.black
+                                                          .withOpacity(0.3),
+                                                      elevation: 5,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  ElevatedButton(
+                                                    child: Text(
+                                                      'Seoul',
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .white, // Set the text color here
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      print(
+                                                          'Close icon tapped!');
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      shape: StadiumBorder(),
+                                                      padding:
+                                                          EdgeInsets.all(10),
+                                                      backgroundColor:
+                                                          const Color.fromARGB(
+                                                                  255,
+                                                                  58,
+                                                                  225,
+                                                                  164)
+                                                              .withOpacity(1),
+                                                      shadowColor: Colors.black
+                                                          .withOpacity(0.3),
+                                                      elevation: 5,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                            ],
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 40, right: 30),
-                            child: IconButton(
+                        SizedBox(height: 10),
+
+                        // Row with three buttons below the carousel
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
                               onPressed: () {
-                                // Add your onPressed functionality here
+                                profileController.favoriteSentReceieved(
+                                  "eachProfileInfo.uid.toString()",
+                                  senderName,
+                                );
+                                print('Favorite icon tapped!');
                               },
-                              icon: const Icon(
-                                Icons.filter_list,
+                              style: ElevatedButton.styleFrom(
+                                shape: CircleBorder(),
+                                padding: EdgeInsets.all(10),
+                                backgroundColor: Colors.grey.withOpacity(0.7),
+                                shadowColor: Colors.black.withOpacity(0.3),
+                                elevation: 5,
+                              ),
+                              child: Icon(
+                                Icons.heat_pump_rounded,
+                                color: const Color.fromARGB(255, 255, 255, 255),
                                 size: 30,
-                                color: Colors.white,
                               ),
                             ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 20,
-                          left: 0,
-                          right: 0,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  eachProfileInfo.name.toString(),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    letterSpacing: 4,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  "${eachProfileInfo.uid}",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      letterSpacing: 2,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  "${eachProfileInfo.photoNo}",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      letterSpacing: 1,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 3),
-                                eachProfileInfo.interests!.isNotEmpty
-                                    ? Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 4.0,
-                                        children: eachProfileInfo.interests!
-                                            .map((interest) {
-                                          return ElevatedButton(
-                                            onPressed: () {
-                                              // Define your action here if needed
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.white.withOpacity(0.2),
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 4, vertical: 4),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(18),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              interest,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                letterSpacing: 4,
-                                                color: const Color.fromARGB(
-                                                    255, 255, 255, 255),
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      )
-                                    : SizedBox(),
-                                SizedBox(height: 4),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Colors.white.withOpacity(0.2),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    "${eachProfileInfo.email}",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      letterSpacing: 4,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        profileController.favoriteSentReceieved(
-                                          eachProfileInfo.uid.toString(),
-                                          senderName,
-                                        );
-                                        print('Favorite icon tapped!');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: CircleBorder(),
-                                        padding: EdgeInsets.all(10),
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                      ),
-                                      child: Icon(
-                                        Icons.heat_pump_rounded,
-                                        color: Colors.red,
-                                        size: 30,
-                                      ),
-                                    ),
-                                    SizedBox(width: 4),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        profileController.LikeSentReceieved(
-                                          eachProfileInfo.uid.toString(),
-                                          senderName,
-                                        );
-                                        print('Like icon tapped!');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: CircleBorder(),
-                                        padding: EdgeInsets.all(10),
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                      ),
-                                      child: Icon(
-                                        Icons.favorite,
-                                        color: Colors.red,
-                                        size: 30,
-                                      ),
-                                    ),
-                                    SizedBox(width: 4),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        print('Close icon tapped!');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: CircleBorder(),
-                                        padding: EdgeInsets.all(10),
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                      ),
-                                      child: Icon(
-                                        Icons.close,
-                                        color: Colors.red,
-                                        size: 30,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                            SizedBox(width: 4),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  profileController.LikeSentReceieved(
+                                    selectedUserUid,
+                                    senderName,
+                                  );
+                                  currentIndex++;
+
+                                  print('Like heart tapped!');
+                                  // selectedUserUid = profileController
+                                  //     .userImageUrlsMap
+                                  //     .value[currentIndex] as String;
+
+                                  selectedUserUid = profileKeys[1];
+
+                                  print(
+                                      'selectedUserUid:$selectedUserUid ontap area');
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: CircleBorder(),
+                                padding: EdgeInsets.all(10),
+                                backgroundColor: Colors.grey.withOpacity(0.7),
+                                shadowColor: Colors.black.withOpacity(0.3),
+                                elevation: 5,
+                              ),
+                              child: Icon(
+                                Icons.favorite,
+                                color: const Color.fromARGB(255, 255, 0, 0),
+                                size: 30,
+                              ),
                             ),
-                          ),
+                            SizedBox(width: 4),
+                            ElevatedButton(
+                              onPressed: () {
+                                print('Close icon tapped!');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: CircleBorder(),
+                                padding: EdgeInsets.all(10),
+                                backgroundColor: Colors.grey.withOpacity(0.7),
+                                shadowColor: Colors.black.withOpacity(0.3),
+                                elevation: 5,
+                              ),
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.red,
+                                size: 30,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
-                    );
-                  },
-                  onStackFinished: () {
-                    print('Stack Finished');
-                  },
-                  upSwipeAllowed: true,
-                  rightSwipeAllowed: true,
-                  leftSwipeAllowed: true,
-                ),
-              ),
-            );
-          }
-        }),
+                    ),
+            ),
+          ),
+        ),
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     body: Container(
-  //       // Set the gradient background for the entire scaffold
-  //       decoration: BoxDecoration(
-  //         gradient: LinearGradient(
-  //           colors: [
-  //             Colors.grey, // Start color
-  //             Colors.grey.shade100, // End color
-  //           ],
-  //           begin: Alignment.topLeft,
-  //           end: Alignment.bottomRight,
-  //         ),
-  //       ),
-  //       // Wrap the entire UI inside Obx to reactively rebuild on profile list changes
-  //       child: Obx(() {
-  //         // Check if the profile list is empty
-  //         if (profileController.allUserProfileList.isEmpty) {
-  //           return Center(
-  //             child: Text(
-  //               'No profiles found',
-  //               style: TextStyle(
-  //                 color: Colors.white,
-  //                 fontSize: 18,
-  //               ),
-  //             ),
-  //           );
-  //         } else {
-  //           // Update swipeItems and matchEngine dynamically based on profile changes
-  //           swipeItems = profileController.allUserProfileList.map((profile) {
-  //             return SwipeItem(
-  //               content: profile,
-  //               likeAction: () {
-  //                 print('Liked ${profile.name}');
-  //                 profileController.LikeSentReceieved(
-  //                   profile.uid.toString(),
-  //                   senderName,
-  //                 );
-  //               },
-  //               nopeAction: () {
-  //                 print('Disliked ${profile.name}');
-  //               },
-  //               superlikeAction: () {
-  //                 print('Superliked ${profile.name}');
-  //                 profileController.favoriteSentReceieved(
-  //                   profile.uid.toString(),
-  //                   senderName,
-  //                 );
-  //               },
-  //             );
-  //           }).toList();
-
-  //           matchEngine = MatchEngine(swipeItems: swipeItems);
-
-  //           // Swipe Cards inside a Container with margin and rounded corners
-  //           return Container(
-  //             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-  //             decoration: BoxDecoration(
-  //               color: Colors.white
-  //                   .withOpacity(0.1), // Slightly opaque background for cards
-  //               borderRadius: BorderRadius.circular(25), // Rounded corners
-  //               boxShadow: [
-  //                 BoxShadow(
-  //                   color: Colors.black.withOpacity(0.2),
-  //                   spreadRadius: 5,
-  //                   blurRadius: 7,
-  //                   offset: Offset(0, 3),
-  //                 ),
-  //               ],
-  //             ),
-  //             child: ClipRRect(
-  //               borderRadius: BorderRadius.circular(
-  //                   25), // Ensure the child content respects the rounded corners
-  //               child: SwipeCards(
-  //                 matchEngine: matchEngine,
-  //                 itemBuilder: (context, index) {
-  //                   final eachProfileInfo =
-  //                       profileController.allUserProfileList[index];
-
-  //                   return Stack(
-  //                     children: [
-  //                       // Profile Image Background
-  //                       Positioned.fill(
-  //                         child: ClipRRect(
-  //                           borderRadius: BorderRadius.circular(
-  //                               25), // Apply rounded corners
-  //                           child: DecoratedBox(
-  //                             decoration: BoxDecoration(
-  //                               image: DecorationImage(
-  //                                 image: NetworkImage(
-  //                                     eachProfileInfo.imageProfile ?? ''),
-  //                                 fit: BoxFit.cover,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       // IconButton for filter
-  //                       Align(
-  //                         alignment: Alignment.topRight,
-  //                         child: Padding(
-  //                           padding: EdgeInsets.only(top: 40, right: 30),
-  //                           child: IconButton(
-  //                             onPressed: () {
-  //                               // Add your onPressed functionality here
-  //                             },
-  //                             icon: const Icon(
-  //                               Icons.filter_list,
-  //                               size: 30,
-  //                               color: Colors.white,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-
-  //                       // Profile info (name, buttons) in a Column layout
-  //                       Positioned(
-  //                         bottom: 20,
-  //                         left: 0,
-  //                         right: 0,
-  //                         child: Padding(
-  //                           padding:
-  //                               const EdgeInsets.symmetric(horizontal: 16.0),
-  //                           child: Column(
-  //                             mainAxisSize: MainAxisSize.min,
-  //                             crossAxisAlignment: CrossAxisAlignment.center,
-  //                             children: [
-  //                               // Profile name
-  //                               Text(
-  //                                 eachProfileInfo.name.toString(),
-  //                                 style: TextStyle(
-  //                                   color: Colors.white,
-  //                                   fontSize: 24,
-  //                                   letterSpacing: 4,
-  //                                   fontWeight: FontWeight.bold,
-  //                                 ),
-  //                               ),
-  //                               SizedBox(height: 4),
-
-  //                               Text(
-  //                                 "${eachProfileInfo.uid}",
-  //                                 style: TextStyle(
-  //                                     fontSize: 14,
-  //                                     letterSpacing: 2,
-  //                                     color: Colors.white,
-  //                                     fontWeight: FontWeight.bold),
-  //                               ),
-
-  //                               SizedBox(height: 4),
-  //                               Text(
-  //                                 "${eachProfileInfo.photoNo}",
-  //                                 // "${eachProfileInfo.age} ⦾ ${eachProfileInfo.city}",
-  //                                 style: TextStyle(
-  //                                     fontSize: 14,
-  //                                     letterSpacing: 1,
-  //                                     color: Colors.white,
-  //                                     fontWeight: FontWeight.bold),
-  //                               ),
-
-  //                               SizedBox(height: 3),
-  //                               eachProfileInfo.interests!.isNotEmpty
-  //                                   ? Wrap(
-  //                                       spacing: 8.0,
-  //                                       runSpacing: 4.0,
-  //                                       children: eachProfileInfo.interests!
-  //                                           .map((interest) {
-  //                                         return ElevatedButton(
-  //                                           onPressed: () {
-  //                                             // Define your action here if needed
-  //                                           },
-  //                                           style: ElevatedButton.styleFrom(
-  //                                             backgroundColor:
-  //                                                 Colors.white.withOpacity(0.2),
-  //                                             padding: EdgeInsets.symmetric(
-  //                                                 horizontal: 4, vertical: 4),
-  //                                             shape: RoundedRectangleBorder(
-  //                                               borderRadius:
-  //                                                   BorderRadius.circular(18),
-  //                                             ),
-  //                                           ),
-  //                                           child: Text(
-  //                                             interest,
-  //                                             style: TextStyle(
-  //                                               fontSize: 14,
-  //                                               letterSpacing: 4,
-  //                                               color: const Color.fromARGB(
-  //                                                   255, 255, 255, 255),
-  //                                             ),
-  //                                           ),
-  //                                         );
-  //                                       }).toList(),
-  //                                     )
-  //                                   : SizedBox(),
-
-  //                               SizedBox(height: 4),
-  //                               // Religion button
-  //                               ElevatedButton(
-  //                                 onPressed: () {},
-  //                                 style: ElevatedButton.styleFrom(
-  //                                   backgroundColor:
-  //                                       Colors.white.withOpacity(0.2),
-  //                                   padding: EdgeInsets.symmetric(
-  //                                       horizontal: 20, vertical: 10),
-  //                                   shape: RoundedRectangleBorder(
-  //                                     borderRadius: BorderRadius.circular(18),
-  //                                   ),
-  //                                 ),
-  //                                 child: Text(
-  //                                   "${eachProfileInfo.email}",
-  //                                   style: TextStyle(
-  //                                     fontSize: 14,
-  //                                     letterSpacing: 4,
-  //                                     color: Colors.black,
-  //                                   ),
-  //                                 ),
-  //                               ),
-
-  //                               Row(
-  //                                 mainAxisAlignment: MainAxisAlignment.center,
-  //                                 children: [
-  //                                   ElevatedButton(
-  //                                     onPressed: () {
-  //                                       profileController.favoriteSentReceieved(
-  //                                         eachProfileInfo.uid.toString(),
-  //                                         senderName,
-  //                                       );
-  //                                       print('Favorite icon tapped!');
-  //                                     },
-  //                                     style: ElevatedButton.styleFrom(
-  //                                       shape: CircleBorder(),
-  //                                       padding: EdgeInsets.all(10),
-  //                                       backgroundColor: Colors.transparent,
-  //                                       shadowColor: Colors.transparent,
-  //                                     ),
-  //                                     child: Icon(
-  //                                       Icons.heat_pump_rounded,
-  //                                       color: Colors.red,
-  //                                       size: 30,
-  //                                     ),
-  //                                   ),
-  //                                   SizedBox(width: 4),
-  //                                   ElevatedButton(
-  //                                     onPressed: () {
-  //                                       profileController.LikeSentReceieved(
-  //                                         eachProfileInfo.uid.toString(),
-  //                                         senderName,
-  //                                       );
-  //                                       print('Like icon tapped!');
-  //                                     },
-  //                                     style: ElevatedButton.styleFrom(
-  //                                       shape: CircleBorder(),
-  //                                       padding: EdgeInsets.all(10),
-  //                                       backgroundColor: Colors.transparent,
-  //                                       shadowColor: Colors.transparent,
-  //                                     ),
-  //                                     child: Icon(
-  //                                       Icons.favorite,
-  //                                       color: Colors.red,
-  //                                       size: 30,
-  //                                     ),
-  //                                   ),
-  //                                   SizedBox(width: 4),
-  //                                   ElevatedButton(
-  //                                     onPressed: () {
-  //                                       print('Close icon tapped!');
-  //                                     },
-  //                                     style: ElevatedButton.styleFrom(
-  //                                       shape: CircleBorder(),
-  //                                       padding: EdgeInsets.all(10),
-  //                                       backgroundColor: Colors.transparent,
-  //                                       shadowColor: Colors.transparent,
-  //                                     ),
-  //                                     child: Icon(
-  //                                       Icons.close,
-  //                                       color: Colors.red,
-  //                                       size: 30,
-  //                                     ),
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   );
-  //                 },
-  //                 onStackFinished: () {
-  //                   print('Stack Finished');
-  //                 },
-  //                 upSwipeAllowed: true,
-  //                 rightSwipeAllowed: true,
-  //                 leftSwipeAllowed: true,
-  //               ),
-  //             ),
-  //           );
-  //         }
-  //       }),
-  //     ),
-  //   );
-  // }
 }

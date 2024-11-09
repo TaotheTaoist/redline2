@@ -115,11 +115,18 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
         print("Fetched image URLs: $imageUrls");
 
-        setState(() {
-          // Add placeholders if less than 6 images
-          urlsList = imageUrls.length >= 6 ? imageUrls : List.from(imageUrls)
-            ..addAll(placeholderUrls.sublist(0, 6 - imageUrls.length));
+        // setState(() {
+        //   // Add placeholders if less than 6 images
+        //   urlsList = imageUrls.length >= 6 ? imageUrls : List.from(imageUrls)
+        //     ..addAll(placeholderUrls.sublist(0, 6 - imageUrls.length));
 
+        //   print("Updated urlsList: $urlsList");
+        // });
+
+        setState(() {
+          // Directly assign the fetched image URLs without adding placeholders
+          urlsList =
+              List.from(imageUrls); // Keep it as is, without placeholders
           print("Updated urlsList: $urlsList");
         });
       } else {
@@ -169,249 +176,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       },
     );
   } // End of confirmation dialog function
-
-  // Future<void> _deleteAccount() async {
-  //   try {
-  //     // Assuming the user is already authenticated
-  //     User? user = FirebaseAuth.instance.currentUser;
-  //     if (user != null) {
-  //       // Delete the user from Firebase Auth
-  //       await user.delete();
-
-  //       // Optionally delete user data from Firestore
-  //       await FirebaseFirestore.instance
-  //           .collection("users")
-  //           .doc(user.uid)
-  //           .delete();
-
-  //       // Log out the user
-  //       await FirebaseAuth.instance.signOut();
-
-  //       // Navigate to LoginScreen after deletion
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     // Handle errors (e.g., user not logged in, etc.)
-  //     print("Error deleting account: $e");
-  //   }
-  // }
-
-//   Future<void> _deleteAccount() async {
-//     try {
-//       // Get the current user
-//       User? user = FirebaseAuth.instance.currentUser;
-//       if (user != null) {
-//         // Reference to Firestore and Firebase Storage
-//         final FirebaseFirestore firestore = FirebaseFirestore.instance;
-//         final FirebaseStorage storage = FirebaseStorage.instance;
-
-//         // Retrieve the user's document from Firestore
-//         DocumentSnapshot userDoc =
-//             await firestore.collection("users").doc(user.uid).get();
-
-//         // Cast the document data to a Map<String, dynamic>
-//         final userData = userDoc.data() as Map<String, dynamic>?;
-
-//         // Check if userData is not null before accessing fields
-//         if (userData != null) {
-//           // Delete the profile image if it exists
-//           if (userData.containsKey('imageProfile')) {
-//             String profileImageUrl = userData['imageProfile'];
-//             await _deleteImage(profileImageUrl, storage);
-//           }
-
-//           // Delete all images in `imageUrls` array if it exists
-//           if (userData.containsKey('imageUrls')) {
-//             List<dynamic> imageUrls = userData['imageUrls'];
-//             for (String imageUrl in imageUrls) {
-//               await _deleteImage(imageUrl, storage);
-//             }
-//           }
-
-//           // Delete the user document from Firestore
-//           await firestore.collection("users").doc(user.uid).delete();
-//         }
-
-//         // Delete the Firebase Auth user
-//         await user.delete();
-
-//         // Sign out the user
-//         await FirebaseAuth.instance.signOut();
-
-//         // Navigate to LoginScreen after deletion
-//         Navigator.pushReplacement(
-//           context,
-//           MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
-//         );
-
-//         print("User account and associated images deleted successfully.");
-//       }
-//     } catch (e) {
-//       print("Error deleting account: $e");
-//     }
-//   }
-
-// // Helper function to delete an image from Firebase Storage
-//   Future<void> _deleteImage(String imageUrl, FirebaseStorage storage) async {
-//     try {
-//       final ref = storage.refFromURL(imageUrl);
-//       await ref.delete();
-//       print("Deleted image: $imageUrl");
-//     } catch (e) {
-//       print("Error deleting image: $e");
-//     }
-//   }
-//   Future<void> _deleteAccount() async {
-//     User? user = FirebaseAuth.instance.currentUser;
-
-//     if (user == null) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text("No user is currently logged in.")),
-//       );
-//       return;
-//     }
-
-//     // Step 1: Show confirmation dialog to delete account
-//     bool confirmed = await showDialog(
-//       context: context,
-//       builder: (BuildContext context) {
-//         return AlertDialog(
-//           title: Text("Delete Account"),
-//           content: Text(
-//               "Are you sure you want to delete your account? This action cannot be undone."),
-//           actions: <Widget>[
-//             TextButton(
-//               child: Text("Cancel"),
-//               onPressed: () => Navigator.of(context).pop(false),
-//             ),
-//             TextButton(
-//               child: Text("Delete"),
-//               onPressed: () => Navigator.of(context).pop(true),
-//             ),
-//           ],
-//         );
-//       },
-//     );
-
-//     if (confirmed != true) return;
-
-//     // Step 2: Show password dialog for re-authentication
-//     String? password = await showDialog<String>(
-//       context: context,
-//       builder: (BuildContext context) {
-//         String inputPassword = '';
-//         return AlertDialog(
-//           title: Text("Re-authenticate"),
-//           content: TextField(
-//             onChanged: (value) {
-//               inputPassword = value;
-//             },
-//             obscureText: true,
-//             decoration: InputDecoration(labelText: "Enter your password"),
-//           ),
-//           actions: <Widget>[
-//             TextButton(
-//               child: Text("Cancel"),
-//               onPressed: () => Navigator.of(context).pop(),
-//             ),
-//             TextButton(
-//               child: Text("Confirm"),
-//               onPressed: () => Navigator.of(context).pop(inputPassword),
-//             ),
-//           ],
-//         );
-//       },
-//     );
-
-//     if (password == null || password.isEmpty) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text("Password is required to delete account.")),
-//       );
-//       return;
-//     }
-
-//     // Step 3: Show a loading indicator while processing
-//     showDialog(
-//       context: context,
-//       barrierDismissible: false,
-//       builder: (BuildContext context) {
-//         return Center(child: CircularProgressIndicator());
-//       },
-//     );
-
-//     try {
-//       // Step 4: Re-authenticate user with the entered password
-//       AuthCredential credential = EmailAuthProvider.credential(
-//         email: user.email!,
-//         password: password,
-//       );
-//       await user.reauthenticateWithCredential(credential);
-
-//       final FirebaseFirestore firestore = FirebaseFirestore.instance;
-//       final FirebaseStorage storage = FirebaseStorage.instance;
-
-//       DocumentSnapshot userDoc =
-//           await firestore.collection("users").doc(user.uid).get();
-//       final userData = userDoc.data() as Map<String, dynamic>?;
-
-//       if (userData != null) {
-//         if (userData.containsKey('imageProfile')) {
-//           String profileImageUrl = userData['imageProfile'];
-//           await _deleteImage(profileImageUrl, storage);
-//         }
-//         if (userData.containsKey('imageUrls')) {
-//           List<dynamic> imageUrls = userData['imageUrls'];
-//           for (String imageUrl in imageUrls) {
-//             await _deleteImage(imageUrl, storage);
-//           }
-//         }
-//         await firestore.collection("users").doc(user.uid).delete();
-//       }
-
-//       // Step 5: Delete user account and log out
-//       await user.delete();
-//       await FirebaseAuth.instance.signOut();
-
-//       Navigator.of(context, rootNavigator: true).pop();
-
-// // Navigate to LoginScreen by popping all screens until reaching the root
-//       Navigator.of(context).popUntil((route) => route.isFirst);
-
-//       // Navigator.pushReplacement(
-//       //   context,
-//       //   MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
-//       // );
-// // https: //stackoverflow.com/questions/55618717/error-thrown-on-navigator-pop-until-debuglocked-is-not-true
-//       WidgetsBinding.instance.addPostFrameCallback((_) {
-//         Navigator.pushReplacement(
-//             context, MaterialPageRoute(builder: (_) => LoginScreen()));
-//       });
-
-//       // ScaffoldMessenger.of(context).showSnackBar(
-//       //   SnackBar(content: Text("Account deleted successfully.")),
-//       // );
-//     } catch (e) {
-//       Navigator.of(context, rootNavigator: true)
-//           .pop(); // Close the loading indicator
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text("Error deleting account: $e")),
-//       );
-//       print("Error deleting account: $e");
-//     }
-//   }
-
-//   Future<void> _deleteImage(String imageUrl, FirebaseStorage storage) async {
-//     try {
-//       final ref = storage.refFromURL(imageUrl);
-//       await ref.delete();
-//       print("Deleted image: $imageUrl");
-//     } catch (e) {
-//       print("Error deleting image: $e");
-//     }
-//   }
 
   Future<void> _deleteAccount() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -621,7 +385,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                                 width: double.infinity,
                               ),
                             )
-                          : Container(); // Placeholder for empty URL
+                          : Container(); // Placeholder for empty image
                     }).toList(),
                   ),
                 ),

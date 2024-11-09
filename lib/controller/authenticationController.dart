@@ -91,35 +91,8 @@ class Authenticationcontroller extends GetxController {
     String email,
     String password,
     String name,
-    // String age,
-    // String photoNo,
-    // String city,
-    // String country,
-    // String profileHeading,
-    // String lookingforInaPartner,
-    // int publishedDateTime,
-    // String height,
-    // String
-    //     weight, // Changed from "Weight" to "weight" to follow camelCase convention
-    // String bodyType,
-    // String drink,
-    // String smoke,
-    // String
-    //     maritalStatus, // Corrected spelling from "martialStatus" to "maritalStatus"
-    // String haveChildren,
-    // String noChildren,
-    // String profession,
-    // String employmentStatus,
-    // String income,
-    // String livingSituation,
-    // String willingtoRelocate,
-    // String relationshipYouAreLookingFor,
-    // String nationality,
-    // String education,
-    // String language,
-    // String religion,
-    // String ethnicity,
     List<String> interests,
+    List<String> imageUrls,
   ) async {
     try {
       // is this code being used? Yes, it need for usercreation
@@ -134,40 +107,10 @@ class Authenticationcontroller extends GetxController {
         email: email,
         password: password,
         name: name,
-        // photoNo: photoNo, // Assuming `photoNo` is already available
-        // age: age,
-        // city: city,
-        // country: country,
-        // profileHeading: profileHeading,
-        // lookingforInaPartner: lookingforInaPartner,
-        // publishedDateTime:
-        //     DateTime.now().millisecondsSinceEpoch, // Save current timestamp
-        // height: height,
-        // weight: weight,
-        // bodyType: bodyType,
-        // drink: drink,
-        // smoke: smoke,
-        // maritalStatus: maritalStatus,
-        // haveChildren: haveChildren,
-        // noChildren: noChildren,
-        // profession: profession,
-        // employmentStatus: employmentStatus,
-        // income: income,
-        // livingSituation: livingSituation,
-        // willingtoRelocate: willingtoRelocate,
-        // relationshipYouAreLookingFor: relationshipYouAreLookingFor,
-        // nationality: nationality,
-        // education: education,
-        // language: language,
-        // religion: religion,
-        // ethnicity: ethnicity,
-
         interests: interests,
+        imageUrls: imageUrls,
       );
-      // await FirebaseFirestore.instance
-      //   .collection('users')
-      //   .doc(credential.user!.uid)
-      //   .set(personInstance.toJson());
+
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)

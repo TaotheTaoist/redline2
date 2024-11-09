@@ -1,4 +1,3 @@
-
 name: redline
 description: "A new Flutter project."
 
@@ -21,12 +20,16 @@ dependencies:
   cupertino_icons: ^1.0.6 # This version supports null safety
   flutter_image_slider:
   google_sign_in: ^6.2.1
+  google_sign_in_ios: ^5.7.8
   swipe_cards: ^2.0.0+1
   intl: ^0.19.0
   carousel_slider:
-
+  cached_network_image: ^3.4.1
+  flutter_cache_manager: ^3.4.1
   pub_updater: ^0.5.0
-  
+  shared_preferences: ^2.3.2
+  smooth_page_indicator: ^1.2.0+3
+
 
 dev_dependencies:
   flutter_test:
@@ -36,5 +39,6 @@ flutter:
   uses-material-design: true
 
   assets:
+    
     - lib/image/logo.png
     - lib/image/profileAvatar.png
