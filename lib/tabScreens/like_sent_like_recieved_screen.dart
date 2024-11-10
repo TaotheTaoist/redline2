@@ -122,6 +122,7 @@ class _LikeSentLikeRecievedScreen extends State<LikeSentLikeRecievedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey,
       appBar: AppBar(
         title: Text(
           "Matched",

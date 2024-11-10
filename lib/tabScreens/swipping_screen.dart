@@ -288,7 +288,8 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                   onPageChanged: (index, reason) {
                                     setState(() {
                                       carouselIndex = index;
-                                      // pageController.animateToPage(index,
+                                      print("carouselIndex$carouselIndex");
+
                                       //     duration: Duration(milliseconds: 300),
                                       //     curve: Curves.ease);
                                     });
@@ -336,7 +337,9 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                 children: [
                                                   ElevatedButton(
                                                     child: Text(
-                                                      'YeongHee',
+                                                      _getDisplayText(
+                                                          cachedProfiles[0],
+                                                          carouselIndex),
                                                       style: TextStyle(
                                                         color: Colors
                                                             .white, // Set the text color here
@@ -368,7 +371,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                   SizedBox(width: 8),
                                                   ElevatedButton(
                                                     child: Text(
-                                                      '26',
+                                                      "",
                                                       style: TextStyle(
                                                         color: Colors
                                                             .white, // Set the text color here
@@ -527,5 +530,18 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
               ),
             ),
     );
+  }
+
+  String _getDisplayText(Person profile, int carouselIndex) {
+    switch (carouselIndex) {
+      case 1:
+        return profile.name ?? "No Name";
+      case 2:
+        return profile.uid ?? "No City";
+      case 3:
+        return profile.email ?? "No City";
+      default:
+        return profile.name ?? "No Name";
+    }
   }
 }
