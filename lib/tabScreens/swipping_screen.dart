@@ -179,8 +179,10 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     });
     final storage = GetStorage();
     print("storage.getValues()${storage.getValues()}");
+
     loadCachedProfiles();
-    print("cachedProfiles: ${cachedProfiles[0].name}");
+    print(
+        " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
   }
 
 // ----------- dont use Ever in init, this didchangeDependecies fix the tab change issue
@@ -211,6 +213,12 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     } else {
       print('No cached profiles found.');
     }
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -266,8 +274,20 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 20),
+                                // child: SmoothPageIndicator(
+                                //   controller: pageController,
+                                //   count: images.length,
+                                //   effect: WormEffect(
+                                //     dotHeight: 12,
+                                //     dotWidth: 12,
+                                //     activeDotColor: Colors.blue,
+                                //     dotColor: Colors.grey,
+                                //   ),
+                                // ),
                                 child: SmoothPageIndicator(
-                                  controller: pageController,
+                                  controller: PageController(
+                                    initialPage: carouselIndex,
+                                  ),
                                   count: images.length,
                                   effect: WormEffect(
                                     dotHeight: 12,
@@ -338,7 +358,8 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                   ElevatedButton(
                                                     child: Text(
                                                       _getDisplayText(
-                                                          cachedProfiles[0],
+                                                          cachedProfiles[
+                                                              currentIndex],
                                                           carouselIndex),
                                                       style: TextStyle(
                                                         color: Colors
@@ -535,9 +556,9 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   String _getDisplayText(Person profile, int carouselIndex) {
     switch (carouselIndex) {
       case 1:
-        return profile.name ?? "No Name";
+        return "Test";
       case 2:
-        return profile.uid ?? "No City";
+        return "Age";
       case 3:
         return profile.email ?? "No City";
       default:
