@@ -119,32 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Future<bool> checkUserProfile(User user) async {
-  //   // Here, assume you've stored user information in Firestore
-  //   final userRef =
-  //       FirebaseFirestore.instance.collection('users').doc(user.uid);
-  //   final userSnapshot = await userRef.get();
-
-  //   if (userSnapshot.exists) {
-  //     // Check if required fields are present
-  //     final userData = userSnapshot.data()!;
-  //     bool hasName =
-  //         userData.containsKey('name') && userData['name'].isNotEmpty;
-  //     bool hasBirthday =
-  //         userData.containsKey('birthday') && userData['birthday'].isNotEmpty;
-  //     bool hasUid = userData.containsKey('uid') && userData['uid'].isNotEmpty;
-  //     bool hasEmail =
-  //         userData.containsKey('email') && userData['email'].isNotEmpty;
-  //     bool hasProfilePicture = userData.containsKey('profilePicture') &&
-  //         userData['profilePicture'].isNotEmpty;
-
-  //     return hasName && hasBirthday && hasUid && hasProfilePicture && hasEmail;
-  //   } else {
-  //     // If no profile exists, return false, meaning profile is incomplete
-  //     return false;
-  //   }
-  // }
-
   Future<bool> checkUserProfile(User user) async {
     try {
       // Reference the user's Firestore document

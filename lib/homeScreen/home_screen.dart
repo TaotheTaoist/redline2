@@ -1,117 +1,7 @@
-// import 'package:flutter/material.dart';
-
-// class HomeScreen extends StatelessWidget {
-//   final String userName;
-
-//   // Optional: You can pass the user's name or any other info to the home screen
-//   HomeScreen({required this.userName});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Welcome, $userName!"),
-//         centerTitle: true,
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Text(
-//               "Welcome to your HomeScreen!",
-//               style: TextStyle(fontSize: 24),
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () {
-//                 // You can add logout or other actions here
-//               },
-//               child: Text("Log Out"),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-// import 'package:datingapp/tabScreens/favorite_sent_receieved_screen.dart';
-// import 'package:datingapp/tabScreens/like_sent_like_recieved_screen.dart';
-// import 'package:datingapp/tabScreens/swipping_screen.dart';
-// import 'package:datingapp/tabScreens/user_details_screen.dart';
-// import 'package:datingapp/tabScreens/view_sent_view_received_screen.dart';
-// import 'package:flutter/material.dart';
-
-// class HomeScreen extends StatefulWidget {
-//   HomeScreen({Key? key}) : super(key: key);
-
-//   @override
-//   _HomeScreenState createState() => _HomeScreenState();
-// }
-
-// class _HomeScreenState extends State<HomeScreen> {
-//   int screenIndex = 0;
-//   List tabScreensList = [
-//     SwippingScreen(),
-//     ViewSentViewReceivedScreen(),
-//     FavoriteSentReceievedScreen(),
-//     LikeSentLikeRecievedScreen(),
-//     UserDetailsScreen()
-//   ];
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       bottomNavigationBar: BottomNavigationBar(
-//         onTap: (indexNumber) {
-//           setState(() {
-//             screenIndex = indexNumber;
-//           });
-//         },
-//         type: BottomNavigationBarType.fixed,
-//         backgroundColor: Colors.black,
-//         selectedItemColor: Colors.white,
-//         unselectedItemColor: Colors.white12,
-//         currentIndex: screenIndex,
-//         items: [
-//           BottomNavigationBarItem(icon: Icon(Icons.home, size: 30)),
-//           BottomNavigationBarItem(icon: Icon(Icons.remove_red_eye, size: 30)),
-//           BottomNavigationBarItem(icon: Icon(Icons.star, size: 30)),
-//           BottomNavigationBarItem(icon: Icon(Icons.favorite, size: 30)),
-//           BottomNavigationBarItem(icon: Icon(Icons.person, size: 30)),
-//         ],
-//       ),
-
-//       body: tabScreensList[screenIndex],
-//       // appBar: AppBar(
-//       //   // Static title without the userName
-//       //   title: Text("Home Screen"),
-//       //   centerTitle: true,
-//       // ),
-//       // body: Center(
-//       //   child: Column(
-//       //     mainAxisAlignment: MainAxisAlignment.center,
-//       //     children: [
-//       //       Text(
-//       //         "Welcome to your HomeScreen!",
-//       //         style: TextStyle(fontSize: 24),
-//       //       ),
-//       //       SizedBox(height: 20),
-//       //       ElevatedButton(
-//       //         onPressed: () {
-//       //           // You can add logout or other actions here
-//       //           setState(() {
-//       //             // Example: Add logic here if state needs to be updated
-//       //           });
-//       //         },
-//       //         child: Text("Log Out"),
-//       //       ),
-//       //     ],
-//       //   ),
-//       // ),
-//     );
-//   }
-// }
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:redline/controller/authenticationController.dart';
 import 'package:redline/controller/profile-controller.dart';
+import 'package:redline/tabScreens/baxiDetailScreen.dart';
 import 'package:redline/tabScreens/favorite_sent_receieved_screen.dart';
 import 'package:redline/tabScreens/like_sent_like_recieved_screen.dart';
 import 'package:redline/tabScreens/swipping_screen.dart';
@@ -143,9 +33,62 @@ class _HomeScreenState extends State<HomeScreen> {
       userID: FirebaseAuth.instance.currentUser!.uid,
     ),
   ];
+  void _listenToBaxiDetailsData() {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      print("User is not logged in.");
+      return;
+    }
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .snapshots()
+        .listen((userDoc) {
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        final birthday = data?['birthday'] as String? ?? 'Unknown';
+        final bdTime = data?['bdTime'] as String? ?? 'Unknown';
+
+        // Update the tabScreensList with the new data
+        setState(() {
+          tabScreensList[1] = BaxiDetailsScreen(
+            birthday: birthday,
+            time: bdTime,
+          );
+        });
+      } else {
+        print("User data does not exist.");
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBaxiDetailsData();
+    _listenToBaxiDetailsData();
+  }
+
+  Future<void> _fetchBaxiDetailsData() async {
+    // Fetch birthday and time
+    final data = await Authenticationcontroller.authenticationcontroller
+        .fetchUserBirthdayAndTime();
+
+    // Replace placeholder with actual BaxiDetailsScreen once data is fetched
+    setState(() {
+      tabScreensList[1] = BaxiDetailsScreen(
+        birthday: data['birthday'] ?? 'Unknown',
+        time: data['bdTime'] ?? 'Unknown',
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authController = Authenticationcontroller.authenticationcontroller;
+    // Dynamically build the tab screens list
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         onTap: (indexNumber) {

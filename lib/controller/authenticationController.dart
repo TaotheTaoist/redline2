@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:redline/authenticationScreen/login_screen.dart';
-import 'package:redline/controller/codeEntryScreen.dart';
+
 import 'package:redline/homeScreen/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,6 +11,11 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:redline/models/person.dart' as personModel;
+import 'package:redline/tabScreens/favorite_sent_receieved_screen.dart';
+import 'package:redline/tabScreens/like_sent_like_recieved_screen.dart';
+import 'package:redline/tabScreens/swipping_screen.dart';
+import 'package:redline/tabScreens/user_details_screen.dart';
+import 'package:redline/tabScreens/view_sent_view_received_screen.dart';
 
 class Authenticationcontroller extends GetxController {
   static Authenticationcontroller authenticationcontroller = Get.find();
@@ -21,7 +26,35 @@ class Authenticationcontroller extends GetxController {
   XFile? imageFile;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   String? verificationId; // Store verification ID
+
+  void listenToUserBaxiDetails(
+      Function(String birthday, String bdTime) callback) {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      print("User is not logged in.");
+      return;
+    }
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .snapshots()
+        .listen((userDoc) {
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        final birthday = data?['birthday'] as String? ?? 'Unknown';
+        final bdTime = data?['bdTime'] as String? ?? 'Unknown';
+
+        // Notify listener
+        callback(birthday, bdTime);
+      } else {
+        print("User data does not exist.");
+      }
+    });
+  }
+
   Future<User?> loginWithGoogle() async {
     try {
       // Trigger the Google Sign-In flow
@@ -48,6 +81,33 @@ class Authenticationcontroller extends GetxController {
       Get.snackbar("Error", "Google login failed. Please try again.");
       print("Google sign-in error: $e");
       return null;
+    }
+  }
+
+  Future<Map<String, String>> fetchUserBirthdayAndTime() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) {
+        throw Exception("User is not logged in.");
+      }
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        return {
+          'birthday': data?['birthday'] as String? ?? '',
+          'bdTime': data?['bdTime'] as String? ?? '',
+        };
+      } else {
+        throw Exception("User data does not exist.");
+      }
+    } catch (e) {
+      print("Error fetching user birthday and time: $e");
+      return {'birthday': '', 'bdTime': ''};
     }
   }
 
@@ -120,20 +180,18 @@ class Authenticationcontroller extends GetxController {
     }
   }
 
-  loginUser(String emailUser, String password) async {
+  Future<void> loginUser(String emailUser, String password) async {
     try {
-      // Attempt to sign in with the provided email and password
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailUser, password: password);
 
       // If login is successful, navigate to HomeScreen
       if (userCredential.user != null) {
-        Get.to(HomeScreen());
+        Get.to(() => HomeScreen());
       }
-    } catch (errorMsg) {
+    } catch (error) {
       // Show an error message if login fails
-      Get.snackbar(
-          "Login Unsuccessful", "Error Occurred: ${errorMsg.toString()}");
+      Get.snackbar("Login Unsuccessful", "Error Occurred: ${error.toString()}");
     }
   }
 
