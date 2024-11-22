@@ -2640,6 +2640,36 @@ class gods {
     return "";
   }
 
+  static String tragedey(String yearOrdayBot, String timebot) {
+    List<String> validSubjects1 = ["亥", "卯", "未"];
+    List<String> validTimebots1 = ["酉"];
+
+    List<String> validSubjects2 = ["申", "子", "辰"];
+    List<String> validTimebots2 = ["午"];
+
+    List<String> validSubjects3 = ["巳", "酉", "丑"];
+    List<String> validTimebots3 = ["卯"];
+
+    List<String> validSubjects4 = ["寅", "午", "戌"];
+    List<String> validTimebots4 = ["子"];
+
+    if (validSubjects1.contains(yearOrdayBot) &&
+        validTimebots1.contains(timebot)) {
+      return "災煞";
+    } else if (validSubjects2.contains(yearOrdayBot) &&
+        validTimebots2.contains(timebot)) {
+      return "災煞";
+    } else if (validSubjects3.contains(yearOrdayBot) &&
+        validTimebots3.contains(timebot)) {
+      return "災煞";
+    } else if (validSubjects4.contains(yearOrdayBot) &&
+        validTimebots4.contains(timebot)) {
+      return "災煞";
+    }
+
+    return "";
+  }
+
   static String saltWater(String yearOrdayBot, String timebot) {
     List<String> validSubjects1 = ["子"];
     List<String> validTimebots1 = ["酉"];

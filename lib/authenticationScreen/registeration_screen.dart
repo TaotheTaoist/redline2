@@ -32,8 +32,10 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   TextEditingController birthdayController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController sexController = TextEditingController();
 
   bool showProgressBar = false;
+  bool isMale = false; // Default value, false means "Female", true means "Male"
 
   var authenticationcontroller =
       Authenticationcontroller.authenticationcontroller;
@@ -560,6 +562,18 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                       ],
                     ),
                   ),
+                  Switch(
+                    value: isMale, // Boolean value controlling the switch state
+                    onChanged: (bool value) {
+                      setState(() {
+                        isMale = value; // Update the boolean value
+                        sexController.text = isMale ? "Male" : "Female";
+                      });
+                    },
+                    activeColor: Colors.blue, // Color of the toggle when active
+                    inactiveThumbColor:
+                        Colors.grey, // Color of the toggle when inactive
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -611,8 +625,10 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                               passwordlTextEditingController.text
                                   .trim(), // Password
                               nameTextEditingController.text.trim(), // Name
+
                               selectedInterests,
-                              []);
+                              [],
+                              sexController.text.trim());
 
                           // On success, hide progress bar and navigate to HomeScreen
                           if (mounted) {

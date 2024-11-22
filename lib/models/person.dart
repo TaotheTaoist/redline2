@@ -13,6 +13,7 @@ class Person {
 
   List<String>? interests;
   List<String>? imageUrls;
+  String? sex;
 
   Person({
     this.uid,
@@ -24,6 +25,7 @@ class Person {
     this.publishedDateTime,
     this.interests,
     this.imageUrls,
+    this.sex,
   });
 
   static Person fromDataSnapshot(DocumentSnapshot snapshot) {
@@ -38,6 +40,7 @@ class Person {
       publishedDateTime: dataSnapshot["publishedDateTime"],
       interests: List<String>.from(dataSnapshot["interests"] ?? []),
       imageUrls: List<String>.from(dataSnapshot["imageUrls"] ?? []),
+      sex: dataSnapshot["sex"],
     );
   }
 
@@ -51,6 +54,7 @@ class Person {
         "publishedDateTime": publishedDateTime,
         "interests": interests,
         "imageUrls": imageUrls,
+        "sex": sex,
       };
 
   // Convert a map to a Person object
@@ -65,6 +69,7 @@ class Person {
       publishedDateTime: json["publishedDateTime"],
       interests: List<String>.from(json["interests"] ?? []),
       imageUrls: List<String>.from(json["imageUrls"] ?? []),
+      sex: json["sex"],
     );
   }
 }
