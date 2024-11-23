@@ -30,9 +30,11 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   TextEditingController nameTextEditingController = TextEditingController();
 
   TextEditingController birthdayController = TextEditingController();
+
   TextEditingController timeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController sexController = TextEditingController();
+  final TextEditingController sexController =
+      TextEditingController(text: "Female");
 
   bool showProgressBar = false;
   bool isMale = false; // Default value, false means "Female", true means "Male"
@@ -567,7 +569,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     onChanged: (bool value) {
                       setState(() {
                         isMale = value; // Update the boolean value
-                        sexController.text = isMale ? "Male" : "Female";
+                        sexController.text = isMale ? "Female" : "Male";
                       });
                     },
                     activeColor: Colors.blue, // Color of the toggle when active
@@ -628,7 +630,10 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
                               selectedInterests,
                               [],
-                              sexController.text.trim());
+                              sexController.text.trim(),
+                              birthdayController.text.trim(),
+                              timeController.text.trim(),
+                              "");
 
                           // On success, hide progress bar and navigate to HomeScreen
                           if (mounted) {
@@ -675,24 +680,23 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Don't have an account ",
+                    "D",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Colors.green,
                     ),
                   ),
                   InkWell(
                     onTap: () {
                       print(Get.routing.current);
-                      print(Get.routing.current);
 
                       print("Tapped!");
                       Get.back();
                     },
                     child: const Text(
-                      "Already have an account",
+                      "已經有帳號",
                       style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),

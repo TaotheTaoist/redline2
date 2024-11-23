@@ -227,10 +227,20 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
           TimeOfDay? pickedTime = await showTimePicker(
             context: context,
             initialTime: TimeOfDay.now(),
+            builder: (context, child) {
+              return MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(alwaysUse24HourFormat: true),
+                child: child!,
+              );
+            },
           );
           if (pickedTime != null) {
-            // Format the selected time and update the controller
-            final String formattedTime = pickedTime.format(context);
+            // Format the selected time in 24-hour format and update the controller
+            final String formattedTime =
+                pickedTime.hour.toString().padLeft(2, '0') +
+                    ":" +
+                    pickedTime.minute.toString().padLeft(2, '0');
             timeController.text = formattedTime;
           }
         },
@@ -247,6 +257,36 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       ),
     );
   }
+
+  // Widget _buildTimeTextField(BuildContext context,
+  //     TextEditingController timeController, String label) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
+  //     child: GestureDetector(
+  //       onTap: () async {
+  //         TimeOfDay? pickedTime = await showTimePicker(
+  //           context: context,
+  //           initialTime: TimeOfDay.now(),
+  //         );
+  //         if (pickedTime != null) {
+  //           // Format the selected time and update the controller
+  //           final String formattedTime = pickedTime.format(context);
+  //           timeController.text = formattedTime;
+  //         }
+  //       },
+  //       child: AbsorbPointer(
+  //         child: TextField(
+  //           controller: timeController,
+  //           decoration: InputDecoration(
+  //             labelText: label,
+  //             border: OutlineInputBorder(),
+  //             suffixIcon: const Icon(Icons.access_time),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   uploadImages() async {
     setState(() {

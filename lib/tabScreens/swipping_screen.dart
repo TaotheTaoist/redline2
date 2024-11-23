@@ -150,6 +150,10 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   void initState() {
     super.initState();
 
+    setState(() {
+      isLoading = true;
+    });
+
 // Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
 // I/flutter (11412): Like icon tapped!
     FirebaseAuth.instance.authStateChanges().listen((User? user) {

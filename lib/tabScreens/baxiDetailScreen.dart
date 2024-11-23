@@ -5,10 +5,8 @@ import 'package:redline/calendar/Lunar.dart' as lunar;
 
 // import 'package:redline/calendar/Lunar.dart' as Lunar;
 import 'package:redline/calendar/eightchar/DaYun.dart';
-import 'package:redline/calendar/eightchar/Yun.dart';
+
 import 'package:redline/calendar/gods.dart';
-import 'package:redline/calendar/util/LunarUtil.dart';
-import 'package:redline/calendar/util/LunarUtil.dart';
 
 import '../calendar/Lunar.dart' as Lunar;
 
@@ -57,7 +55,8 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   late List<String> dayZhi;
   late List<String> timeZhi;
 
-  late List<String> happened;
+  // List<String>? happened;
+  List<String>? happened;
 
   @override
   void initState() {
@@ -91,8 +90,6 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     ageInt = calculateAge(combinedDateTime);
     tianShiShenTime = lunarDate.getBaZiShiShenGan()[3];
     tianShiShenMonth = lunarDate.getBaZiShiShenGan()[1];
-    // tianShiShenMonth =
-    //     getDayunGanShishen(lunarDate.getDayGan(), lunarDate.getMonthGan());
 
     tianShiShenYear = lunarDate.getBaZiShiShenGan()[0];
 
@@ -127,9 +124,19 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
       dayZhi,
     );
 
-    happened = happedHistory(ageInt, tianShiShenMonth, tianShiShenYear, timeZhi,
-        yearZhi, monthZhi, dayZhi, 1);
+    happened = happedHistory2(15, tianShiShenMonth, tianShiShenYear, timeZhi,
+        tianShiShenTime, yearZhi, monthZhi, dayZhi, widget.sex);
   }
+  //  int age, // The input age
+  //   String tianShiShenMonth, // Current month (e.g., "殺")
+  //   String tianShiShenYear, // Current year (e.g., "印")
+  //   List<String>? timeZhi, // Optional time-based Zhi list
+  //   String? tianShiShenTime, // Time-related TianShiShen (e.g., "印" for 46~54)
+  //   String yearZhi, // Year-related Zhi
+  //   List<String> monthZhi, // Month-related Zhi
+  //   List<String> dayZhi, // Day-related Zhi
+  //   String sex, // Gender ("male" or "female")
+  //   [int messageIndex = 1] // Optional index for a specific message
 
   int calculateAge(DateTime birthDate) {
     int years = now.year - birthDate.year;
@@ -157,7 +164,7 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
               "diziCom: ${gods.diziCom(lunarDate.getTimeZhi(), lunarDate.getDayZhi(), lunarDate.getMonthZhi(), lunarDate.getYearZhi())}"),
           Text(
               "diziCom: ${gods.tianganCombine(lunarDate.getTimeGan(), lunarDate.getDayGan(), lunarDate.getMonthGan(), lunarDate.getYearGan())}"),
-          Text(happened[0])
+          Text(happened![0]),
         ],
       ),
     );

@@ -6,14 +6,16 @@ class Person {
   String? email;
   String? password;
   String? name;
-
   String? photoNo;
-
   int? publishedDateTime;
-
   List<String>? interests;
   List<String>? imageUrls;
   String? sex;
+
+  // New fields
+  String? bdTime;
+  String? birthday;
+  String? sure;
 
   Person({
     this.uid,
@@ -26,6 +28,9 @@ class Person {
     this.interests,
     this.imageUrls,
     this.sex,
+    this.bdTime, // New field
+    this.birthday, // New field
+    this.sure, // New field
   });
 
   static Person fromDataSnapshot(DocumentSnapshot snapshot) {
@@ -41,6 +46,9 @@ class Person {
       interests: List<String>.from(dataSnapshot["interests"] ?? []),
       imageUrls: List<String>.from(dataSnapshot["imageUrls"] ?? []),
       sex: dataSnapshot["sex"],
+      bdTime: dataSnapshot["bdTime"], // New field
+      birthday: dataSnapshot["birthday"], // New field
+      sure: dataSnapshot["sure"], // New field
     );
   }
 
@@ -55,6 +63,9 @@ class Person {
         "interests": interests,
         "imageUrls": imageUrls,
         "sex": sex,
+        "bdTime": bdTime, // New field
+        "birthday": birthday, // New field
+        "sure": sure, // New field
       };
 
   // Convert a map to a Person object
@@ -70,6 +81,9 @@ class Person {
       interests: List<String>.from(json["interests"] ?? []),
       imageUrls: List<String>.from(json["imageUrls"] ?? []),
       sex: json["sex"],
+      bdTime: json["bdTime"], // New field
+      birthday: json["birthday"], // New field
+      sure: json["sure"], // New field
     );
   }
 }

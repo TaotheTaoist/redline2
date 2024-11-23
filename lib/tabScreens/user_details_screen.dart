@@ -147,16 +147,13 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
-  // Start of delete account function
-  // Function to prompt the user for confirmation before deletion
   void _confirmDeleteAccount(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Confirm Deletion'),
-          content: Text(
-              'Are you sure you want to delete your account? This action cannot be undone.'),
+          content: Text('確定要刪除帳號'),
           actions: [
             TextButton(
               onPressed: () {
@@ -167,7 +164,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
-                _deleteAccount(); // Call the delete account function
+
+                // _deleteAccount();
               },
               child: Text('Delete'),
             ),
@@ -444,8 +442,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   ElevatedButton(
                     // Start of Delete Account Button
                     onPressed: () {
-                      _confirmDeleteAccount(
-                          context); // Call confirmation dialog
+                      // _confirmDeleteAccount(
+                      //     context); // Call confirmation dialog
+                      _deleteAccount();
                     },
                     child: Text('Delete Account'),
                   ), // End of Delete Account Button
