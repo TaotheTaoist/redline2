@@ -34,6 +34,7 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   int month = 1;
   int liunenIntholder = 0;
   late String age;
+  late int ageInt;
 
   late DateTime dateLiunen = DateTime(year, 5, 2);
   // late Lunar.Lunar.fromDate(date);
@@ -55,6 +56,8 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   late List<String> monthZhi;
   late List<String> dayZhi;
   late List<String> timeZhi;
+
+  late List<String> happened;
 
   @override
   void initState() {
@@ -84,8 +87,8 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     // year = combinedDateTime.year;
 
     // Do other initializations like calculating age or setting other values.
-    age = calculateAge(combinedDateTime);
-
+    age = calculateAge(combinedDateTime).toString();
+    ageInt = calculateAge(combinedDateTime);
     tianShiShenTime = lunarDate.getBaZiShiShenGan()[3];
     tianShiShenMonth = lunarDate.getBaZiShiShenGan()[1];
     // tianShiShenMonth =
@@ -123,15 +126,18 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
       monthZhi,
       dayZhi,
     );
+
+    happened = happedHistory(ageInt, tianShiShenMonth, tianShiShenYear, timeZhi,
+        yearZhi, monthZhi, dayZhi, 1);
   }
 
-  String calculateAge(DateTime birthDate) {
+  int calculateAge(DateTime birthDate) {
     int years = now.year - birthDate.year;
     if (now.month < birthDate.month ||
         (now.month == birthDate.month && now.day < birthDate.day)) {
       years--;
     }
-    return years.toString();
+    return years;
   }
 
   @override
@@ -150,7 +156,8 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
           Text(
               "diziCom: ${gods.diziCom(lunarDate.getTimeZhi(), lunarDate.getDayZhi(), lunarDate.getMonthZhi(), lunarDate.getYearZhi())}"),
           Text(
-              "diziCom: ${gods.tianganCombine(lunarDate.getTimeGan(), lunarDate.getDayGan(), lunarDate.getMonthGan(), lunarDate.getYearGan())}")
+              "diziCom: ${gods.tianganCombine(lunarDate.getTimeGan(), lunarDate.getDayGan(), lunarDate.getMonthGan(), lunarDate.getYearGan())}"),
+          Text(happened[0])
         ],
       ),
     );
