@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:redline/constants/interests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:redline/authenticationScreen/birthdaycal.dart';
-import 'package:redline/authenticationScreen/login_screen.dart';
 import 'package:redline/controller/authenticationController.dart';
 import 'package:redline/homeScreen/home_screen.dart';
 import 'package:redline/widgets/custom_text_field_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -621,19 +619,23 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
                         try {
                           await authenticationcontroller.creatNewUserAccount(
-                              authenticationcontroller
-                                  .profileImage!, // Image file
-                              emailTextEditingController.text.trim(), // Email
-                              passwordlTextEditingController.text
-                                  .trim(), // Password
-                              nameTextEditingController.text.trim(), // Name
+                            authenticationcontroller
+                                .profileImage!, // Image file
+                            emailTextEditingController.text.trim(), // Email
+                            passwordlTextEditingController.text
+                                .trim(), // Password
+                            nameTextEditingController.text.trim(), // Name
 
-                              selectedInterests,
-                              [],
-                              sexController.text.trim(),
-                              birthdayController.text.trim(),
-                              timeController.text.trim(),
-                              "");
+                            selectedInterests,
+                            [],
+                            sexController.text.trim(),
+                            birthdayController.text.trim(),
+                            timeController.text.trim(),
+                            timeController.text.isEmpty ? "false" : "true",
+                          );
+
+                          print(
+                              "sure: ${timeController.text.isEmpty ? "false" : "true"}");
 
                           // On success, hide progress bar and navigate to HomeScreen
                           if (mounted) {

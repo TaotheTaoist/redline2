@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:redline/authenticationScreen/ProfileCompletionScreen.dart';
 import 'package:redline/authenticationScreen/registeration_screen.dart';
 import 'package:redline/controller/authenticationController.dart';
-import 'package:redline/controller/phoneNumberScreen.dart';
-import 'package:redline/tabScreens/swipping_screen.dart';
 import 'package:redline/widgets/custom_text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

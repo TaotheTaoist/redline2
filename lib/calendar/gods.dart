@@ -1397,7 +1397,51 @@ class gods {
     return matchingPairs;
   }
 
+  // 宮位受損 算本命 不須寅巳申
   static List<String> diziThreeAttcks(
+    String input1,
+    String input2, [
+    String? input3,
+    String? input4,
+    String? input5,
+    String? input6,
+    String? input7,
+    String? input8,
+  ]) {
+    final inputs = <String>[
+      input1,
+      input2,
+      input3 ?? '',
+      input4 ?? '',
+      input5 ?? '',
+      input6 ?? '',
+      input7 ?? '',
+      input8 ?? '',
+    ];
+
+    final combinedTiangan = [
+      ['丑', '未', '戌'],
+    ];
+
+    List<String> matchingPairs = [];
+
+    for (var trio in combinedTiangan) {
+      final first = trio[0];
+      final second = trio[1];
+      final third = trio[2];
+
+      if (inputs.contains(first) &&
+          inputs.contains(second) &&
+          inputs.contains(third)) {
+        matchingPairs.add('土');
+      }
+    }
+
+    return matchingPairs;
+  }
+
+  // 宮位受損  算運勢用
+  static List<String> diziThreeAttcks2(
     String input1,
     String input2, [
     String? input3,
@@ -1433,7 +1477,7 @@ class gods {
       if (inputs.contains(first) &&
           inputs.contains(second) &&
           inputs.contains(third)) {
-        matchingPairs.add('$first$second$third邢;');
+        matchingPairs.add('$first$second$third邢');
       }
     }
 
@@ -1678,6 +1722,59 @@ class gods {
     return matchingPairs;
   }
 
+  static List<String> diziThreeCom(
+    String input1,
+    String input2, [
+    String? input3,
+    String? input4,
+    String? input5,
+    String? input6,
+    String? input7,
+    String? input8,
+  ]) {
+    // Combine inputs into a list and filter out null values
+    final inputs = [
+      input1,
+      input2,
+      if (input3 != null) input3,
+      if (input4 != null) input4,
+      if (input5 != null) input5,
+      if (input6 != null) input6,
+      if (input7 != null) input7,
+      if (input8 != null) input8,
+    ];
+
+    // Define the combinations and their corresponding values
+    final combinedTiangan = [
+      ["申", "子", "辰"],
+      ["寅", "午", "戌"],
+      ["亥", "卯", "未"],
+      ["巳", "酉", "丑"]
+    ];
+
+    final appendDict = {"申子辰": "水", "寅午戌": "火", "亥卯未": "木", "巳酉丑": "金"};
+
+    List<String> matchingPairs = [];
+
+    // Loop through each combination
+    for (var combination in combinedTiangan) {
+      final first = combination[0];
+      final second = combination[1];
+      final third = combination[2];
+
+      if (inputs.contains(first) &&
+          inputs.contains(second) &&
+          inputs.contains(third)) {
+        final pair = "$first$second$third";
+        final appendString =
+            appendDict[pair] ?? ""; // Default to empty string if not found
+        matchingPairs.add("$pair合$appendString");
+      }
+    }
+
+    return matchingPairs;
+  }
+
   static List<String> diziAttk(
     String input1,
     String input2, [
@@ -1851,7 +1948,7 @@ class gods {
         final pair = '${group[0]}${group[1]}${group[2]}';
         final appendString =
             appendDict[pair] ?? ''; // Use empty string if not found
-        matchingPairs.add('$pair會$appendString;');
+        matchingPairs.add('$pair會$appendString');
       }
     }
 
@@ -1890,7 +1987,7 @@ class gods {
 
     for (var (first, second) in combinedTiangan) {
       if (inputs.contains(first) && inputs.contains(second)) {
-        matchingPairs.add('$first$second破;');
+        matchingPairs.add('$first$second破');
       }
     }
 

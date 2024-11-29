@@ -149,9 +149,10 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   @override
   void initState() {
     super.initState();
-
-    setState(() {
-      isLoading = true;
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        // isLoading = false; // Set loading to false after 3 seconds
+      });
     });
 
 // Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
@@ -176,11 +177,11 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     // readUserData();
 
     print("currentIndex$currentIndex at init");
-    Future.delayed(Duration(seconds: 3), () {
-      setState(() {
-        isLoading = false; // Set loading to false after 3 seconds
-      });
-    });
+    // Future.delayed(Duration(seconds: 3), () {
+    //   setState(() {
+    //     isLoading = false; // Set loading to false after 3 seconds
+    //   });
+    // });
     final storage = GetStorage();
     print("storage.getValues()${storage.getValues()}");
 

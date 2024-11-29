@@ -605,6 +605,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
       if (timeController.text.isNotEmpty) {
         updateData["bdTime"] = timeController.text;
+        updateData["sure"] = "sure";
       }
 
       if (BDController.text.isNotEmpty) {

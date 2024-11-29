@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/controller/authenticationController.dart';
 import 'package:redline/homeScreen/home_screen.dart';
-import 'package:redline/tabScreens/swipping_screen.dart';
 import 'package:redline/widgets/custom_text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart'; // For date formatting
+// For date formatting
 
 class ProfileCompletionScreen extends StatefulWidget {
   final User user;

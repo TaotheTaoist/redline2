@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final birthday = data?['birthday'] as String? ?? 'Unknown';
         final bdTime = data?['bdTime'] as String? ?? 'Unknown';
         final sex = data?['sex'] as String? ?? 'male';
+        final sure = data?['sure'] as String? ?? 'false';
 
         // Update the tabScreensList with the new data
         setState(() {
@@ -57,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
             birthday: birthday,
             time: bdTime,
             sex: sex,
+            sure: sure,
           );
         });
       } else {
@@ -83,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
         birthday: data['birthday'] ?? 'Unknown',
         time: data['bdTime'] ?? 'Unknown',
         sex: data['sex'] ?? "male",
+        sure: data['sure'] ?? "false",
       );
     });
   }
