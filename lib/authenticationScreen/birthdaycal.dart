@@ -455,6 +455,72 @@ Map<String, List<String>> countAllWords({
   return wordMessages;
 }
 
+// 算有多少五行
+
+Map<String, int> countElementOccurrences(
+  String word1,
+  String word2,
+  String word3,
+  String word4,
+  String word5, {
+  String? optional1,
+  String? optional2,
+  String? optional3,
+  String? optional4,
+  String? optional5,
+}) {
+  // Initialize the counts for each element type
+  Map<ElementType, int> elementCounts = {
+    ElementType.Wood: 0,
+    ElementType.Fire: 0,
+    ElementType.Earth: 0,
+    ElementType.Metal: 0,
+    ElementType.Water: 0,
+  };
+
+  // Combine required and optional inputs into a single list
+  List<String?> allWords = [
+    word1,
+    word2,
+    word3,
+    word4,
+    word5,
+    optional1,
+    optional2,
+    optional3,
+    optional4,
+    optional5,
+  ];
+
+  // Count occurrences of each element
+  for (var word in allWords) {
+    if (word != null && elementMapping.containsKey(word)) {
+      ElementType element = elementMapping[word]!;
+      elementCounts[element] = elementCounts[element]! + 1;
+    }
+  }
+
+  // Map enum values to their Chinese names
+  final Map<ElementType, String> chineseNames = {
+    ElementType.Wood: "木",
+    ElementType.Fire: "火",
+    ElementType.Earth: "土",
+    ElementType.Metal: "金",
+    ElementType.Water: "水",
+  };
+
+  // Convert element counts to a map with Chinese names as keys
+  Map<String, int> result = {};
+  elementCounts.forEach((element, count) {
+    if (count > 0) {
+      result[chineseNames[element]!] = count;
+    }
+  });
+
+  return result;
+}
+
+// 查月干與月支是否同一氣
 List<String> personalityWrapper({
   required List<String> zhiList2,
   required String sex,

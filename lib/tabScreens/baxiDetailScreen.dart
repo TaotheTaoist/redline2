@@ -78,6 +78,26 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   String? preferElements2;
   String? preferElements3;
 
+  Map<String, int>? elementOccur;
+
+  String dummyyeartop = "壬";
+  String dummyyearbot = "亥";
+  String dummyMonthtop = "庚";
+  String dummyMonthbot = "申";
+  String dummydaytop = "癸";
+  String dummydaybot = "癸";
+  String dummytimetop = "癸";
+  String dummytimebot = "亥";
+
+  String? dummyyeartopEle;
+  String? dummyyearbotEle;
+  String? dummyMonthtopEle;
+  String? dummyMonthbotEle;
+  String? dummydaytopEle;
+  String? dummydaybotEle;
+  String? dummytimetopEle;
+  String? dummytimebotEle;
+
   @override
   void initState() {
     // 所有十神
@@ -134,33 +154,36 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     print(dayZhi);
     print(timeZhi);
 
-    // MissingChineseCharacters = calculateMissingChineseCharacters(
-    //   tianShiShenTime,
-    //   tianShiShenMonth,
-    //   tianShiShenYear,
-    //   timeZhi,
-    //   yearZhi,
-    //   monthZhi,
-    //   dayZhi,
-    // );
-// // ===========================================================================
-//     happened = happedHistory2(15, tianShiShenMonth, tianShiShenYear, timeZhi,
-//         tianShiShenTime, yearZhi, monthZhi, dayZhi, widget.sex);
+    dummyyeartopEle = getWuXing(dummyyearbot);
+    print("dummyyeartopEle:$dummyyeartopEle");
+    dummyyearbotEle = getWuXing(dummyyearbot);
+    print("dummyyearbotEle:$dummyyearbotEle");
+    dummyMonthtopEle = getWuXing(dummyMonthtop);
+    print("dummyMonthtopEle:$dummyMonthtopEle");
+    dummyMonthbotEle = getWuXing(dummyMonthbot);
+    print("dummyMonthbotEle:$dummyMonthbotEle");
+    dummydaytopEle = getWuXing(dummydaytop);
+    print("dummydaytopEle :$dummydaytopEle ");
+    dummydaybotEle = getWuXing(dummydaybot);
+    print("dummydaybotEle:$dummydaybotEle");
+    dummytimetopEle = getWuXing(dummytimetop);
+    print("dummytimetopEle :$dummytimetopEle ");
+    dummytimebotEle = getWuXing(dummytimebot);
+    print(" dummytimebotEle:$dummytimebotEle");
 
-//     tiangan3top = gods.tianganThreeTops(
-//       tianShiShenTime,
-//       tianShiShenMonth,
-//       tianShiShenYear,
-//       dayTop,
-//     );
-//     tianganAttk = gods.tianganAttk(lunarDate.getTimeGan(),
-//         lunarDate.getDayGan(), lunarDate.getMonthGan(), lunarDate.getYearGan());
     ConfirmTime();
-    // checkEnergydiziTheeMeet();
-    // checkEnergydiziTheecome();
 
-    checkDiziThreeAttack();
-    attackSelf();
+    // check5Elements();
+
+    // checkEnergydiziTheeMeet();
+    checkEnergydiziTheecome();
+
+    // checkDiziThreeAttack();
+    // check5Elements();
+    // attackSelf();
+
+    // attkOneSelf = gods.attkOneself("亥", "亥", "午", "午");
+    // print("自邢$attkOneSelf");
   }
 
   // 確認時間
@@ -206,6 +229,198 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
           lunarDate.getYearGan());
       diziAttk = gods.diziAttk(lunarDate.getMonthZhi(), lunarDate.getYearZhi(),
           lunarDate.getDayZhi());
+    }
+  }
+
+  void check5Elements() {
+    String? firstElement;
+    String? secondElement;
+    int? secondElementCount;
+
+    if (widget.sure == "sure") {
+      // Step 1: Get the result map by counting element occurrences
+      Map<String, int> result = countElementOccurrences(
+        dummyyeartop,
+        dummyyearbot,
+        dummyMonthtop,
+        dummyMonthbot,
+        dummydaybot,
+        optional2: dummytimetop,
+        optional3: dummytimebot,
+      );
+
+      // Step 2: Map each input to its label and value
+      Map<String, String?> labeledInputs = {
+        "dummyyeartop": dummyyeartop,
+        "dummyyearbot": dummyyearbot,
+        "dummyMonthtop": dummyMonthtop,
+        "dummyMonthbot": dummyMonthbot,
+        "dummydaybot": dummydaybot,
+        "dummytimetop (optional2)": dummytimetop,
+        "dummytimebot (optional2)": dummytimebot,
+      };
+      print("Labeled inputs: $labeledInputs");
+
+      // Step 3: Map inputs to elements
+      Map<String, String> inputToElement = {};
+      labeledInputs.forEach((label, word) {
+        if (word != null && elementMapping.containsKey(word)) {
+          String element = {
+            ElementType.Wood: "木",
+            ElementType.Fire: "火",
+            ElementType.Earth: "土",
+            ElementType.Metal: "金",
+            ElementType.Water: "水",
+          }[elementMapping[word]!]!;
+          inputToElement[label] = element;
+        }
+      });
+      print("Input to element map: $inputToElement");
+
+      // Step 4: Process results and determine the first and second elements
+      // We'll first loop through all elements to process them.
+      result.forEach((element, count) {
+        print("Element: $element, Count: $count");
+
+        // Store contributing inputs for each element
+        var contributingInputs = inputToElement.entries
+            .where((entry) =>
+                entry.value == element &&
+                entry.key != "dummydaytop (optional1)") // Adjust if necessary
+            .map((entry) => entry.key)
+            .toList();
+
+        print("Contributing inputs for $element: $contributingInputs");
+
+        // Adjust results if `dummydaytop` affects the count
+        if (count == contributingInputs.length + 1 &&
+            inputToElement["dummydaytop (optional1)"] == element) {
+          print(
+              "Adjusted Element: $element, Count: ${contributingInputs.length} 1");
+        }
+
+        // Find exceptional inputs (those not contributing to the count)
+        var exceptionalInputs = labeledInputs.keys.where((label) {
+          return !contributingInputs.contains(label);
+        }).toList();
+
+        print("Exceptional inputs for $element: $exceptionalInputs");
+
+        // Handle storing of first and second elements
+        if (exceptionalInputs.isNotEmpty) {
+          // Save first element when not already saved
+          if (firstElement == null) {
+            firstElement = element;
+            print("First element saved: $firstElement");
+          } else if (secondElement == null &&
+              firstElement !=
+                  element && // Ensure second element is not the same as first
+              count <= 5) {
+            // Save second element if it occurs <= 5 times
+            secondElement = element;
+            secondElementCount = count; // Store the count of second element
+            print(
+                "Second element saved: $secondElement with count: $secondElementCount");
+          }
+        }
+      });
+
+      // Step 5: After the loop completes, perform the switch case logic
+      if (firstElement != null && secondElement != null) {
+        print("First Element: $firstElement");
+        print("Second Element: $secondElement");
+
+        // Now process elements with count >= 5 after checking first and second elements
+        result.forEach((element, count) {
+          if (count >= 5) {
+            print("Element $element has more than 5 occurrences: $count");
+
+            // Custom processing for certain elements when their count >= 5
+            switch (element) {
+              case "金":
+                if (inputToElement.containsKey("dummyMonthbot")) {
+                  String? monthbotValue = inputToElement["dummyMonthbot"];
+                  print("Value of dummyMonthbot in 金 case: $monthbotValue");
+
+                  if (monthbotValue == "金" || monthbotValue == "土") {
+                    print("monthbotValue:$monthbotValue");
+                    if ((firstElement == "金" || secondElementCount == "土") ||
+                        (firstElement == "土" || secondElementCount == "金")) {
+                      print("從格");
+                    } else {
+                      print("從不了");
+                    }
+                  }
+                }
+                break;
+              case "木":
+                if (inputToElement.containsKey("dummyMonthbot")) {
+                  String? monthbotValue = inputToElement["dummyMonthbot"];
+                  print("Value of dummyMonthbot in 金 case: $monthbotValue");
+
+                  if (monthbotValue == "水" || monthbotValue == "木") {
+                    print("monthbotValue:$monthbotValue");
+                    if ((firstElement == "木" || secondElementCount == "土") ||
+                        (firstElement == "土" || secondElementCount == "木")) {
+                      print("從格");
+                    } else {
+                      print("從不了");
+                    }
+                  }
+                }
+                break;
+              case "水":
+                if (inputToElement.containsKey("dummyMonthbot")) {
+                  String? monthbotValue = inputToElement["dummyMonthbot"];
+                  print("Value of dummyMonthbot in 金 case: $monthbotValue");
+
+                  if (monthbotValue == "金" || monthbotValue == "水") {
+                    print("monthbotValue:$monthbotValue");
+                    if ((firstElement == "金" || secondElementCount == "金") ||
+                        (firstElement == "水" || secondElementCount == "水")) {
+                      print("從格");
+                    } else {
+                      print("從不了");
+                    }
+                  }
+                }
+                break;
+              case "火":
+                if (inputToElement.containsKey("dummyMonthbot")) {
+                  String? monthbotValue = inputToElement["dummyMonthbot"];
+                  print("Value of dummyMonthbot in 金 case: $monthbotValue");
+
+                  if (monthbotValue == "火" || monthbotValue == "木") {
+                    print("monthbotValue:$monthbotValue");
+                    if ((firstElement == "木" || secondElementCount == "火") ||
+                        (firstElement == "火" || secondElementCount == "木")) {
+                      print("從格");
+                    } else {
+                      print("從不了");
+                    }
+                  }
+                }
+                break;
+              case "土":
+                if (inputToElement.containsKey("dummyMonthbot")) {
+                  String? monthbotValue = inputToElement["dummyMonthbot"];
+                  print("Value of dummyMonthbot in 金 case: $monthbotValue");
+
+                  if (monthbotValue == "土" || monthbotValue == "火") {
+                    print("monthbotValue:$monthbotValue");
+                    if ((firstElement == "土" || secondElementCount == "火") ||
+                        (firstElement == "火" || secondElementCount == "土")) {
+                      print("從格");
+                    } else {
+                      print("從不了");
+                    }
+                  }
+                }
+                break;
+            }
+          }
+        });
+      }
     }
   }
 
@@ -373,13 +588,130 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   }
 
   void attackSelf() {
-    if (widget.sure == "false ") {
-      attkOneSelf = gods.attkOneself("亥", "亥", "午", "午");
-      if (lunarDate.getYearZhi() == lunarDate.getYearZhi()) {}
-    }
+    if (widget.sure == "false") {
+      attkOneSelf = gods.attkOneself(dummyyearbot, dummyMonthbot, dummydaybot);
+      print("自邢$attkOneSelf");
 
-    print(attkOneSelf);
+      if (attkOneSelf!.isNotEmpty && attkOneSelf![0] == "亥亥自刑") {
+        if (dummyyearbot == dummyMonthbot) {
+          String element = "水";
+          List<String> tianEle = getKeysByValue(element);
+          print("找三合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+
+          print("喜用神:${favorGods}");
+          preferElements = identifyElement(dummydaytop, favorGods![0]);
+          preferElements2 = identifyElement(dummydaytop, favorGods![2]);
+          preferElements3 = (favorGods?.length ?? 0) > 4
+              ? identifyElement(dummydaytop, favorGods![4])
+              : null;
+        } else if (dummydaybot == dummyMonthbot) {
+          String element = "水";
+          List<String> tianEle = getKeysByValue(element);
+          print("找三合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          preferElements = identifyElement(dummydaytop, favorGods![0]);
+          preferElements2 = identifyElement(dummydaytop, favorGods![2]);
+          preferElements3 = (favorGods?.length ?? 0) > 4
+              ? identifyElement(dummydaytop, favorGods![4])
+              : null;
+        }
+      } else if (attkOneSelf!.isNotEmpty && attkOneSelf![0] == "辰辰自刑") {
+        if (dummyyearbot == dummyMonthbot) {
+          String element = "土";
+          List<String> tianEle = getKeysByValue(element);
+          print("找三合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          print("喜用神:${favorGods}");
+          preferElements = identifyElement(dummydaytop, favorGods![0]);
+          preferElements2 = identifyElement(dummydaytop, favorGods![2]);
+          preferElements3 = (favorGods?.length ?? 0) > 4
+              ? identifyElement(dummydaytop, favorGods![4])
+              : null;
+        } else if (dummydaybot == dummyMonthbot) {
+          String element = "土";
+          List<String> tianEle = getKeysByValue(element);
+          print("找三合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          preferElements = identifyElement(dummydaytop, favorGods![0]);
+          preferElements2 = identifyElement(dummydaytop, favorGods![2]);
+          preferElements3 = (favorGods?.length ?? 0) > 4
+              ? identifyElement(dummydaytop, favorGods![4])
+              : null;
+        }
+      } else if (attkOneSelf!.isNotEmpty && attkOneSelf![0] == "酉酉自刑") {
+        if (dummyyearbot == dummyMonthbot) {
+          String element = "金";
+          List<String> tianEle = getKeysByValue(element);
+          print("找三合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          print("喜用神:${favorGods}");
+          preferElements = identifyElement(dummydaytop, favorGods![0]);
+          preferElements2 = identifyElement(dummydaytop, favorGods![2]);
+          preferElements3 = (favorGods?.length ?? 0) > 4
+              ? identifyElement(dummydaytop, favorGods![4])
+              : null;
+        } else if (dummydaybot == dummyMonthbot) {
+          String element = "金";
+          List<String> tianEle = getKeysByValue(element);
+          print("找三合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          preferElements = identifyElement(dummydaytop, favorGods![0]);
+          preferElements2 = identifyElement(dummydaytop, favorGods![2]);
+          preferElements3 = (favorGods?.length ?? 0) > 4
+              ? identifyElement(dummydaytop, favorGods![4])
+              : null;
+        }
+      } else if (attkOneSelf!.isNotEmpty && attkOneSelf![0] == "午午自刑") {
+        if (dummyyearbot == dummyMonthbot) {
+          String element = "火";
+          List<String> tianEle = getKeysByValue(element);
+          print("找三合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          print("喜用神:${favorGods}");
+          preferElements = identifyElement(dummydaytop, favorGods![0]);
+          preferElements2 = identifyElement(dummydaytop, favorGods![2]);
+          preferElements3 = (favorGods?.length ?? 0) > 4
+              ? identifyElement(dummydaytop, favorGods![4])
+              : null;
+        } else if (dummydaybot == dummyMonthbot) {
+          String element = "火";
+          List<String> tianEle = getKeysByValue(element);
+          print("找三合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          preferElements = identifyElement(dummydaytop, favorGods![0]);
+          preferElements2 = identifyElement(dummydaytop, favorGods![2]);
+          preferElements3 = (favorGods?.length ?? 0) > 4
+              ? identifyElement(dummydaytop, favorGods![4])
+              : null;
+        }
+      }
+    }
   }
+
+  // 地支6合開始
+  // void regularCalculating() {
+  //   String?
+
+  //   List<String> diziCom =
+  //       gods.diziCom(dummyyearbot, dummyMonthbot, dummydaybot);
+  // }
 
   int calculateAge(DateTime birthDate) {
     int years = now.year - birthDate.year;
@@ -507,7 +839,7 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     String combinedKey = base + word;
     if (CUSTOM_ELEMENT_MAPPING.containsKey(combinedKey)) {
       String element = CUSTOM_ELEMENT_MAPPING[combinedKey]!;
-      print('Custom mapping found: $combinedKey maps to $element');
+      print('需要的十神: $combinedKey maps to $element');
       return element;
     }
 
@@ -584,6 +916,22 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     } else {
       throw ArgumentError('');
     }
+  }
+
+// 天干地支換五行
+  String? getWuXing(String key) {
+    // Check in WU_XING_GAN
+    if (LunarUtil.WU_XING_GAN.containsKey(key)) {
+      return LunarUtil.WU_XING_GAN[key];
+    }
+
+    // Check in WU_XING_ZHI
+    if (LunarUtil.WU_XING_ZHI.containsKey(key)) {
+      return LunarUtil.WU_XING_ZHI[key];
+    }
+
+    // Return null if the key is not found
+    return null;
   }
 
   @override

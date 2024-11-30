@@ -1853,7 +1853,7 @@ class gods {
       if (count >= 2) {
         final pair = '$first$first';
         final appendString = appendDict[pair] ?? '';
-        matchingPairs.add('$pair$appendString;');
+        matchingPairs.add('$pair$appendString');
       }
     }
 
