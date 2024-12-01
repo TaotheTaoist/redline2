@@ -1546,16 +1546,24 @@ class gods {
 
     final combinedTiangan = [
       ['申', '子'],
+      ['辰', '子'],
       ['寅', '午'],
+      ['戌', '午'],
       ['亥', '卯'],
+      ['卯', '未'],
       ['巳', '酉'],
+      ['酉', '丑'],
     ];
 
     final appendDict = {
+      '辰子': '水',
       '申子': '水',
       '寅午': '火',
+      '午戌': '火',
+      '卯未': '木',
       '亥卯': '木',
       '巳酉': '金',
+      '酉丑': '金',
     };
 
     List<String> matchingPairs = [];
@@ -1567,7 +1575,7 @@ class gods {
       if (inputs.contains(first) && inputs.contains(second)) {
         final combined = '$first$second';
         final appendString = appendDict[combined] ?? '';
-        matchingPairs.add('$combined半合$appendString;');
+        matchingPairs.add('$combined半合$appendString');
       }
     }
 
@@ -1652,7 +1660,6 @@ class gods {
       ['卯', '戌'],
       ['寅', '亥'],
       ['子', '丑'],
-      ['午', '未'],
     ];
 
     final appendDict = {
@@ -1661,6 +1668,51 @@ class gods {
       '卯戌': '火',
       '寅亥': '木',
       '子丑': '土',
+    };
+
+    List<String> matchingPairs = [];
+
+    for (var pair in combinedTiangan) {
+      final first = pair[0];
+      final second = pair[1];
+
+      if (inputs.contains(first) && inputs.contains(second)) {
+        final combined = '$first$second';
+        final appendString = appendDict[combined] ?? '';
+        matchingPairs.add('$combined可合$appendString');
+      }
+    }
+
+    return matchingPairs;
+  }
+
+// 午未和
+  static List<String> diziComWu(
+    String input1,
+    String input2, [
+    String? input3,
+    String? input4,
+    String? input5,
+    String? input6,
+    String? input7,
+    String? input8,
+  ]) {
+    final inputs = <String>[
+      input1,
+      input2,
+      input3 ?? '',
+      input4 ?? '',
+      input5 ?? '',
+      input6 ?? '',
+      input7 ?? '',
+      input8 ?? '',
+    ];
+
+    final combinedTiangan = [
+      ['午', '未'],
+    ];
+
+    final appendDict = {
       '午未': '火土',
     };
 
@@ -1673,7 +1725,7 @@ class gods {
       if (inputs.contains(first) && inputs.contains(second)) {
         final combined = '$first$second';
         final appendString = appendDict[combined] ?? '';
-        matchingPairs.add('$combined可合$appendString;');
+        matchingPairs.add('$combined可合$appendString');
       }
     }
 

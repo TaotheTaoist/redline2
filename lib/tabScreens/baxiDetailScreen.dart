@@ -80,14 +80,14 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
 
   Map<String, int>? elementOccur;
 
-  String dummyyeartop = "壬";
-  String dummyyearbot = "亥";
+  String dummyyeartop = "庚";
+  String dummyyearbot = "午";
   String dummyMonthtop = "庚";
-  String dummyMonthbot = "申";
-  String dummydaytop = "癸";
-  String dummydaybot = "癸";
-  String dummytimetop = "癸";
-  String dummytimebot = "亥";
+  String dummyMonthbot = "辰";
+  String dummydaytop = "辛";
+  String dummydaybot = "亥";
+  String dummytimetop = "乙";
+  String dummytimebot = "未";
 
   String? dummyyeartopEle;
   String? dummyyearbotEle;
@@ -97,6 +97,8 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   String? dummydaybotEle;
   String? dummytimetopEle;
   String? dummytimebotEle;
+
+  late int bodystrength;
 
   @override
   void initState() {
@@ -141,7 +143,17 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
 
     dayZhi = lunarDate.getBaZiShiShenDayZhi();
     timeZhi = lunarDate.getBaZiShiShenTimeZhi();
-    // firstCharacter = lunarDate.getBaZiShiShenTimeZhi()[0];
+
+    bodystrength = bodyStrength(
+        yeartop: dummyyeartop,
+        yearbot: dummyyearbot,
+        monthtop: dummyMonthtop,
+        monthbot: dummyMonthbot,
+        daytop: dummydaytop,
+        daybot: dummydaybot,
+        timetop: dummytimetop,
+        timebot: dummytimebot);
+    print("bodystrength:$bodystrength");
 
     print(tianShiShenTime);
     print(tianShiShenMonth);
@@ -154,7 +166,7 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     print(dayZhi);
     print(timeZhi);
 
-    dummyyeartopEle = getWuXing(dummyyearbot);
+    dummyyeartopEle = getWuXing(dummyyeartop);
     print("dummyyeartopEle:$dummyyeartopEle");
     dummyyearbotEle = getWuXing(dummyyearbot);
     print("dummyyearbotEle:$dummyyearbotEle");
@@ -176,14 +188,12 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     // check5Elements();
 
     // checkEnergydiziTheeMeet();
-    checkEnergydiziTheecome();
+    // checkEnergydiziTheecome();
 
     // checkDiziThreeAttack();
     // check5Elements();
     // attackSelf();
-
-    // attkOneSelf = gods.attkOneself("亥", "亥", "午", "午");
-    // print("自邢$attkOneSelf");
+    regularCalculating();
   }
 
   // 確認時間
@@ -705,13 +715,92 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     }
   }
 
+  //  地支沒合 算拱合 之後半合
+
   // 地支6合開始
   void regularCalculating() {
     if (widget.sure == "false") {
-      List<String> diziCom =
-          gods.diziCom(dummyyearbot, dummyMonthbot, dummydaybot);
-      if (diziCom.isNotEmpty) {}
+      List<String> diziCom = gods.diziCom(dummyyearbot, dummyMonthbot);
+      List<String> diziComMonthDay = gods.diziCom(dummydaybot, dummyMonthbot);
+      print("diziCom:$diziCom");
+      if (diziCom.isNotEmpty) {
+        // 如果地支年月合 還有通根
+        String element = diziCom[0].split('合').last;
+        if (element == dummyMonthtopEle || element == dummyyeartopEle) {
+          // 看這個五行與這個日主是什麼關西
+          print("element: $element");
+          List<String> tianEle = getKeysByValue(element);
+          print("找6合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          print("不知道時間所以先段喜用神 再問問題");
+          print("喜用神:${favorGods}");
+        }
+      } else if (diziComMonthDay.isNotEmpty) {
+        // 看月與日有沒有合
+        String element = diziComMonthDay[0].split('合').last;
+        if (element == dummyMonthtopEle || element == dummydaytopEle) {
+          // 看這個五行與這個日主是什麼關西
+          print("element: $element");
+          List<String> tianEle = getKeysByValue(element);
+          print("找6合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          print("不知道時間所以先段喜用神 再問問題");
+          print("喜用神:${favorGods}");
+        }
+      }
       return;
+    } else if (widget.sure == "sure") {
+      List<String> diziCom = gods.diziCom(dummyyearbot, dummyMonthbot);
+      List<String> diziComMonthDay = gods.diziCom(dummydaybot, dummyMonthbot);
+      List<String> diziComhDayTime = gods.diziCom(dummydaybot, dummytimebot);
+      print("diziCom:$diziCom");
+      if (diziCom.isNotEmpty) {
+        // 如果地支年月合 還有通根
+        String element = diziCom[0].split('合').last;
+        if (element == dummyMonthtopEle || element == dummyyeartopEle) {
+          // 看這個五行與這個日主是什麼關西
+          print("element: $element");
+          List<String> tianEle = getKeysByValue(element);
+          print("找6合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          print("不知道時間所以先段喜用神 再問問題");
+          print("喜用神:${favorGods}");
+        }
+      } else if (diziComMonthDay.isNotEmpty) {
+        // 看月與日有沒有合
+        String element = diziComMonthDay[0].split('合').last;
+        if (element == dummyMonthtopEle || element == dummydaytopEle) {
+          // 看這個五行與這個日主是什麼關西
+          print("element: $element");
+          List<String> tianEle = getKeysByValue(element);
+          print("找6合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          print("不知道時間所以先段喜用神 再問問題");
+          print("喜用神:${favorGods}");
+        }
+      } else if (diziComhDayTime.isNotEmpty) {
+        // 看月與日有沒有合
+        String element = diziComhDayTime[0].split('合').last;
+        if (element == dummyMonthtopEle || element == dummydaytopEle) {
+          // 看這個五行與這個日主是什麼關西
+          print("element: $element");
+          List<String> tianEle = getKeysByValue(element);
+          print("找6合透干:$tianEle");
+          String? shiShenType = getShiShen(dummydaytop, tianEle[0]);
+          print("shiShenType:$shiShenType");
+          favorGods = favorElements(shiShenType ?? "");
+          print("不知道時間所以先段喜用神 再問問題");
+          print("喜用神:${favorGods}");
+        }
+      }
     }
   }
 
@@ -965,5 +1054,279 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
         ],
       ),
     );
+  }
+
+  final Map<String, ElementType> elementMapping = {
+    "寅": ElementType.Wood,
+    "卯": ElementType.Wood,
+    "乙": ElementType.Wood,
+    "甲": ElementType.Wood,
+    "巳": ElementType.Fire,
+    "午": ElementType.Fire,
+    "丙": ElementType.Fire,
+    "丁": ElementType.Fire,
+    "未": ElementType.Earth,
+    "申": ElementType.Metal,
+    "戊": ElementType.Earth,
+    "己": ElementType.Earth,
+    "酉": ElementType.Metal,
+    "戌": ElementType.Earth,
+    "庚": ElementType.Metal,
+    "辛": ElementType.Metal,
+    "亥": ElementType.Water,
+    "子": ElementType.Water,
+    "壬": ElementType.Water,
+    "癸": ElementType.Water,
+    "丑": ElementType.Earth,
+    "辰": ElementType.Earth
+  };
+  int bodyStrength({
+    required String yeartop,
+    required String yearbot,
+    required String monthtop,
+    required String monthbot,
+    required String daytop, // Explicitly passing daytop
+    required String daybot, // Explicitly passing daybot
+    String timetop = "",
+    String timebot = "",
+  }) {
+    int n1 = 0, n2 = 0, n3 = 0, n4 = 0, n5 = 0, n6 = 0, n7 = 0;
+    int total = 0;
+
+    switch (daytop) {
+      // Using daytop as the "body"
+      case "甲":
+      case "乙":
+        n1 = elementChangWood(daytop, yeartop,
+            8); // Corrected: using daytop for the first calculation
+        n2 = elementChangWood(daytop, yearbot, 4);
+        n3 = elementChangWood(daytop, monthtop, 12);
+        n4 = elementChangWood2(daytop, monthbot, 40);
+        n5 = elementChangWood(
+            daytop, daybot, 12); // Corrected: using daybot for n5
+        n6 = timetop.isEmpty ? 0 : elementChangWood(daytop, timetop, 12);
+        n7 = timebot.isEmpty ? 0 : elementChangWood(daytop, timebot, 12);
+        break;
+
+      case "丙":
+      case "丁":
+        n1 = elementChangFire(daytop, yeartop, 8);
+        n2 = elementChangFire(daytop, yearbot, 4);
+        n3 = elementChangFire(daytop, monthtop, 12);
+        n4 = elementChangFire2(daytop, monthbot, 40);
+        n5 = elementChangFire(daytop, daybot, 12);
+        n6 = timetop.isEmpty ? 0 : elementChangFire(daytop, timetop, 12);
+        n7 = timebot.isEmpty ? 0 : elementChangFire(daytop, timebot, 12);
+        break;
+
+      case "戊":
+      case "己":
+        n1 = elementChangEarth(daytop, yeartop, 8);
+        n2 = elementChangEarth(daytop, yearbot, 4);
+        n3 = elementChangEarth(daytop, monthtop, 12);
+        n4 = elementChangEarth2(daytop, monthbot, 40);
+        n5 = elementChangEarth(daytop, daybot, 12);
+        n6 = timetop.isEmpty ? 0 : elementChangEarth(daytop, timetop, 12);
+        n7 = timebot.isEmpty ? 0 : elementChangEarth(daytop, timebot, 12);
+        break;
+
+      case "庚":
+      case "辛":
+        n1 = elementChangMetal(daytop, yeartop, 8);
+        n2 = elementChangMetal(daytop, yearbot, 4);
+        n3 = elementChangMetal(daytop, monthtop, 12);
+        n4 = elementChangMetal2(daytop, monthbot, 40);
+        n5 = elementChangMetal(daytop, daybot, 12);
+        n6 = timetop.isEmpty ? 0 : elementChangMetal(daytop, timetop, 12);
+        n7 = timebot.isEmpty ? 0 : elementChangMetal(daytop, timebot, 12);
+        break;
+
+      case "壬":
+      case "癸":
+        n1 = elementChangWater(daytop, yeartop, 8);
+        n2 = elementChangWater(daytop, yearbot, 4);
+        n3 = elementChangWater(daytop, monthtop, 12);
+        n4 = elementChangWater2(daytop, monthbot, 40);
+        n5 = elementChangWater(daytop, daybot, 12);
+        n6 = timetop.isEmpty ? 0 : elementChangWater(daytop, timetop, 12);
+        n7 = timebot.isEmpty ? 0 : elementChangWater(daytop, timebot, 12);
+        break;
+
+      default:
+        break;
+    }
+
+    // Total strength calculation
+    total = n1 + n2 + n3 + n4 + n5 + n6 + n7;
+    return total;
+  }
+
+  int elementChangWood(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    // Add points only if the element is Wood
+    if (types.$1 == ElementType.Wood && types.$2 == ElementType.Wood) {
+      totalValue += tiangan; // Add points if both are Wood
+    }
+
+    return totalValue;
+  }
+
+  int elementChangWood2(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    // Check if both elements are Wood (add points for Wood-Wood)
+    if (types.$1 == types.$2) {
+      if (types.$1 == ElementType.Wood) {
+        totalValue += tiangan; // Only add points if both are Wood
+      }
+    } else {
+      // For specific combinations of elements (e.g., Wood-Water)
+      switch (types) {
+        case (ElementType.Wood, ElementType.Water):
+          totalValue += tiangan; // Add points for Wood-Water
+          break;
+        default:
+          totalValue -= tiangan; // Otherwise, subtract points
+      }
+    }
+
+    return totalValue;
+  }
+
+  int elementChangFire2(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    if (types.$1 == types.$2) {
+      totalValue += tiangan;
+    } else {
+      switch (types) {
+        case (ElementType.Fire, ElementType.Wood):
+          totalValue += tiangan;
+          break;
+        default:
+          totalValue -= tiangan;
+      }
+    }
+
+    return totalValue;
+  }
+
+  int elementChangFire(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    // Add points only if the element is Fire
+    if (types.$1 == ElementType.Fire && types.$2 == ElementType.Fire) {
+      totalValue += tiangan; // Add points if both are Fire
+    }
+
+    return totalValue;
+  }
+
+  int elementChangMetal2(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    // Add points if either element is Metal or Earth
+    if (types.$1 == ElementType.Metal ||
+        types.$1 == ElementType.Earth ||
+        types.$2 == ElementType.Metal ||
+        types.$2 == ElementType.Earth) {
+      totalValue += tiangan;
+    }
+
+    // If neither element is Metal or Earth, no points are added
+
+    return totalValue;
+  }
+
+  int elementChangMetal(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    // Add points only if the element is Metal
+    if (types.$1 == ElementType.Metal && types.$2 == ElementType.Metal) {
+      totalValue += tiangan; // Add points if both are Metal
+    }
+
+    // If it’s not Metal, just keep the total value as it is (no subtraction or addition)
+
+    return totalValue;
+  }
+
+  int elementChangWater2(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    if (types.$1 == types.$2) {
+      totalValue += tiangan;
+    } else {
+      switch (types) {
+        case (ElementType.Water, ElementType.Metal):
+          totalValue += tiangan;
+          break;
+        default:
+          totalValue -= tiangan;
+      }
+    }
+
+    return totalValue;
+  }
+
+  int elementChangWater(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    // Add points only if the element is Water
+    if (types.$1 == ElementType.Water && types.$2 == ElementType.Water) {
+      totalValue += tiangan; // Add points if both are Water
+    }
+
+    return totalValue;
+  }
+
+  int elementChangEarth2(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    if (types.$1 == types.$2) {
+      totalValue += tiangan;
+    } else {
+      switch (types) {
+        case (ElementType.Earth, ElementType.Fire):
+          totalValue += tiangan;
+          break;
+        default:
+          totalValue -= tiangan;
+      }
+    }
+
+    return totalValue;
+  }
+
+  int elementChangEarth(String word1, String word2, int tiangan) {
+    int totalValue = 0;
+
+    final types = (elementMapping[word1]!, elementMapping[word2]!);
+
+    // Add points only if the element is Earth
+    if (types.$1 == ElementType.Earth && types.$2 == ElementType.Earth) {
+      totalValue += tiangan; // Add points if both are Earth
+    }
+
+    return totalValue;
   }
 }

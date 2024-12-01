@@ -320,18 +320,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(name.isNotEmpty ? name : "User Details"),
         centerTitle: true,
         automaticallyImplyLeading: true, // This will show the back button
-        leading: IconButton(
-          onPressed: () {
-            Get.back(); // Navigate back when the back button is pressed
-          },
-          icon: const Icon(
-            Icons.arrow_back_outlined,
-            size: 40,
-          ),
-        ),
+
         actions: [
           Row(
             children: [
@@ -389,7 +382,108 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 ),
               ),
               SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        name,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        '• 31',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.pets, // Example icon
+                    color: const Color.fromARGB(255, 80, 80, 80),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4),
+              Text(
+                '♓ Pisces',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              Divider(thickness: 1.0),
 
+              // About Me Section
+              Text(
+                '關於我',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Do is always better than say!\nWant to travel and explore!',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              Divider(thickness: 1.0),
+
+              // Interests Section
+              Text(
+                '興趣',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink,
+                ),
+              ),
+              SizedBox(height: 8),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pink,
+                      foregroundColor: Colors.white,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text('Tennis'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 160, 160, 160),
+                      foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text('Basketball'),
+                  ),
+                  Chip(
+                    label: Text('Basketball'),
+                    backgroundColor: Colors.grey[200],
+                  ),
+                ],
+              ),
               // Section: Appearance
               _buildSectionTitle("Section 1"),
               _buildTable([
@@ -402,8 +496,41 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 mainAxisAlignment:
                     MainAxisAlignment.center, // Align buttons to center
                 children: [
+                  // ElevatedButton(
+                  //   // Start of Log Out Button
+                  //   onPressed: () async {
+                  //     await FirebaseAuth.instance
+                  //         .signOut(); // Sign out the user
+
+                  //     setState(() {
+                  //       currentUserID =
+                  //           ""; // Clear the global or current user ID variable
+                  //       widget.userID = "";
+                  //       name = "";
+                  //       uid = "";
+                  //       imageProfile = "";
+                  //       email = "";
+                  //       password = "";
+
+                  //       // String age = "";
+                  //     });
+                  //     // await FirebaseFirestore.instance.clearPersistence();
+                  //     await FirebaseFirestore.instance.terminate();
+                  //     // After sign out, navigate to a different page (optional)
+                  //     Navigator.pushReplacement(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => LoginScreen()), // Example
+                  //     );
+
+                  //     // Navigator.pushReplacement(
+                  //     //     context,
+                  //     //     MaterialPageRoute(
+                  //     //         builder: (BuildContext context) => LoginScreen()));
+                  //   },
+                  //   child: Text("Log Out"),
+                  // ), // End of Log Out Button
                   ElevatedButton(
-                    // Start of Log Out Button
                     onPressed: () async {
                       await FirebaseAuth.instance
                           .signOut(); // Sign out the user
@@ -434,22 +561,52 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       //     MaterialPageRoute(
                       //         builder: (BuildContext context) => LoginScreen()));
                     },
-                    child: Text("Log Out"),
-                  ), // End of Log Out Button
-
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(
+                          255, 255, 190, 212), // Background color
+                      foregroundColor: const Color.fromARGB(
+                          255, 221, 55, 40), // Text (and icon) color
+                    ),
+                    child: Text(
+                      'Log Out',
+                      style: TextStyle(
+                        fontWeight:
+                            FontWeight.bold, // Optional: Customize text further
+                      ),
+                    ),
+                  ),
                   SizedBox(width: 20), // Spacer between buttons
-
                   ElevatedButton(
-                    // Start of Delete Account Button
                     onPressed: () {
-                      // _confirmDeleteAccount(
-                      //     context); // Call confirmation dialog
+                      // _confirmDeleteAccount(context); // Call confirmation dialog
                       _deleteAccount();
                     },
-                    child: Text('Delete Account'),
-                  ), // End of Delete Account Button
-                ], // End of children in Row
-              ), // End of Row for buttons
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(
+                          255, 255, 190, 212), // Background color
+                      foregroundColor: const Color.fromARGB(
+                          255, 221, 55, 40), // Text (and icon) color
+                    ),
+                    child: Text(
+                      'Delete Account',
+                      style: TextStyle(
+                        fontWeight:
+                            FontWeight.bold, // Optional: Customize text further
+                      ),
+                    ),
+                  ),
+
+                  // ElevatedButton(
+                  //   // Start of Delete Account Button
+                  //   onPressed: () {
+
+                  //     _deleteAccount();
+                  //   },
+                  //   child: Text('Delete Account'),
+
+                  // ),
+                ],
+              ),
             ],
           ),
         ),
@@ -489,7 +646,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black54,
+            color: const Color.fromARGB(137, 138, 98, 98),
             blurRadius: 8,
             offset: Offset(0, 4),
           ),

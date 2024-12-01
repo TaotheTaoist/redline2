@@ -226,6 +226,26 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     super.dispose();
   }
 
+  void _showPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Popup Title'),
+          content: Text('This is a simple pop-up dialog!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -247,340 +267,34 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
     // print("images:$images");
 
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: Center(
-    //       child: Text(
-    //         "Profile Carousel",
-    //         style: TextStyle(
-    //           color: const Color.fromARGB(255, 255, 17, 128),
-    //           fontSize: 20,
-    //           fontWeight: FontWeight.bold,
-    //         ),
-    //       ),
-    //     ),
-    //     backgroundColor: Colors.white,
-    //   ),
-    //   body: isLoading
-    //       ? Center(child: CircularProgressIndicator())
-    //       : SingleChildScrollView(
-    //           // Allow scrolling for overflow
-    //           child: Container(
-    //             decoration: BoxDecoration(
-    //               gradient: LinearGradient(
-    //                 colors: [
-    //                   const Color.fromARGB(255, 255, 216, 216),
-    //                   // const Color.fromARGB(255, 0, 119, 255),
-    //                   const Color.fromARGB(255, 230, 230, 230),
-    //                 ],
-    //                 begin: Alignment.topLeft,
-    //                 end: Alignment.bottomRight,
-    //               ),
-    //             ),
-    //             padding: EdgeInsets.zero,
-    //             margin: EdgeInsets.zero,
-    //             child: Padding(
-    //               padding:
-    //                   EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 15),
-    //               child: Center(
-    //                 child: Column(
-    //                   mainAxisAlignment: MainAxisAlignment.center,
-    //                   children: [
-    //                     if (images.isNotEmpty)
-    //                       Column(
-    //                         children: [
-    //                           Padding(
-    //                             padding: const EdgeInsets.only(bottom: 20),
-    //                             // child: SmoothPageIndicator(
-    //                             //   controller: pageController,
-    //                             //   count: images.length,
-    //                             //   effect: WormEffect(
-    //                             //     dotHeight: 12,
-    //                             //     dotWidth: 12,
-    //                             //     activeDotColor: Colors.blue,
-    //                             //     dotColor: Colors.grey,
-    //                             //   ),
-    //                             // ),
-    //                             child: SmoothPageIndicator(
-    //                               controller: PageController(
-    //                                 initialPage: carouselIndex,
-    //                               ),
-    //                               count: images.length,
-    //                               effect: WormEffect(
-    //                                 dotHeight: 12,
-    //                                 dotWidth: 12,
-    //                                 activeDotColor: Colors.blue,
-    //                                 dotColor: Colors.grey,
-    //                               ),
-    //                             ),
-    //                           ),
-    //                           CarouselSlider(
-    //                             options: CarouselOptions(
-    //                               height: screenHeight * 0.69,
-    //                               autoPlay: false,
-    //                               enlargeCenterPage: true,
-    //                               enableInfiniteScroll: true,
-    //                               autoPlayInterval: Duration(seconds: 2),
-    //                               viewportFraction: 1.0,
-    //                               onPageChanged: (index, reason) {
-    //                                 setState(() {
-    //                                   carouselIndex = index;
-    //                                   print("carouselIndex$carouselIndex");
-
-    //                                   //     duration: Duration(milliseconds: 300),
-    //                                   //     curve: Curves.ease);
-    //                                 });
-    //                               },
-    //                             ),
-    //                             items: images.map((imageUrl) {
-    //                               return Builder(
-    //                                 builder: (BuildContext context) {
-    //                                   return Container(
-    //                                     margin: EdgeInsets.all(5),
-    //                                     decoration: BoxDecoration(
-    //                                       color: const Color.fromARGB(
-    //                                               255, 255, 255, 255)
-    //                                           .withOpacity(0.0),
-    //                                       borderRadius:
-    //                                           BorderRadius.circular(30),
-    //                                       boxShadow: [
-    //                                         BoxShadow(
-    //                                           color:
-    //                                               Colors.black.withOpacity(0.2),
-    //                                           spreadRadius: 5,
-    //                                           blurRadius: 2,
-    //                                           offset: Offset(4, 4),
-    //                                         ),
-    //                                       ],
-    //                                     ),
-    //                                     child: Stack(
-    //                                       children: [
-    //                                         ClipRRect(
-    //                                           borderRadius:
-    //                                               BorderRadius.circular(16),
-    //                                           child: Image.network(
-    //                                             imageUrl,
-    //                                             fit: BoxFit.cover,
-    //                                             width: double.infinity,
-    //                                             height: screenHeight * 0.65,
-    //                                           ),
-    //                                         ),
-    //                                         Positioned(
-    //                                           top: 435,
-    //                                           left: 0,
-    //                                           right: 0,
-    //                                           bottom: 0,
-    //                                           child: Row(
-    //                                             mainAxisAlignment:
-    //                                                 MainAxisAlignment.center,
-    //                                             children: [
-    //                                               ElevatedButton(
-    //                                                 child: Text(
-    //                                                   _getDisplayText(
-    //                                                       cachedProfiles[
-    //                                                           currentIndex],
-    //                                                       carouselIndex),
-    //                                                   style: TextStyle(
-    //                                                     color: Colors
-    //                                                         .white, // Set the text color here
-    //                                                   ),
-    //                                                 ),
-    //                                                 onPressed: () {
-    //                                                   profileController
-    //                                                       .LikeSentReceieved(
-    //                                                     "eachProfileInfo.uid.toString()",
-    //                                                     senderName,
-    //                                                   );
-    //                                                   print(
-    //                                                       'Like icon tapped!');
-    //                                                 },
-    //                                                 style: ElevatedButton
-    //                                                     .styleFrom(
-    //                                                   shape: StadiumBorder(),
-    //                                                   padding:
-    //                                                       EdgeInsets.all(10),
-    //                                                   backgroundColor:
-    //                                                       Color.fromARGB(255,
-    //                                                               58, 225, 164)
-    //                                                           .withOpacity(1),
-    //                                                   shadowColor:
-    //                                                       const Color.fromARGB(
-    //                                                               255,
-    //                                                               212,
-    //                                                               211,
-    //                                                               211)
-    //                                                           .withOpacity(0.3),
-    //                                                   elevation: 5,
-    //                                                 ),
-    //                                               ),
-    //                                               SizedBox(width: 8),
-    //                                               ElevatedButton(
-    //                                                 child: Text(
-    //                                                   "",
-    //                                                   style: TextStyle(
-    //                                                     color: Colors
-    //                                                         .white, // Set the text color here
-    //                                                   ),
-    //                                                 ),
-    //                                                 onPressed: () {
-    //                                                   profileController
-    //                                                       .LikeSentReceieved(
-    //                                                     "eachProfileInfo.uid.toString()",
-    //                                                     senderName,
-    //                                                   );
-    //                                                   print(
-    //                                                       'Like icon tapped!');
-    //                                                 },
-    //                                                 style: ElevatedButton
-    //                                                     .styleFrom(
-    //                                                   shape: StadiumBorder(),
-    //                                                   padding:
-    //                                                       EdgeInsets.all(10),
-    //                                                   backgroundColor:
-    //                                                       Color.fromARGB(255,
-    //                                                               58, 225, 164)
-    //                                                           .withOpacity(1),
-    //                                                   shadowColor: Colors.black
-    //                                                       .withOpacity(0.3),
-    //                                                   elevation: 5,
-    //                                                 ),
-    //                                               ),
-    //                                               SizedBox(width: 8),
-    //                                               ElevatedButton(
-    //                                                 child: Text(
-    //                                                   'Seoul',
-    //                                                   style: TextStyle(
-    //                                                     color: Colors
-    //                                                         .white, // Set the text color here
-    //                                                   ),
-    //                                                 ),
-    //                                                 onPressed: () {
-    //                                                   print(
-    //                                                       'Close icon tapped!');
-    //                                                 },
-    //                                                 style: ElevatedButton
-    //                                                     .styleFrom(
-    //                                                   shape: StadiumBorder(),
-    //                                                   padding:
-    //                                                       EdgeInsets.all(10),
-    //                                                   backgroundColor:
-    //                                                       const Color.fromARGB(
-    //                                                               255,
-    //                                                               58,
-    //                                                               225,
-    //                                                               164)
-    //                                                           .withOpacity(1),
-    //                                                   shadowColor: Colors.black
-    //                                                       .withOpacity(0.3),
-    //                                                   elevation: 5,
-    //                                                 ),
-    //                                               ),
-    //                                             ],
-    //                                           ),
-    //                                         ),
-    //                                       ],
-    //                                     ),
-    //                                   );
-    //                                 },
-    //                               );
-    //                             }).toList(),
-    //                           ),
-    //                         ],
-    //                       ),
-    //                     SizedBox(height: 10),
-
-    //                     // Row with three buttons below the carousel
-    //                     Row(
-    //                       mainAxisAlignment: MainAxisAlignment.center,
-    //                       children: [
-    //                         ElevatedButton(
-    //                           onPressed: () {
-    //                             profileController.favoriteSentReceieved(
-    //                               "eachProfileInfo.uid.toString()",
-    //                               senderName,
-    //                             );
-    //                             print('Favorite icon tapped!');
-    //                           },
-    //                           style: ElevatedButton.styleFrom(
-    //                             shape: CircleBorder(),
-    //                             padding: EdgeInsets.all(10),
-    //                             backgroundColor:
-    //                                 const Color.fromARGB(255, 255, 255, 255)
-    //                                     .withOpacity(0.7),
-    //                             shadowColor: Colors.black.withOpacity(0.3),
-    //                             elevation: 5,
-    //                           ),
-    //                           child: Icon(
-    //                             Icons.heat_pump_rounded,
-    //                             color: const Color.fromARGB(255, 255, 255, 255),
-    //                             size: 30,
-    //                           ),
-    //                         ),
-    //                         SizedBox(width: 4),
-    //                         ElevatedButton(
-    //                           onPressed: () {
-    //                             setState(() {
-    //                               profileController.LikeSentReceieved(
-    //                                 selectedUserUid,
-    //                                 senderName,
-    //                               );
-    //                               currentIndex++;
-
-    //                               print('Like heart tapped!');
-    //                               // selectedUserUid = profileController
-    //                               //     .userImageUrlsMap
-    //                               //     .value[currentIndex] as String;
-
-    //                               selectedUserUid = profileKeys[1];
-
-    //                               print(
-    //                                   'selectedUserUid:$selectedUserUid ontap area');
-    //                             });
-    //                           },
-    //                           style: ElevatedButton.styleFrom(
-    //                             shape: CircleBorder(),
-    //                             padding: EdgeInsets.all(10),
-    //                             backgroundColor: Colors.grey.withOpacity(0.7),
-    //                             shadowColor: Colors.black.withOpacity(0.3),
-    //                             elevation: 5,
-    //                           ),
-    //                           child: Icon(
-    //                             Icons.favorite,
-    //                             color: const Color.fromARGB(255, 255, 0, 0),
-    //                             size: 30,
-    //                           ),
-    //                         ),
-    //                         SizedBox(width: 4),
-    //                         ElevatedButton(
-    //                           onPressed: () {
-    //                             print('Close icon tapped!');
-    //                           },
-    //                           style: ElevatedButton.styleFrom(
-    //                             shape: CircleBorder(),
-    //                             padding: EdgeInsets.all(10),
-    //                             backgroundColor: Colors.grey.withOpacity(0.7),
-    //                             shadowColor: Colors.black.withOpacity(0.3),
-    //                             elevation: 5,
-    //                           ),
-    //                           child: Icon(
-    //                             Icons.close,
-    //                             color: Colors.red,
-    //                             size: 30,
-    //                           ),
-    //                         ),
-    //                       ],
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    // );
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 216, 216),
-        elevation: 0,
+      // appBar: AppBar(
+      //   backgroundColor: const Color.fromARGB(255, 255, 216, 216),
+      //   elevation: 0,
+      // ),
+      appBar: PreferredSize(
+        preferredSize:
+            Size.fromHeight(40.0), // Set the height here (e.g., 50.0)
+        child: AppBar(
+          backgroundColor: const Color.fromARGB(255, 255, 216, 216),
+          title: Text(''), // Empty title or you can add a title here
+          actions: <Widget>[
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: 16.0), // Padding for spacing
+              child: IconButton(
+                icon: Icon(
+                  Icons.filter_alt,
+                  size: 35.0, // Icon size
+                  color: Colors.blue, // Icon color
+                ),
+                onPressed: () {
+                  _showPopup(context); // Call the popup function when clicked
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
@@ -601,7 +315,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                 margin: EdgeInsets.zero,
                 child: Padding(
                   padding:
-                      EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 15),
+                      EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 15),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -610,7 +324,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                           Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
+                                padding: const EdgeInsets.only(bottom: 8),
                                 child: SmoothPageIndicator(
                                   controller: PageController(
                                     initialPage: carouselIndex,
@@ -642,22 +356,13 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                   return Builder(
                                     builder: (BuildContext context) {
                                       return Container(
-                                        margin: EdgeInsets.all(5),
+                                        // margin: EdgeInsets.all(1),
                                         decoration: BoxDecoration(
                                           color: const Color.fromARGB(
                                                   255, 255, 255, 255)
                                               .withOpacity(0.0),
                                           borderRadius:
                                               BorderRadius.circular(30),
-                                          // boxShadow: [
-                                          //   BoxShadow(
-                                          //     color:
-                                          //         Colors.black.withOpacity(0.2),
-                                          //     spreadRadius: 5,
-                                          //     blurRadius: 2,
-                                          //     offset: Offset(4, 4),
-                                          //   ),
-                                          // ],
                                         ),
                                         child: Stack(
                                           children: [
@@ -674,7 +379,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                             // First set of buttons - above the three
                                             Positioned(
                                               top:
-                                                  50, // Positioning above the second row of buttons
+                                                  30, // Positioning above the second row of buttons
                                               left: 0,
                                               right: 0,
                                               child: Row(
