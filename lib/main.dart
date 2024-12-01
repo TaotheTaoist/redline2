@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Dating App',
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
       home:
           const LoginScreen(), // Make sure this screen is correctly implemented

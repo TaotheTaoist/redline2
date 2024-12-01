@@ -207,32 +207,44 @@ class _LoginScreenState extends State<LoginScreen> {
                   labelText: "Email",
                   iconData: Icons.email_outlined,
                   isObscure: false,
+                  borderRadius: 20.0,
                 ),
               ),
               const SizedBox(height: 20),
-              // Password Input Field with Toggle Visibility
               Container(
                 width: MediaQuery.of(context).size.width - 36,
-                child: TextField(
-                  controller: passwordTextEditingController,
-                  obscureText: obscureText, // Toggles password visibility
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        obscureText ? Icons.visibility_off : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          obscureText = !obscureText; // Toggle visibility
-                        });
-                      },
-                    ),
-                    border: const OutlineInputBorder(),
-                  ),
+                child: CustomTextFieldWidget(
+                  editingController:
+                      passwordTextEditingController, // Your password field controller
+                  labelText: "Password", // Field label
+                  iconData: Icons.lock_outline, // Lock icon for password
+                  isObscure: true, // Hides the input for password
+                  borderRadius: 20.0, // Set to 20 for more rounded borders
                 ),
               ),
+
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 36,
+              //   child: TextField(
+              //     controller: passwordTextEditingController,
+              //     obscureText: obscureText, // Toggles password visibility
+              //     decoration: InputDecoration(
+              //       labelText: 'Password',
+              //       prefixIcon: Icon(Icons.lock_outline),
+              //       suffixIcon: IconButton(
+              //         icon: Icon(
+              //           obscureText ? Icons.visibility_off : Icons.visibility,
+              //         ),
+              //         onPressed: () {
+              //           setState(() {
+              //             obscureText = !obscureText; // Toggle visibility
+              //           });
+              //         },
+              //       ),
+              //       border: const OutlineInputBorder(),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 20),
               // Login Button
               Container(

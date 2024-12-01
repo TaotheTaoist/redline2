@@ -119,11 +119,98 @@ class _LikeSentLikeRecievedScreen extends State<LikeSentLikeRecievedScreen> {
     getMutualLikesList();
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     backgroundColor: Colors.grey,
+  //     appBar: AppBar(
+  //       title: Text(
+  //         "Matched",
+  //         style: TextStyle(
+  //           fontSize: 20,
+  //           fontWeight: FontWeight.bold,
+  //           color: Colors.white,
+  //         ),
+  //       ),
+  //       centerTitle: true, // Center the title text
+  //     ),
+  //     body: mutualLikesList.isEmpty
+  //         ? Center(
+  //             child:
+  //                 Icon(Icons.person_off_sharp, color: Colors.white, size: 60),
+  //           )
+  //         : GridView.count(
+  //             crossAxisCount: 2,
+  //             padding: const EdgeInsets.all(8),
+  //             children: List.generate(mutualLikesList.length, (Index) {
+  //               return GridTile(
+  //                 child: Padding(
+  //                   padding: const EdgeInsets.all(2.0),
+  //                   child: Card(
+  //                     color: Colors.blue.shade200,
+  //                     child: GestureDetector(
+  //                       onTap: () {
+  //                         // Navigate to ChatScreen when a mutual match is clicked
+  //                         Navigator.push(
+  //                           context,
+  //                           MaterialPageRoute(
+  //                             builder: (context) => ChatScreen(
+  //                               currentUserID:
+  //                                   currentUserID, // Pass current user's ID
+  //                               matchedUserID: mutualLikesList[Index]
+  //                                   ["uid"], // Pass matched user's ID
+  //                             ),
+  //                           ),
+  //                         );
+  //                       },
+  //                       child: DecoratedBox(
+  //                         decoration: BoxDecoration(
+  //                           image: DecorationImage(
+  //                             image: NetworkImage(
+  //                               mutualLikesList[Index]["imageProfile"],
+  //                             ),
+  //                             fit: BoxFit.cover,
+  //                           ),
+  //                         ),
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.all(8.0),
+  //                           child: Center(
+  //                             child: Column(
+  //                               children: [
+  //                                 Text(
+  //                                   mutualLikesList[Index]["name"].toString() +
+  //                                       " " +
+  //                                       mutualLikesList[Index]["age"]
+  //                                           .toString(),
+  //                                   style: const TextStyle(
+  //                                     color: Colors.white,
+  //                                     fontSize: 16,
+  //                                     fontWeight: FontWeight.bold,
+  //                                   ),
+  //                                 ),
+  //                                 const SizedBox(
+  //                                   height: 4,
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               );
+  //             }),
+  //           ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: const Color.fromARGB(255, 255, 216, 216),
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 255, 216, 216),
+        elevation: 0,
         title: Text(
           "Matched",
           style: TextStyle(
@@ -134,74 +221,66 @@ class _LikeSentLikeRecievedScreen extends State<LikeSentLikeRecievedScreen> {
         ),
         centerTitle: true, // Center the title text
       ),
-      body: mutualLikesList.isEmpty
-          ? Center(
-              child:
-                  Icon(Icons.person_off_sharp, color: Colors.white, size: 60),
-            )
-          : GridView.count(
-              crossAxisCount: 2,
-              padding: const EdgeInsets.all(8),
-              children: List.generate(mutualLikesList.length, (Index) {
-                return GridTile(
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Card(
-                      color: Colors.blue.shade200,
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigate to ChatScreen when a mutual match is clicked
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatScreen(
-                                currentUserID:
-                                    currentUserID, // Pass current user's ID
-                                matchedUserID: mutualLikesList[Index]
-                                    ["uid"], // Pass matched user's ID
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color.fromARGB(255, 255, 216, 216),
+              const Color.fromARGB(255, 255, 252, 252),
+              const Color.fromARGB(255, 255, 255, 255),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: mutualLikesList.isEmpty
+            ? Center(
+                child:
+                    Icon(Icons.person_off_sharp, color: Colors.white, size: 60),
+              )
+            : GridView.count(
+                crossAxisCount: 2,
+                padding: const EdgeInsets.all(8),
+                children: List.generate(mutualLikesList.length, (Index) {
+                  return GridTile(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              20), // Set border radius for the card
+                        ),
+                        elevation: 5, // Optional: add shadow for depth
+                        child: GestureDetector(
+                          onTap: () {
+                            // Navigate to ChatScreen when a mutual match is clicked
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                  currentUserID:
+                                      currentUserID, // Pass current user's ID
+                                  matchedUserID: mutualLikesList[Index]
+                                      ["uid"], // Pass matched user's ID
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                mutualLikesList[Index]["imageProfile"],
-                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                20), // Apply radius to image
+                            child: Image.network(
+                              mutualLikesList[Index]["imageProfile"],
                               fit: BoxFit.cover,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    mutualLikesList[Index]["name"].toString() +
-                                        " " +
-                                        mutualLikesList[Index]["age"]
-                                            .toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
-                                ],
-                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
-            ),
+                  );
+                }),
+              ),
+      ),
     );
   }
 }

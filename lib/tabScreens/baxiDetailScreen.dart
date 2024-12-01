@@ -706,12 +706,14 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   }
 
   // 地支6合開始
-  // void regularCalculating() {
-  //   String?
-
-  //   List<String> diziCom =
-  //       gods.diziCom(dummyyearbot, dummyMonthbot, dummydaybot);
-  // }
+  void regularCalculating() {
+    if (widget.sure == "false") {
+      List<String> diziCom =
+          gods.diziCom(dummyyearbot, dummyMonthbot, dummydaybot);
+      if (diziCom.isNotEmpty) {}
+      return;
+    }
+  }
 
   int calculateAge(DateTime birthDate) {
     int years = now.year - birthDate.year;
@@ -937,6 +939,7 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text('Baxi Details'),
       ),

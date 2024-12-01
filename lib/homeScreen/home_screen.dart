@@ -90,48 +90,147 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       bottomNavigationBar: ClipRRect(
+//         borderRadius: BorderRadius.only(
+//           topLeft: Radius.circular(20),
+//           topRight: Radius.circular(20),
+//         ), // Adds rounded edges to the top
+//         child: BottomNavigationBar(
+//           onTap: (indexNumber) {
+//             setState(() {
+//               screenIndex = indexNumber;
+//             });
+//           },
+//           type: BottomNavigationBarType.fixed,
+//           backgroundColor: Colors.white,
+//           selectedItemColor: const Color.fromARGB(255, 255, 106, 180),
+//           unselectedItemColor: const Color.fromARGB(137, 182, 181, 181),
+//           currentIndex: screenIndex,
+//           items: const [
+//             BottomNavigationBarItem(
+//               icon: Icon(Icons.home, size: 30),
+//               label: 'Home',
+//             ),
+//             BottomNavigationBarItem(
+//               icon: Icon(Icons.remove_red_eye, size: 30),
+//               label: 'View',
+//             ),
+//             BottomNavigationBarItem(
+//               icon: Icon(Icons.star, size: 30),
+//               label: 'Favorites',
+//             ),
+//             BottomNavigationBarItem(
+//               icon: Icon(Icons.chat, size: 30),
+//               label: 'Likes',
+//             ),
+//             BottomNavigationBarItem(
+//               icon: Icon(Icons.person, size: 30),
+//               label: 'Profile',
+//             ),
+//           ],
+//         ),
+//       ),
+//       body: tabScreensList[screenIndex],
+//     );
+//   }
+// }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       bottomNavigationBar: BottomNavigationBar(
+//         onTap: (indexNumber) {
+//           setState(() {
+//             screenIndex = indexNumber;
+//           });
+//         },
+//         type: BottomNavigationBarType.fixed,
+//         backgroundColor: Colors.white,
+//         selectedItemColor: const Color.fromARGB(255, 255, 106, 180),
+//         unselectedItemColor: const Color.fromARGB(137, 182, 181, 181),
+//         currentIndex: screenIndex,
+//         items: const [
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.home, size: 30),
+//             label: 'Home',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.remove_red_eye, size: 30),
+//             label: 'View',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.star, size: 30),
+//             label: 'Favorites',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.chat, size: 30),
+//             label: 'Likes',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.person, size: 30),
+//             label: 'Profile',
+//           ),
+//         ],
+//       ),
+//       body: tabScreensList[screenIndex],
+//     );
+//   }
+// }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (indexNumber) {
-          setState(() {
-            screenIndex = indexNumber;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.transparent,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
-        currentIndex: screenIndex,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(
+              color: const Color.fromARGB(
+                  255, 245, 174, 174), // Border color at the top
+              width: 2, // Border width at the top
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.remove_red_eye, size: 30),
-            label: 'View',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star, size: 30),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat, size: 30),
-            label: 'Likes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 30),
-            label: 'Profile',
-          ),
-        ],
+        ),
+        child: BottomNavigationBar(
+          onTap: (indexNumber) {
+            setState(() {
+              screenIndex = indexNumber;
+            });
+          },
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          selectedItemColor: const Color.fromARGB(255, 255, 106, 180),
+          unselectedItemColor: const Color.fromARGB(136, 148, 148, 148),
+          currentIndex: screenIndex,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, size: 30),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.remove_red_eye, size: 30),
+              label: 'View',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.star, size: 30),
+              label: 'Favorites',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat, size: 30),
+              label: 'Likes',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person, size: 30),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
       body: tabScreensList[screenIndex],
     );
   }
 }
-
 // import 'package:redline/controller/profile-controller.dart';
 // import 'package:redline/tabScreens/favorite_sent_receieved_screen.dart';
 // import 'package:redline/tabScreens/like_sent_like_recieved_screen.dart';
