@@ -173,7 +173,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         });
       }
     });
-    print("Current User ID: $currentUserID");
+    print("Current User ID: $currentUserID swipping_screen.dart");
     // readUserData();
 
     print("currentIndex$currentIndex at init");

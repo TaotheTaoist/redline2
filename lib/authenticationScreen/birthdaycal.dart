@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class BirthdayCal {
-  // Method to select a date using date picker
   static Future<void> selectDate(
       BuildContext context, TextEditingController controller) async {
     DateTime? selectedDate = await showDatePicker(

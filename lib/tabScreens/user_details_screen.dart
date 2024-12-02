@@ -3,13 +3,18 @@ import 'dart:ffi';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:redline/accountSettingScreen/account_settings_screen.dart';
+import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/authenticationScreen/login_screen.dart';
+import 'package:redline/calendar/Lunar.dart' as Lunar;
+import 'package:redline/controller/profile-controller.dart';
 import 'package:redline/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slider/carousel.dart';
 import 'package:get/get.dart';
+import 'package:redline/models/person.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   String? userID;
@@ -24,6 +29,7 @@ class UserDetailsScreen extends StatefulWidget {
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
   // }
+  final Profilecontroller profileController = Get.find<Profilecontroller>();
 
   String uid = "";
   String imageProfile = "";
@@ -32,27 +38,21 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   String name = "";
   String age = "";
   String photoNo = "";
-  // String city = "";
-  // String country = "";
-  // String profileHeading = "";
-  // String lookingforInaPartner = "";
+
+  String birthday = "";
+  String time = "";
+  int year = 2000;
+
+  late Lunar.Lunar lunarDate;
+
+  String xingxuo = "";
 
   int publishedDateTime = 0;
 
   List<String> urlsList = [];
-
-  // String urlImage1 =
-  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  // String urlImage2 =
-  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  // String urlImage3 =
-  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  // String urlImage4 =
-  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  // String urlImage5 =
-  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  // String urlImage6 =
-  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
+  // bool isLoading = true;
+  Map<String, dynamic> cachedUser =
+      Profilecontroller().storage.read("currentUserData");
 
   final List<String> placeholderUrls = [
     'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3',
@@ -65,14 +65,50 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   void initState() {
     super.initState();
+
     print('User UID widget.userID: ${widget.userID}');
     print('currentUserId:${FirebaseAuth.instance.currentUser!.uid}');
 
+    print("cacheduser $cachedUser userdetail_Screen");
+
+    birthday = cachedUser["birthday"];
+    print("uid at $birthday");
     retrieveUserInfo().then((_) {
-      retrieveUserImages(); // Load images after user info is retrieved
+      retrieveUserImages();
+
+      // this part must be inside "then block"
+      // =============================================================
+      late DateTime combinedDateTime;
+
+      TimeOfDay? parsedTime = stringToTimeOfDay(time);
+
+      print('Parsed Time: $parsedTime');
+
+      final birthdayDate = DateTime.parse(birthday);
+      final year = birthdayDate.year;
+      final month = birthdayDate.month;
+      final day = birthdayDate.day;
+
+      combinedDateTime = DateTime(
+        year,
+        month,
+        day,
+        parsedTime?.hour ?? 2,
+        parsedTime?.minute ?? 2,
+      );
+      lunarDate = Lunar.Lunar.fromDate(combinedDateTime);
+      xingxuo = lunarDate.getSolar().getXingZuo();
+
+      print("baxi${lunarDate.getBaZi()}");
+      // =============================================================
     }).catchError((e) {
       print("Error during user info retrieval: $e");
     });
+    // Future.delayed(Duration(seconds: 2), () {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    // });
   }
 
   retrieveUserInfo() async {
@@ -90,6 +126,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           email = data["email"];
           uid = data["uid"];
           age = data["age"].toString();
+          time = data["bdTime"].toString();
+          // birthday = data["birthday"].toString();
+          print("Document snapshot: ${snapshot.data()}");
+
+          print("Assigned birthday: $birthday");
         });
       } else {
         print("No such document!");
@@ -292,6 +333,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 235, 235, 235),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: Text("編輯"),
@@ -316,7 +358,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body:
+          //  isLoading
+          //     ? Center(child: CircularProgressIndicator()):
+          SingleChildScrollView(
         controller: ScrollController(),
         child: Padding(
           padding: const EdgeInsets.all(30),
@@ -386,7 +431,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
               ),
               SizedBox(height: 4),
               Text(
-                '♓ Pisces',
+                '♓ $xingxuo',
                 style: TextStyle(
                   fontSize: 16,
                   color: const Color.fromARGB(255, 0, 0, 0),

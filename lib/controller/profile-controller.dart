@@ -30,6 +30,8 @@ class Profilecontroller extends GetxController {
     GetStorage.init();
     loadCachedData();
 
+    fetchAndCacheCurrentUserData();
+
     // Bind Firestore stream to keep the list updated
     usersProfileList.bindStream(_fetchProfilesFromFirestore());
 
@@ -41,6 +43,32 @@ class Profilecontroller extends GetxController {
     });
 
     // loadCachedData();
+  }
+
+  void fetchAndCacheCurrentUserData() async {
+    // Fetch current user data from Firestore
+    try {
+      String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot currentUserSnapshot =
+          await _firestore.collection("users").doc(currentUserUid).get();
+
+      if (currentUserSnapshot.exists) {
+        Map<String, dynamic> currentUserData =
+            currentUserSnapshot.data() as Map<String, dynamic>;
+
+        // Assuming Person.fromJson() can handle the structure of the current user data
+        Person currentUser = Person.fromDataSnapshot(currentUserSnapshot);
+
+        // Cache current user data
+        storage.write('currentUserData', currentUser.toJson());
+        print("Current user data saved to cache. :${currentUserData}");
+        print(storage.read("currentUserData"));
+      } else {
+        print("Current user document does not exist.");
+      }
+    } catch (e) {
+      print("Error fetching current user data: $e");
+    }
   }
 
   Stream<List<Person>> _fetchProfilesFromFirestore() {
@@ -82,7 +110,7 @@ class Profilecontroller extends GetxController {
   void cacheData() {
     if (usersProfileList.value.isNotEmpty) {
       print('Saving profiles to cache...');
-      storage.write('cachedProfiles',
+      storage.write('cachedProfiles not including current user',
           usersProfileList.value.map((p) => p.toJson()).toList());
 
       print(
@@ -102,33 +130,6 @@ class Profilecontroller extends GetxController {
     debugPrint(
         "Caching profiles: ${usersProfileList.value.map((p) => p.toJson()).toList()} cacheData()");
   }
-
-  // void loadCachedData() async {
-  //   var cachedProfiles =
-  //       await storage.read('cachedProfiles') as List<dynamic>? ?? [];
-  //   var cachedImages =
-  //       await storage.read('cachedImageUrls') as Map<String, dynamic>? ?? {};
-
-  //   print("Raw cached profiles: $cachedProfiles");
-  //   print("Raw cached images: $cachedImages");
-  //   print("loadCachedData()");
-  //   if (cachedProfiles.isNotEmpty) {
-  //     usersProfileList.value =
-  //         cachedProfiles.map((e) => Person.fromJson(e)).toList();
-  //     print(
-  //         "Loaded cached profiles: ${usersProfileList.value.length} profiles loaded.");
-  //   } else {
-  //     print("No cached profiles found.");
-  //   }
-  //   if (cachedImages.isNotEmpty) {
-  //     userImageUrlsMap.value = Map<String, List<String>>.from(cachedImages);
-
-  //     print(
-  //         "Loaded cached image URLs: ${userImageUrlsMap.value.length} user images loaded.");
-  //   } else {
-  //     print("No cached image URLs found.");
-  //   }
-  // }
 
   void loadCachedData() {
     var cachedProfiles = storage.read('cachedProfiles');
@@ -306,44 +307,4 @@ class Profilecontroller extends GetxController {
 
     return interests;
   }
-
-  // @override
-  // void onInit() {
-  //   super.onInit();
-
-  //   usersProfileList.bindStream(FirebaseFirestore.instance
-  //       .collection("users")
-  //       .where("uid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
-  //       .snapshots()
-  //       .map((QuerySnapshot queryDataSnapshot) {
-  //     List<Person> profilesList = [];
-
-  //     // Debugging
-  //     print(
-  //         'Number of profiles fetched: ${queryDataSnapshot.size} - profile-controller');
-  //     if (queryDataSnapshot.size == 0) {
-  //       print('No profiles found');
-  //     }
-
-  //     for (var eachProfile in queryDataSnapshot.docs) {
-  //       // print('Profile data: ${eachProfile.data()}');
-  //       profilesList.add(Person.fromDataSnapshot(eachProfile));
-  //     }
-
-  //     return profilesList;
-  //   }).handleError((error) {
-  //     print('Error fetching profiles: $error');
-  //   }));
-  //   // Use `ever()` to watch the usersProfileList and call fetchUserImageUrlsMap once profiles are loaded
-  //   ever(usersProfileList, (_) {
-  //     if (usersProfileList.value.isNotEmpty) {
-  //       // Call the method to fetch image URLs only after the profiles are loaded
-  //       fetchUserImageUrlsMap();
-  //     }
-  //   });
-
-  //   print("Profile Controller Initialized");
-  //   print("Function finished at: ${DateTime.now()} Profile Controller ");
-  //   // SwipeableProfiles().selectedUserUid = profileController.userImageUrlsMap.value[0] as String;
-  // }
 }
