@@ -150,16 +150,18 @@ class Authenticationcontroller extends GetxController {
   }
 
   creatNewUserAccount(
-      File imageProfile,
-      String email,
-      String password,
-      String name,
-      List<String> interests,
-      List<String> imageUrls,
-      String sex,
-      String bdTime,
-      String birthday,
-      String sure) async {
+    File imageProfile,
+    String email,
+    String password,
+    String name,
+    List<String> interests,
+    List<String> imageUrls,
+    String sex,
+    String bdTime,
+    String birthday,
+    String sure,
+    int age,
+  ) async {
     try {
       // is this code being used? Yes, it need for usercreation
       UserCredential credential = await FirebaseAuth.instance
@@ -168,17 +170,19 @@ class Authenticationcontroller extends GetxController {
       //changed String to String? but original was String, to fit a new version of uploadImageToStorage
       String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
       personModel.Person personInstance = personModel.Person(
-          uid: FirebaseAuth.instance.currentUser!.uid,
-          imageProfile: urlOfDownloadImage,
-          email: email,
-          password: password,
-          name: name,
-          interests: interests,
-          imageUrls: imageUrls,
-          sex: sex,
-          bdTime: bdTime,
-          birthday: birthday,
-          sure: sure);
+        uid: FirebaseAuth.instance.currentUser!.uid,
+        imageProfile: urlOfDownloadImage,
+        email: email,
+        password: password,
+        name: name,
+        interests: interests,
+        imageUrls: imageUrls,
+        sex: sex,
+        bdTime: bdTime,
+        birthday: birthday,
+        sure: sure,
+        age: age,
+      );
 
       await FirebaseFirestore.instance
           .collection('users')
@@ -240,6 +244,8 @@ class Authenticationcontroller extends GetxController {
     });
   }
 }
+
+
 // import 'dart:io';
 
 // import 'package:cloud_firestore/cloud_firestore.dart';

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/controller/authenticationController.dart';
 import 'package:redline/homeScreen/home_screen.dart';
@@ -30,6 +31,8 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
 
   var authenticationcontroller =
       Authenticationcontroller.authenticationcontroller;
+
+  late int age;
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +164,28 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
 
             const SizedBox(height: 20),
             GestureDetector(
-              onTap: () => BirthdayCal.selectDate(context, birthdayController),
+              onTap: () async {
+                // Call the selectDate function
+
+                DateTime? selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime(2100),
+                );
+
+                if (selectedDate != null) {
+                  // Calculate the age
+                  age = BirthdayCal.calculateAge(selectedDate);
+
+                  print("age: $age");
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(selectedDate);
+
+                  // Update the TextEditingController with both birthday and age
+                  birthdayController.text = '$formattedDate';
+                }
+              },
               child: AbsorbPointer(
                 child: CustomTextFieldWidget(
                   editingController: birthdayController,
@@ -171,6 +195,18 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
                 ),
               ),
             ),
+
+            // GestureDetector(
+            //   onTap: () => BirthdayCal.selectDate(context, birthdayController),
+            //   child: AbsorbPointer(
+            //     child: CustomTextFieldWidget(
+            //       editingController: birthdayController,
+            //       labelText: "Birthday",
+            //       iconData: Icons.cake,
+            //       borderRadius: 20.0,
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () async {
@@ -218,6 +254,7 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
                   'birthday': birthdayController.text.trim(),
                   // 'location': locationController.text.trim(),
                   'imageProfile': widget.user.photoURL ?? '',
+                  'age': age,
                 }, SetOptions(merge: true));
                 await checkProfileCompletion();
                 // }

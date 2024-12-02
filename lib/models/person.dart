@@ -16,6 +16,7 @@ class Person {
   String? bdTime;
   String? birthday;
   String? sure;
+  int? age;
 
   Person({
     this.uid,
@@ -28,9 +29,10 @@ class Person {
     this.interests,
     this.imageUrls,
     this.sex,
-    this.bdTime, // New field
-    this.birthday, // New field
-    this.sure, // New field
+    this.bdTime,
+    this.birthday,
+    this.sure,
+    this.age,
   });
 
   static Person fromDataSnapshot(DocumentSnapshot snapshot) {
@@ -46,9 +48,10 @@ class Person {
       interests: List<String>.from(dataSnapshot["interests"] ?? []),
       imageUrls: List<String>.from(dataSnapshot["imageUrls"] ?? []),
       sex: dataSnapshot["sex"],
-      bdTime: dataSnapshot["bdTime"], // New field
-      birthday: dataSnapshot["birthday"], // New field
-      sure: dataSnapshot["sure"], // New field
+      bdTime: dataSnapshot["bdTime"],
+      birthday: dataSnapshot["birthday"],
+      sure: dataSnapshot["sure"],
+      age: dataSnapshot["age"],
     );
   }
 
@@ -63,9 +66,10 @@ class Person {
         "interests": interests,
         "imageUrls": imageUrls,
         "sex": sex,
-        "bdTime": bdTime, // New field
-        "birthday": birthday, // New field
-        "sure": sure, // New field
+        "bdTime": bdTime,
+        "birthday": birthday,
+        "sure": sure,
+        "age": age,
       };
 
   // Convert a map to a Person object
@@ -81,9 +85,10 @@ class Person {
       interests: List<String>.from(json["interests"] ?? []),
       imageUrls: List<String>.from(json["imageUrls"] ?? []),
       sex: json["sex"],
-      bdTime: json["bdTime"], // New field
-      birthday: json["birthday"], // New field
-      sure: json["sure"], // New field
+      bdTime: json["bdTime"],
+      birthday: json["birthday"],
+      sure: json["sure"],
+      age: json["age"],
     );
   }
 }

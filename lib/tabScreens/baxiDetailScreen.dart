@@ -100,6 +100,8 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
 
   late int bodystrength;
 
+  String? xingXuo;
+
   @override
   void initState() {
     // 所有十神
@@ -194,6 +196,8 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     // check5Elements();
     // attackSelf();
     regularCalculating();
+    xingXuo = lunarDate.getSolar().getXingZuo();
+    print("xingXuo:$xingXuo");
   }
 
   // 確認時間

@@ -30,7 +30,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   String email = "";
   String password = "";
   String name = "";
-  // String age = "";
+  String age = "";
   String photoNo = "";
   // String city = "";
   // String country = "";
@@ -41,18 +41,18 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   List<String> urlsList = [];
 
-  String urlImage1 =
-      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  String urlImage2 =
-      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  String urlImage3 =
-      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  String urlImage4 =
-      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  String urlImage5 =
-      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
-  String urlImage6 =
-      "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
+  // String urlImage1 =
+  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
+  // String urlImage2 =
+  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
+  // String urlImage3 =
+  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
+  // String urlImage4 =
+  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
+  // String urlImage5 =
+  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
+  // String urlImage6 =
+  //     "https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3";
 
   final List<String> placeholderUrls = [
     'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/placeholder%2FprofileAvatar.png?alt=media&token=a1fb4ae4-c16a-44fe-8ac7-858c0be0f5b3',
@@ -86,9 +86,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         // Cast snapshot.data() to Map<String, dynamic>
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
         setState(() {
-          name = data["name"]; // Now you can access "name"
+          name = data["name"];
           email = data["email"];
           uid = data["uid"];
+          age = data["age"].toString();
         });
       } else {
         print("No such document!");
@@ -146,34 +147,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       });
     }
   }
-
-  void _confirmDeleteAccount(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm Deletion'),
-          content: Text('確定要刪除帳號'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-
-                // _deleteAccount();
-              },
-              child: Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
-  } // End of confirmation dialog function
 
   Future<void> _deleteAccount() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -320,8 +293,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(name.isNotEmpty ? name : "User Details"),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        title: Text("編輯"),
         centerTitle: true,
         automaticallyImplyLeading: true, // This will show the back button
 
@@ -336,6 +309,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 icon: const Icon(
                   Icons.settings,
                   size: 40,
+                  color: Colors.grey,
                 ),
               ),
             ],
@@ -396,8 +370,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        '• 31',
+                        '• ${age}',
                         style: TextStyle(
+                          color: const Color.fromARGB(255, 0, 0, 0),
                           fontSize: 20,
                         ),
                       ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:redline/constants/interests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:redline/authenticationScreen/birthdaycal.dart';
@@ -50,6 +51,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   final List<String> selectedInterests = [];
 
   String labelText = "Time (optional)";
+
+  late int age;
 
   // Toggle selection on tap
   void toggleInterest(String interest) {
@@ -350,8 +353,29 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     ),
                     const SizedBox(height: 20),
                     GestureDetector(
-                      onTap: () =>
-                          BirthdayCal.selectDate(context, birthdayController),
+                      onTap: () async {
+                        // Call the selectDate function
+
+                        DateTime? selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime(2100),
+                        );
+
+                        if (selectedDate != null) {
+                          // Calculate the age
+                          age = BirthdayCal.calculateAge(selectedDate);
+
+                          print("age: $age");
+                          String formattedDate =
+                              DateFormat('yyyy-MM-dd').format(selectedDate);
+
+                          // Update the TextEditingController with both birthday and age
+                          birthdayController.text =
+                              '$formattedDate (Age: $age)';
+                        }
+                      },
                       child: AbsorbPointer(
                         child: CustomTextFieldWidget(
                           editingController: birthdayController,
@@ -361,6 +385,19 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         ),
                       ),
                     ),
+
+                    // GestureDetector(
+                    //   onTap: () =>
+                    //       BirthdayCal.selectDate(context, birthdayController),
+                    //   child: AbsorbPointer(
+                    //     child: CustomTextFieldWidget(
+                    //       editingController: birthdayController,
+                    //       labelText: "Birthday",
+                    //       iconData: Icons.cake,
+                    //       borderRadius: 20.0,
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                     GestureDetector(
                       onTap: () async {
@@ -619,20 +656,20 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
                         try {
                           await authenticationcontroller.creatNewUserAccount(
-                            authenticationcontroller
-                                .profileImage!, // Image file
-                            emailTextEditingController.text.trim(), // Email
-                            passwordlTextEditingController.text
-                                .trim(), // Password
-                            nameTextEditingController.text.trim(), // Name
+                              authenticationcontroller
+                                  .profileImage!, // Image file
+                              emailTextEditingController.text.trim(), // Email
+                              passwordlTextEditingController.text
+                                  .trim(), // Password
+                              nameTextEditingController.text.trim(), // Name
 
-                            selectedInterests,
-                            [],
-                            sexController.text.trim(),
-                            birthdayController.text.trim(),
-                            timeController.text.trim(),
-                            timeController.text.isEmpty ? "false" : "true",
-                          );
+                              selectedInterests,
+                              [],
+                              sexController.text.trim(),
+                              birthdayController.text.trim(),
+                              timeController.text.trim(),
+                              timeController.text.isEmpty ? "false" : "true",
+                              age);
 
                           print(
                               "sure: ${timeController.text.isEmpty ? "false" : "true"}");

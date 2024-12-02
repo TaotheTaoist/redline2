@@ -184,13 +184,13 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(
-            top: BorderSide(
-              color: const Color.fromARGB(
-                  255, 245, 174, 174), // Border color at the top
-              width: 2, // Border width at the top
-            ),
-          ),
+          // border: Border(
+          //   top: BorderSide(
+          //     color: const Color.fromARGB(
+          //         255, 245, 174, 174),
+          //     width: 2,
+          //   ),
+          // ),
         ),
         child: BottomNavigationBar(
           onTap: (indexNumber) {

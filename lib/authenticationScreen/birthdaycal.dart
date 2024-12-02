@@ -17,6 +17,16 @@ class BirthdayCal {
     }
   }
 
+  static calculateAge(DateTime birthDate) {
+    DateTime now = DateTime.now();
+    int years = now.year - birthDate.year;
+    if (now.month < birthDate.month ||
+        (now.month == birthDate.month && now.day < birthDate.day)) {
+      years--;
+    }
+    return years;
+  }
+
   // Method to select time using time picker
   static Future<void> selectTime(
       BuildContext context, TextEditingController controller) async {

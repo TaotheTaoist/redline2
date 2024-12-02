@@ -2,7 +2,6 @@
 
 import '../Solar.dart';
 
-
 /// 阳历工具
 /// @author 6tail
 class SolarUtil {
@@ -29,16 +28,16 @@ class SolarUtil {
   static const List<String> XING_ZUO = [
     '白羊',
     '金牛',
-    '双子',
+    '雙子',
     '巨蟹',
-    '狮子',
-    '处女',
+    '獅子',
+    '處女',
     '天秤',
-    '天蝎',
+    '天蠍',
     '射手',
     '摩羯',
     '水瓶',
-    '双鱼'
+    '雙魚'
   ];
 
   /// 日期对应的节日
@@ -283,7 +282,12 @@ class SolarUtil {
   /// @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
   /// @return 周数
   static int getWeeksOfMonth(int year, int month, int start) {
-    return ((getDaysOfMonth(year, month) + Solar.fromYmd(year, month, 1).getWeek() - start) * 1.0 / WEEK.length).ceil();
+    return ((getDaysOfMonth(year, month) +
+                Solar.fromYmd(year, month, 1).getWeek() -
+                start) *
+            1.0 /
+            WEEK.length)
+        .ceil();
   }
 
   /// 获取两个日期之间相差的天数（如果日期a比日期b小，天数为正，如果日期a比日期b大，天数为负）
@@ -300,8 +304,7 @@ class SolarUtil {
     int days;
     int i;
     if (ay == by) {
-      n = getDaysInYear(by, bm, bd) -
-          getDaysInYear(ay, am, ad);
+      n = getDaysInYear(by, bm, bd) - getDaysInYear(ay, am, ad);
     } else if (ay > by) {
       days = getDaysOfYear(by) - getDaysInYear(by, bm, bd);
       for (i = by + 1; i < ay; i++) {
@@ -319,5 +322,4 @@ class SolarUtil {
     }
     return n;
   }
-
 }
