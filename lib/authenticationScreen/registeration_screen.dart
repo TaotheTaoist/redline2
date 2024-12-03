@@ -385,19 +385,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         ),
                       ),
                     ),
-
-                    // GestureDetector(
-                    //   onTap: () =>
-                    //       BirthdayCal.selectDate(context, birthdayController),
-                    //   child: AbsorbPointer(
-                    //     child: CustomTextFieldWidget(
-                    //       editingController: birthdayController,
-                    //       labelText: "Birthday",
-                    //       iconData: Icons.cake,
-                    //       borderRadius: 20.0,
-                    //     ),
-                    //   ),
-                    // ),
                     const SizedBox(height: 20),
                     GestureDetector(
                       onTap: () async {

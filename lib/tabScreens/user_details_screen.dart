@@ -14,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slider/carousel.dart';
 import 'package:get/get.dart';
+import 'package:redline/homeScreen/home_screen.dart';
 import 'package:redline/models/person.dart';
 
 class UserDetailsScreen extends StatefulWidget {
@@ -72,7 +73,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     print("cacheduser $cachedUser userdetail_Screen");
 
     birthday = cachedUser["birthday"];
-    print("uid at $birthday");
+    print("name at ${cachedUser["name"]}");
     retrieveUserInfo().then((_) {
       retrieveUserImages();
 
@@ -331,22 +332,74 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId != null) {
+      print("userID at this :$userId");
+      setState(() {
+        retrieveUserInfo();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 235, 235, 235),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: Text("編輯"),
+        titleTextStyle: TextStyle(color: Colors.black),
         centerTitle: true,
-        automaticallyImplyLeading: true, // This will show the back button
-
+        automaticallyImplyLeading: false,
         actions: [
           Row(
             children: [
               IconButton(
                 onPressed: () {
-                  Get.to(
-                      AccountSettingsScreen()); // Navigate to account settings
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AccountSettingsScreen(userID: uid),
+                    ),
+                  ).then((value) async {
+                    try {
+                      // Fetch the current user's data from Firestore
+                      String currentUserUid =
+                          FirebaseAuth.instance.currentUser!.uid;
+                      DocumentSnapshot currentUserSnapshot =
+                          await FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(currentUserUid)
+                              .get();
+
+                      if (currentUserSnapshot.exists) {
+                        // Retrieve the name from Firestore
+                        String fetchedName =
+                            currentUserSnapshot.get('name') ?? '';
+
+                        // Use setState to update the name and trigger UI update
+                        setState(() {
+                          name = fetchedName; // Assign the name from Firestore
+                        });
+                      } else {
+                        print("Current user document does not exist.");
+                      }
+                    } catch (e) {
+                      print("Error retrieving user data: $e");
+                    }
+                  });
+                  // .then((value) async {
+                  //   setState(() async {
+                  //     await profileController.listenToCurrentUserDataChanges();
+                  //     name = cachedUser["name"];
+                  //     print("cacheduser $cachedUser inside of set state");
+                  //     print("wtf is going on");
+                  //     print("what is my name$name");
+                  //   });
+                  // });
                 },
                 icon: const Icon(
                   Icons.settings,
@@ -409,6 +462,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       Text(
                         name,
                         style: TextStyle(
+                          color: const Color.fromARGB(255, 0, 0, 0),
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         ),
@@ -516,40 +570,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 mainAxisAlignment:
                     MainAxisAlignment.center, // Align buttons to center
                 children: [
-                  // ElevatedButton(
-                  //   // Start of Log Out Button
-                  //   onPressed: () async {
-                  //     await FirebaseAuth.instance
-                  //         .signOut(); // Sign out the user
-
-                  //     setState(() {
-                  //       currentUserID =
-                  //           ""; // Clear the global or current user ID variable
-                  //       widget.userID = "";
-                  //       name = "";
-                  //       uid = "";
-                  //       imageProfile = "";
-                  //       email = "";
-                  //       password = "";
-
-                  //       // String age = "";
-                  //     });
-                  //     // await FirebaseFirestore.instance.clearPersistence();
-                  //     await FirebaseFirestore.instance.terminate();
-                  //     // After sign out, navigate to a different page (optional)
-                  //     Navigator.pushReplacement(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (context) => LoginScreen()), // Example
-                  //     );
-
-                  //     // Navigator.pushReplacement(
-                  //     //     context,
-                  //     //     MaterialPageRoute(
-                  //     //         builder: (BuildContext context) => LoginScreen()));
-                  //   },
-                  //   child: Text("Log Out"),
-                  // ), // End of Log Out Button
                   ElevatedButton(
                     onPressed: () async {
                       await FirebaseAuth.instance
@@ -615,16 +635,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                     ),
                   ),
-
-                  // ElevatedButton(
-                  //   // Start of Delete Account Button
-                  //   onPressed: () {
-
-                  //     _deleteAccount();
-                  //   },
-                  //   child: Text('Delete Account'),
-
-                  // ),
                 ],
               ),
             ],

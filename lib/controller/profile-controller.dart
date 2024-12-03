@@ -42,7 +42,7 @@ class Profilecontroller extends GetxController {
       }
     });
 
-    // loadCachedData();
+    listenToCurrentUserDataChanges();
   }
 
   void fetchAndCacheCurrentUserData() async {
@@ -68,6 +68,37 @@ class Profilecontroller extends GetxController {
       }
     } catch (e) {
       print("Error fetching current user data: $e");
+    }
+  }
+
+  // void listenToCurrentUserDataChanges() {
+  Future<void> listenToCurrentUserDataChanges() async {
+    try {
+      String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+
+      // Fetch current user data once (instead of using snapshots.listen)
+      DocumentSnapshot documentSnapshot =
+          await _firestore.collection("users").doc(currentUserUid).get();
+
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> currentUserData =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        // Assuming Person.fromJson() can handle the structure of the current user data
+        Person currentUser = Person.fromDataSnapshot(documentSnapshot);
+
+        // Cache the updated user data
+        await storage.write('currentUserData', currentUser.toJson());
+        print(
+            "new Updated for current user and saved to cache: $currentUserData");
+
+        // Optionally return the current user if needed elsewhere
+        return; // Can return currentUser if needed
+      } else {
+        print("Current user document no longer exists.");
+      }
+    } catch (e) {
+      print("Error setting up listener for current user data: $e");
     }
   }
 

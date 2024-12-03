@@ -319,9 +319,43 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     if (user != null) {
                       Get.snackbar(
-                          "Success", "Logged in successfully with Google!");
+                        "Success",
+                        "Logged in successfully with Google!",
+                        snackPosition: SnackPosition
+                            .TOP, // Position of the snackbar (TOP or BOTTOM)
+                        backgroundColor: Colors.green, // Background color
+                        colorText: Colors.white, // Text color
+                        borderRadius: 12, // Rounded corners
+                        margin: const EdgeInsets.all(
+                            10), // Margin around the snackbar
+                        icon: const Icon(Icons.check_circle,
+                            color: Colors.white), // Add an icon
+                        duration: const Duration(
+                            seconds: 3), // Duration the snackbar is displayed
+                        isDismissible: true, // Allow manual dismissal
+                        forwardAnimationCurve:
+                            Curves.easeInOut, // Animation curve
+                      );
                     } else {
-                      Get.snackbar("Error", "Google login failed.");
+                      Get.snackbar(
+                        "Success",
+                        "Failed",
+                        snackPosition: SnackPosition
+                            .TOP, // Position of the snackbar (TOP or BOTTOM)
+                        backgroundColor: const Color.fromARGB(
+                            255, 250, 142, 0), // Background color
+                        colorText: Colors.white, // Text color
+                        borderRadius: 12, // Rounded corners
+                        margin: const EdgeInsets.all(
+                            10), // Margin around the snackbar
+                        icon: const Icon(Icons.check_circle,
+                            color: Colors.white), // Add an icon
+                        duration: const Duration(
+                            seconds: 3), // Duration the snackbar is displayed
+                        isDismissible: true, // Allow manual dismissal
+                        forwardAnimationCurve:
+                            Curves.easeInOut, // Animation curve
+                      );
                     }
                     if (mounted) {
                       setState(() {
