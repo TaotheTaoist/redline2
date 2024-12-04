@@ -185,7 +185,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color.fromARGB(
+            255,
+            255,
+            216,
+            216,
+          ),
           // border: Border(
           //   top: BorderSide(
           //     color: const Color.fromARGB(

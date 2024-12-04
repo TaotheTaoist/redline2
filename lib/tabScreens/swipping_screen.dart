@@ -276,7 +276,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         preferredSize:
             Size.fromHeight(40.0), // Set the height here (e.g., 50.0)
         child: AppBar(
-          backgroundColor: const Color.fromARGB(255, 255, 216, 216),
+          backgroundColor: const Color.fromARGB(255, 255, 177, 177),
           title: Text(''), // Empty title or you can add a title here
           actions: <Widget>[
             Padding(
@@ -303,8 +303,8 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color.fromARGB(255, 255, 216, 216),
-                      const Color.fromARGB(255, 255, 252, 252),
+                      const Color.fromARGB(255, 255, 177, 177),
+                      const Color.fromARGB(255, 247, 233, 233),
                       const Color.fromARGB(255, 255, 255, 255),
                     ],
                     begin: Alignment.topCenter,

@@ -404,7 +404,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 icon: const Icon(
                   Icons.settings,
                   size: 40,
-                  color: Colors.grey,
+                  color: Color.fromARGB(255, 0, 0, 0),
                 ),
               ),
             ],
