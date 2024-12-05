@@ -67,15 +67,15 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
     });
   }
 
-  void addInterest() {
-    // Get the interest from the text controller and add it to the list if not empty
-    String newInterest = interestTextEditingController.text.trim();
-    if (newInterest.isNotEmpty && !interests.contains(newInterest)) {
-      interests.add(newInterest);
-      interestTextEditingController
-          .clear(); // Clear the text field after adding
-    }
-  }
+  // void addInterest() {
+  //   // Get the interest from the text controller and add it to the list if not empty
+  //   String newInterest = interestTextEditingController.text.trim();
+  //   if (newInterest.isNotEmpty && !interests.contains(newInterest)) {
+  //     interests.add(newInterest);
+  //     interestTextEditingController
+  //         .clear(); // Clear the text field after adding
+  //   }
+  // }
 
   Future<bool> _checkIfEmailExists(String email, String currentUserId) async {
     final QuerySnapshot result = await FirebaseFirestore.instance
@@ -85,92 +85,296 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
     return result.docs.isNotEmpty && result.docs.first.id != currentUserId;
   }
 
+  // void _showMoreInterests(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(
+  //         top: Radius.circular(12),
+  //       ),
+  //     ),
+  //     builder: (context) {
+  //       return StatefulBuilder(
+  //         builder: (BuildContext context, StateSetter setState) {
+  //           return SingleChildScrollView(
+  //             child: Container(
+  //               padding: const EdgeInsets.fromLTRB(
+  //                   20, 40, 20, 20), // Top padding added here
+  //               decoration: BoxDecoration(
+  //                 color: Colors.white,
+  //                 borderRadius: BorderRadius.only(
+  //                   topLeft: Radius.circular(12),
+  //                   topRight: Radius.circular(12),
+  //                 ),
+  //               ),
+  //               child: Column(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 children: [
+  //                   // Back Button and Title Row
+  //                   Row(
+  //                     children: [
+  //                       IconButton(
+  //                         color: Colors.black,
+  //                         icon: Icon(Icons.arrow_back),
+  //                         onPressed: () {
+  //                           Navigator.pop(
+  //                               context); // Pop the modal bottom sheet
+  //                         },
+  //                       ),
+  //                       Expanded(
+  //                         child: Text(
+  //                           "興趣",
+  //                           style: TextStyle(
+  //                             color: Colors.black,
+  //                             fontSize: 20,
+  //                             fontWeight: FontWeight.bold,
+  //                           ),
+  //                           textAlign: TextAlign.center,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                           width:
+  //                               48), // Placeholder for spacing (to balance the back button)
+  //                     ],
+  //                   ),
+  //                   SizedBox(height: 20),
+
+  //                   // Horizontal Category Selector
+  //                   SingleChildScrollView(
+  //                     scrollDirection: Axis.horizontal,
+  //                     child: Row(
+  //                       children: [
+  //                         // Lifestyle Interests
+  //                         GestureDetector(
+  //                           onTap: () {
+  //                             setState(() {
+  //                               selectedCategory =
+  //                                   "Lifestyle"; // Correct category key
+  //                             });
+  //                           },
+  //                           child: Container(
+  //                             padding: const EdgeInsets.symmetric(
+  //                                 horizontal: 20, vertical: 10),
+  //                             decoration: BoxDecoration(
+  //                               color: selectedCategory == "Lifestyle"
+  //                                   ? Colors.blue
+  //                                   : Colors.grey.shade300,
+  //                               borderRadius: BorderRadius.circular(8),
+  //                             ),
+  //                             child: Text(
+  //                               "Lifestyle Interests",
+  //                               style: TextStyle(
+  //                                 color: selectedCategory == "Lifestyle"
+  //                                     ? Colors.white
+  //                                     : Colors.black,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         SizedBox(width: 10),
+  //                         // Toys Interests
+  //                         GestureDetector(
+  //                           onTap: () {
+  //                             setState(() {
+  //                               selectedCategory =
+  //                                   "Toys"; // Correct category key
+  //                             });
+  //                           },
+  //                           child: Container(
+  //                             padding: const EdgeInsets.symmetric(
+  //                                 horizontal: 20, vertical: 10),
+  //                             decoration: BoxDecoration(
+  //                               color: selectedCategory == "Toys"
+  //                                   ? Colors.blue
+  //                                   : Colors.grey.shade300,
+  //                               borderRadius: BorderRadius.circular(8),
+  //                             ),
+  //                             child: Text(
+  //                               "Toys Interests",
+  //                               style: TextStyle(
+  //                                 color: selectedCategory == "Toys"
+  //                                     ? Colors.white
+  //                                     : Colors.black,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         GestureDetector(
+  //                           onTap: () {
+  //                             setState(() {
+  //                               selectedCategory =
+  //                                   "Toys"; // Correct category key
+  //                             });
+  //                           },
+  //                           child: Container(
+  //                             padding: const EdgeInsets.symmetric(
+  //                                 horizontal: 20, vertical: 10),
+  //                             decoration: BoxDecoration(
+  //                               color: selectedCategory == "occ"
+  //                                   ? Colors.blue
+  //                                   : Colors.grey.shade300,
+  //                               borderRadius: BorderRadius.circular(8),
+  //                             ),
+  //                             child: Text(
+  //                               "職業",
+  //                               style: TextStyle(
+  //                                 color: selectedCategory == "occ"
+  //                                     ? Colors.white
+  //                                     : Colors.black,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 20),
+
+  //                   // Category Items
+  //                   if (selectedCategory == "Lifestyle")
+  //                     _buildInterestSection(
+  //                         "Lifestyle Interests", lifestyleInterests, setState),
+  //                   if (selectedCategory == "Toys")
+  //                     _buildInterestSection(
+  //                         "Toys Interests", toysInterests, setState),
+  //                   if (selectedCategory == "occ")
+  //                     _buildInterestSection("職業", occupations, setState),
+
+  //                   SizedBox(height: 20),
+
+  //                   // Done Button
+  //                   ElevatedButton(
+  //                     onPressed: () {
+  //                       Navigator.pop(context); // Close the bottom sheet
+  //                     },
+  //                     child: Text("Done"),
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor: Colors.blue, // Button color
+  //                       padding:
+  //                           EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Widget _buildInterestSection(
+  //     String title, List<String> interests, StateSetter setState) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         title,
+  //         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //       ),
+  //       SizedBox(height: 10),
+  //       Wrap(
+  //         spacing: 10,
+  //         children: interests.map((interest) {
+  //           final isSelected = selectedInterests.contains(interest);
+  //           return ElevatedButton(
+  //             onPressed: () {
+  //               setState(() {
+  //                 toggleInterest(
+  //                     interest); // Call toggleInterest and update state
+  //               });
+  //             },
+  //             child: Text(
+  //               interest,
+  //               style: TextStyle(
+  //                 color: isSelected ? Colors.white : Colors.black,
+  //               ),
+  //             ),
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor:
+  //                   isSelected ? Colors.blue : Colors.grey.shade300,
+  //               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //             ),
+  //           );
+  //         }).toList(),
+  //       ),
+  //     ],
+  //   );
+  // }
   void _showMoreInterests(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(12),
+        ),
+      ),
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+            return SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12)),
-              ),
-              padding: const EdgeInsets.all(20.0),
-              child: SingleChildScrollView(
+                    topRight: Radius.circular(12),
+                  ),
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Title
-                    Text(
-                      "Select More Interests",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    // Back Button and Title Row
+                    Row(
+                      children: [
+                        IconButton(
+                          color: Colors.black,
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        Expanded(
+                          child: Text(
+                            "興趣",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(width: 48), // Placeholder for spacing
+                      ],
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 20),
 
                     // Horizontal Category Selector
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          // Lifestyle Interests
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedCategory =
-                                    "Lifestyle"; // Correct category key
-                              });
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: selectedCategory == "Lifestyle"
-                                    ? Colors.blue
-                                    : Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                "Lifestyle Interests",
-                                style: TextStyle(
-                                    color: selectedCategory == "Lifestyle"
-                                        ? Colors.white
-                                        : Colors.black),
-                              ),
-                            ),
+                          _buildCategorySelector(
+                            setState,
+                            "Lifestyle",
+                            "Lifestyle Interests",
                           ),
-
                           SizedBox(width: 10),
-
-                          // Toys Interests
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedCategory =
-                                    "Toys"; // Correct category key
-                              });
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: selectedCategory == "Toys"
-                                    ? Colors.blue
-                                    : Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                "Toys Interests",
-                                style: TextStyle(
-                                    color: selectedCategory == "Toys"
-                                        ? Colors.white
-                                        : Colors.black),
-                              ),
-                            ),
+                          _buildCategorySelector(
+                            setState,
+                            "Toys",
+                            "Toys Interests",
+                          ),
+                          SizedBox(width: 10),
+                          _buildCategorySelector(
+                            setState,
+                            "occ",
+                            "職業",
                           ),
                         ],
                       ),
@@ -184,6 +388,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     if (selectedCategory == "Toys")
                       _buildInterestSection(
                           "Toys Interests", toysInterests, setState),
+                    if (selectedCategory == "occ")
+                      _buildInterestSection("職業", occupations, setState),
 
                     SizedBox(height: 20),
 
@@ -194,7 +400,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                       },
                       child: Text("Done"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue, // Button color
+                        backgroundColor: Colors.blue,
                         padding:
                             EdgeInsets.symmetric(horizontal: 40, vertical: 10),
                       ),
@@ -209,6 +415,35 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
     );
   }
 
+  // Method to build category selector buttons
+  Widget _buildCategorySelector(
+      StateSetter setState, String categoryKey, String label) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedCategory = categoryKey;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: selectedCategory == categoryKey
+              ? Colors.blue
+              : Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color:
+                selectedCategory == categoryKey ? Colors.white : Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Method to build interest sections dynamically
   Widget _buildInterestSection(
       String title, List<String> interests, StateSetter setState) {
     return Column(
@@ -216,57 +451,45 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         SizedBox(height: 10),
         Wrap(
           spacing: 10,
+          runSpacing: 10,
           children: interests.map((interest) {
-            final isSelected = selectedInterests.contains(interest);
-            return ElevatedButton(
-              onPressed: () {
+            bool isSelected = selectedInterests.contains(interest);
+            return GestureDetector(
+              onTap: () {
                 setState(() {
-                  toggleInterest(
-                      interest); // Call toggleInterest and update state
+                  if (isSelected) {
+                    selectedInterests.remove(interest);
+                  } else {
+                    selectedInterests.add(interest);
+                  }
                 });
               },
-              child: Text(
-                interest,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.blue : Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isSelected ? Colors.blue : Colors.grey.shade300,
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Text(
+                  interest,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                  ),
+                ),
               ),
             );
           }).toList(),
         ),
       ],
-    );
-  }
-
-  Widget _buildCategoryButton(
-      String category, String selectedCategory, StateSetter setState) {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          selectedCategory = category; // Update selected category
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor:
-            selectedCategory == category ? Colors.blue : Colors.grey,
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      ),
-      child: Text(
-        category,
-        style: TextStyle(
-          color: selectedCategory == category ? Colors.white : Colors.black,
-        ),
-      ),
     );
   }
 
@@ -344,10 +567,14 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 177, 177),
+        backgroundColor: Colors.pink[300],
+        iconTheme: const IconThemeData(
+          color: Colors.black, // Change the back arrow color
+        ),
         title: const Text(
           "Create Account",
-          style: TextStyle(color: Colors.white, fontSize: 22),
+          style: TextStyle(
+              color: Color.fromARGB(255, 252, 252, 252), fontSize: 22),
         ),
         // automaticallyImplyLeading: false,
         actions: [],
@@ -439,7 +666,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     child: Column(
                       children: [
                         CustomTextFieldWidget.buildTextField(
-                            nameTextEditingController, "Name"),
+                            nameTextEditingController, "Name",
+                            icon: Icons.person),
                         const SizedBox(height: 20),
                         // CustomTextFieldWidget(
                         //   editingController: nameTextEditingController,
@@ -447,18 +675,28 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         //   iconData: Icons.person,
                         //   borderRadius: 20.0,
                         // ),
-                        const SizedBox(height: 20),
-                        CustomTextFieldWidget(
-                          editingController: emailTextEditingController,
-                          labelText: "Email",
-                          iconData: Icons.email_outlined,
-                          borderRadius: 20.0,
+
+                        CustomTextFieldWidget.buildTextField(
+                          emailTextEditingController,
+                          "Email",
+                          icon: Icons.email_outlined,
                         ),
+                        // CustomTextFieldWidget(
+                        //   editingController: emailTextEditingController,
+                        //   labelText: "Email",
+                        //   iconData: Icons.email_outlined,
+                        //   borderRadius: 20.0,
+                        // ),
                         const SizedBox(height: 20),
+                        // buildbdField(
+                        //   context,
+                        //   birthdayController,
+                        //   "Birthday",
+                        // ),
+
                         GestureDetector(
                           onTap: () async {
                             // Call the selectDate function
-
                             DateTime? selectedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
@@ -469,26 +707,54 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             if (selectedDate != null) {
                               // Calculate the age
                               age = BirthdayCal.calculateAge(selectedDate);
-
                               print("age: $age");
+
                               String formattedDate =
                                   DateFormat('yyyy-MM-dd').format(selectedDate);
 
-                              // Update the TextEditingController with both birthday and age
-                              birthdayController.text =
-                                  '$formattedDate (Age: $age)';
+                              // Update the TextEditingController with the selected date
+                              birthdayController.text = formattedDate;
                             }
                           },
                           child: AbsorbPointer(
-                            child: CustomTextFieldWidget(
-                              editingController: birthdayController,
-                              labelText: "Birthday",
-                              iconData: Icons.cake,
-                              borderRadius: 20.0,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.0),
+                                border: Border.all(color: Colors.grey),
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.cake,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      birthdayController.text.isEmpty
+                                          ? "Select Birthday"
+                                          : birthdayController.text,
+                                      style: TextStyle(
+                                        color: birthdayController.text.isEmpty
+                                            ? Colors.grey
+                                            : Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.calendar_today,
+                                    color: Colors.blue,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
+
                         GestureDetector(
                           onTap: () async {
                             await BirthdayCal.selectTime(
@@ -501,31 +767,124 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             });
                           },
                           child: AbsorbPointer(
-                            child: CustomTextFieldWidget(
-                              editingController: timeController,
-                              labelText:
-                                  labelText, // Use the updated label text
-                              iconData: Icons.access_time,
-                              borderRadius: 20.0,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.0),
+                                border: Border.all(color: Colors.grey),
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.access_time,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      timeController.text.isEmpty
+                                          ? "Select Time (optional)"
+                                          : timeController.text,
+                                      style: TextStyle(
+                                        color: timeController.text.isEmpty
+                                            ? Colors.grey
+                                            : Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.access_time,
+                                    color: Colors.blue,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
+
+                        // GestureDetector(
+                        //   onTap: () async {
+                        //     // Call the selectDate function
+
+                        //     DateTime? selectedDate = await showDatePicker(
+                        //       context: context,
+                        //       initialDate: DateTime.now(),
+                        //       firstDate: DateTime(1900),
+                        //       lastDate: DateTime(2100),
+                        //     );
+
+                        //     if (selectedDate != null) {
+                        //       // Calculate the age
+                        //       age = BirthdayCal.calculateAge(selectedDate);
+
+                        //       print("age: $age");
+                        //       String formattedDate =
+                        //           DateFormat('yyyy-MM-dd').format(selectedDate);
+
+                        //       // Update the TextEditingController with both birthday and age
+                        //       birthdayController.text = '$formattedDate';
+                        //     }
+                        //   },
+                        //   child: AbsorbPointer(
+                        //     child: CustomTextFieldWidget(
+                        //       editingController: birthdayController,
+                        //       labelText: "Birthday",
+                        //       iconData: Icons.cake,
+                        //       borderRadius: 20.0,
+                        //     ),
+                        //   ),
+                        // ),
+
+                        // GestureDetector(
+                        //   onTap: () async {
+                        //     await BirthdayCal.selectTime(
+                        //         context, timeController);
+                        //     setState(() {
+                        //       labelText = timeController.text.isEmpty
+                        //           ? "Time (optional)"
+                        //           : timeController
+                        //               .text; // Update label text based on selection
+                        //     });
+                        //   },
+                        //   child: AbsorbPointer(
+                        //     child: CustomTextFieldWidget(
+                        //       editingController: timeController,
+                        //       labelText:
+                        //           labelText, // Use the updated label text
+                        //       iconData: Icons.access_time,
+                        //       borderRadius: 20.0,
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(height: 20),
-                        CustomTextFieldWidget(
-                          editingController: passwordlTextEditingController,
-                          labelText: "Password",
-                          iconData: Icons.lock_outline,
-                          isObscure: true,
-                          borderRadius: 20.0,
+                        CustomTextFieldWidget.buildTextField(
+                          passwordlTextEditingController,
+                          "密碼",
+                          icon: Icons.lock_outline,
                         ),
+                        // CustomTextFieldWidget(
+                        //   editingController: passwordlTextEditingController,
+                        //   labelText: "Password",
+                        //   iconData: Icons.lock_outline,
+                        //   isObscure: true,
+                        //   borderRadius: 20.0,
+                        // ),
                         const SizedBox(height: 20),
-                        CustomTextFieldWidget(
-                          editingController: confirmPasswordController,
-                          labelText: "Confirm your Password",
-                          iconData: Icons.lock_outline,
-                          isObscure: true,
-                          borderRadius: 20.0,
+                        CustomTextFieldWidget.buildTextField(
+                          confirmPasswordController,
+                          "密碼",
+                          icon: Icons.lock_outline_sharp,
                         ),
+                        // CustomTextFieldWidget(
+                        //   editingController: confirmPasswordController,
+                        //   labelText: "Confirm your Password",
+                        //   iconData: Icons.lock_outline,
+                        //   isObscure: true,
+                        //   borderRadius: 20.0,
+                        // ),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -709,12 +1068,12 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 10),
                   Container(
                     width: MediaQuery.of(context).size.width - 36,
-                    height: 55,
+                    height: 40,
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: Color.fromARGB(2, 52, 109, 156),
                       borderRadius: BorderRadius.all(
                         Radius.circular(12),
                       ),
@@ -744,8 +1103,29 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                 0, missingFields.length - 2);
 
                             // Show snackbar with the list of missing fields
-                            Get.snackbar("Error",
-                                "Please fill in the following fields: $missingFields");
+                            Get.snackbar(
+                              "Error", // Title of the Snackbar
+                              "Please fill in the following fields: $missingFields", // Message of the Snackbar
+                              snackPosition: SnackPosition
+                                  .BOTTOM, // Position of the Snackbar
+                              backgroundColor: Colors
+                                  .white, // Background color of the Snackbar
+                              titleText: Text(
+                                "Error",
+                                style: TextStyle(
+                                  color: Colors
+                                      .red, // Red color for the title text
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              messageText: Text(
+                                "Please fill in the following fields: $missingFields",
+                                style: TextStyle(
+                                  color: Colors
+                                      .red, // Red color for the message text
+                                ),
+                              ),
+                            );
                           } else {
                             // All fields are filled, proceed to create new user
                             setState(() {
@@ -798,7 +1178,30 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                   showProgressBar = false; // Hide progress bar
                                 });
                                 Get.snackbar(
-                                    "Error", "Failed to create account: $e");
+                                  "Error", // Title of the Snackbar
+                                  "Failed to create account: $e", // Message of the Snackbar
+                                  snackPosition: SnackPosition
+                                      .BOTTOM, // Position of the Snackbar
+                                  backgroundColor: Colors
+                                      .white, // Background color of the Snackbar
+                                  titleText: Text(
+                                    "Error",
+                                    style: TextStyle(
+                                      color: Colors
+                                          .red, // Red color for the title text
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  messageText: Text(
+                                    "Failed to create account: $e",
+                                    style: TextStyle(
+                                      color: Colors
+                                          .red, // Red color for the message text
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
                               }
                             }
                           }
@@ -808,14 +1211,14 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         }
                       },
                       child: const Center(
-                          // child: Text(
-                          //   "已經有帳號",
-                          //   style: TextStyle(
-                          //       fontSize: 20,
-                          //       fontWeight: FontWeight.bold,
-                          //       color: Colors.black),
-                          // ),
-                          ),
+                        child: Text(
+                          "申請帳號",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                      ),
                     ),
                   ),
                   // SizedBox(height: 20),
@@ -861,4 +1264,204 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
       ),
     );
   }
+
+  buildbdField(
+      BuildContext context, TextEditingController dateController, String label,
+      {IconData? icon}) {
+    final FocusNode focusNode = FocusNode();
+
+    return GestureDetector(
+      onTap: () async {
+        // Trigger focus for visual feedback
+        focusNode.requestFocus();
+
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900), // Earliest selectable date
+          lastDate: DateTime(2100), // Latest selectable date
+        );
+
+        // Remove focus after date selection
+        focusNode.unfocus();
+
+        if (pickedDate != null) {
+          final String formattedDate =
+              "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+          dateController.text = formattedDate;
+
+          // Assuming `age` is a global or state variable
+          age = BirthdayCal.calculateAge(pickedDate);
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: AbsorbPointer(
+          child: TextField(
+            controller: dateController,
+            focusNode: focusNode,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 80, 80, 80), // Text color
+              fontSize: 16, // Font size for input text
+              fontWeight: FontWeight.w500, // Font weight
+            ),
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: TextStyle(
+                color: Colors.grey[800], // Label text color
+                fontSize: 14, // Font size for label
+              ),
+              hintText: "Enter $label", // Placeholder text
+              hintStyle: TextStyle(
+                color: Colors.grey[600], // Placeholder text color
+                fontSize: 14, // Font size for placeholder
+              ),
+              fillColor:
+                  Colors.grey[300], // Background color inside the TextField
+              filled: true, // Enables the fillColor property
+              prefixIcon: icon != null
+                  ? Icon(
+                      icon,
+                      color:
+                          const Color.fromARGB(255, 238, 80, 159), // Icon color
+                    )
+                  : null, // If no icon is provided, no prefix icon is displayed
+              border: OutlineInputBorder(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(34),
+                  topRight: Radius.circular(18),
+                  bottomLeft: Radius.circular(18),
+                  bottomRight: Radius.circular(18),
+                ), // Apply custom border radius
+                borderSide: const BorderSide(
+                  color: Colors.grey, // Outline border color
+                  width: 2, // Outline border width
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(34),
+                  topRight: Radius.circular(18),
+                  bottomLeft: Radius.circular(18),
+                  bottomRight: Radius.circular(18),
+                ), // Border radius for enabled state
+                borderSide: const BorderSide(
+                  color: Colors.grey, // Outline border color
+                  width: 2, // Outline border
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(34),
+                  topRight: Radius.circular(34),
+                  bottomLeft: Radius.circular(34),
+                  bottomRight: Radius.circular(34),
+                ), // Border radius for focused state
+                borderSide: const BorderSide(
+                  color: Color.fromARGB(
+                      255, 238, 80, 159), // Border color when focused
+                  width: 2, // Border width when focused
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  // buildbdField(BuildContext context, TextEditingController dateController,
+  //     String label) {
+  //   final FocusNode focusNode = FocusNode();
+
+  //   return GestureDetector(
+  //     onTap: () async {
+  //       // Trigger focus for visual feedback
+  //       focusNode.requestFocus();
+
+  //       DateTime? pickedDate = await showDatePicker(
+  //         context: context,
+  //         initialDate: DateTime.now(),
+  //         firstDate: DateTime(1900), // Earliest selectable date
+  //         lastDate: DateTime(2100), // Latest selectable date
+  //       );
+
+  //       // Remove focus after date selection
+  //       focusNode.unfocus();
+
+  //       if (pickedDate != null) {
+  //         final String formattedDate =
+  //             "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+  //         dateController.text = formattedDate;
+
+  //         age = BirthdayCal.calculateAge(pickedDate);
+  //       }
+  //     },
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(vertical: 8.0),
+  //       child: AbsorbPointer(
+  //         child: TextField(
+  //           controller: dateController,
+  //           focusNode: focusNode,
+  //           style: const TextStyle(
+  //             color: Color.fromARGB(255, 80, 80, 80), // Text color
+  //             fontSize: 16, // Font size for input text
+  //             fontWeight: FontWeight.w500, // Font weight
+  //           ),
+  //           decoration: InputDecoration(
+  //             labelText: label,
+  //             labelStyle: TextStyle(
+  //               color: Colors.grey[800], // Label text color
+  //               fontSize: 14, // Font size for label
+  //             ),
+  //             hintText: "Enter $label", // Placeholder text
+  //             hintStyle: TextStyle(
+  //               color: Colors.grey[600], // Placeholder text color
+  //               fontSize: 14, // Font size for placeholder
+  //             ),
+  //             fillColor:
+  //                 Colors.grey[300], // Background color inside the TextField
+  //             filled: true, // Enables the fillColor property
+  //             border: OutlineInputBorder(
+  //               borderRadius: const BorderRadius.only(
+  //                 topLeft: Radius.circular(34),
+  //                 topRight: Radius.circular(18),
+  //                 bottomLeft: Radius.circular(18),
+  //                 bottomRight: Radius.circular(18),
+  //               ), // Apply custom border radius
+  //               borderSide: const BorderSide(
+  //                 color: Colors.grey, // Outline border color
+  //                 width: 2, // Outline border width
+  //               ),
+  //             ),
+  //             enabledBorder: OutlineInputBorder(
+  //               borderRadius: const BorderRadius.only(
+  //                 topLeft: Radius.circular(34),
+  //                 topRight: Radius.circular(18),
+  //                 bottomLeft: Radius.circular(18),
+  //                 bottomRight: Radius.circular(18),
+  //               ), // Border radius for enabled state
+  //               borderSide: const BorderSide(
+  //                 color: Colors.grey, // Outline border color
+  //                 width: 2, // Outline border
+  //               ),
+  //             ),
+  //             focusedBorder: OutlineInputBorder(
+  //               borderRadius: const BorderRadius.only(
+  //                 topLeft: Radius.circular(34),
+  //                 topRight: Radius.circular(34),
+  //                 bottomLeft: Radius.circular(34),
+  //                 bottomRight: Radius.circular(34),
+  //               ), // Border radius for focused state
+  //               borderSide: const BorderSide(
+  //                 color: Color.fromARGB(
+  //                     255, 238, 80, 159), // Border color when focused
+  //                 width: 2, // Border width when focused
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

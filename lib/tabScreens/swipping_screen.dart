@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,7 +46,14 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
   PageController pageController = PageController();
   CarouselController carouselController = CarouselController();
-  List<String> images = [];
+  // List<String> images = [];
+
+  List<String> images = [
+    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/images%2F1730960552826_5.jpg?alt=media&token=0a9a5ae6-c7b8-4321-9cd2-b28524ba56cf',
+    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/images%2F1730715450932_0.jpg?alt=media&token=4716d5b8-1388-4fd3-8d2d-cf652d6c5ffe',
+    ''
+  ];
+
   List<Person> cachedProfiles = [];
 
   readUserData() async {
@@ -70,7 +78,52 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     });
   }
 
-//
+  // Future<Map<String, List<String>>> generateUserImageUrlsMap(
+  //     Profilecontroller profileController) async {
+  //   Map<String, List<String>> userImageUrlsMap = {};
+
+  //   if (profileController.allUserProfileList.isEmpty) {
+  //     return userImageUrlsMap;
+  //   }
+
+  //   // Record the start time
+  //   final stopwatch = Stopwatch()..start();
+
+  //   for (var user in profileController.allUserProfileList) {
+  //     if (user.uid != null) {
+  //       var snapshot = await FirebaseFirestore.instance
+  //           .collection("users")
+  //           .doc(user.uid)
+  //           .get();
+
+  //       if (snapshot.exists) {
+  //         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+  //         if (data["imageUrls"] is List &&
+  //             (data["imageUrls"] as List).isNotEmpty) {
+  //           List<String> imageUrls = List<String>.from(data["imageUrls"] ?? []);
+  //           userImageUrlsMap[user.uid!] = imageUrls;
+
+  //           // For each image URL, load and cache it using CachedNetworkImage
+  //           for (String imageUrl in imageUrls) {
+  //             await _cacheImage(imageUrl); // Cache each image URL
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   stopwatch.stop();
+  //   print("Time taken to fetch and cache images: ${stopwatch.elapsed}");
+
+  //   return userImageUrlsMap;
+  // }
+
+  // Function to cache the image using CachedNetworkImage
+  Future<void> _cacheImage(String imageUrl) async {
+    await CachedNetworkImageProvider(imageUrl).obtainKey(ImageConfiguration());
+    print('Image cached: $imageUrl');
+  }
 
   Future<Map<String, List<String>>> generateUserImageUrlsMap(
       Profilecontroller profileController) async {
@@ -80,7 +133,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
       // print("No user profiles found in the list. generateUserImageUrlsMap");
       return userImageUrlsMap; // Return early if the list is empty
     }
-
+    final stopwatch = Stopwatch()..start();
     for (var user in profileController.allUserProfileList) {
       if (user.uid != null) {
         // print(
@@ -102,6 +155,9 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
           if (data["imageUrls"] is List &&
               (data["imageUrls"] as List).isNotEmpty) {
             List<String> imageUrls = List<String>.from(data["imageUrls"] ?? []);
+            for (String imageUrl in imageUrls) {
+              await _cacheImage(imageUrl); // Cache each image URL
+            }
 
             // Log the retrieved imageUrls
             print("Image URLs for user ID ${user.uid}: $imageUrls");
@@ -115,10 +171,12 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
           // print(
           // "No data found for user ID: ${user.uid} generateUserImageUrlsMap");
         }
+        stopwatch.stop();
+        //   print("Time taken to fetch and cache images: ${stopwatch.elapsed}");
       }
     }
 
-    // print("Final userImageUrlsMap: $userImageUrlsMap generateUserImageUrlsMap");
+    print("Final userImageUrlsMap: $userImageUrlsMap generateUserImageUrlsMap");
     return userImageUrlsMap;
   }
 
@@ -355,8 +413,8 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                             ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(16),
-                                              child: Image.network(
-                                                imageUrl,
+                                              child: CachedNetworkImage(
+                                                imageUrl: imageUrl,
                                                 fit: BoxFit.cover,
                                                 width: double.infinity,
                                                 height: screenHeight * 1,

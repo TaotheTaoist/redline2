@@ -59,6 +59,7 @@ import 'package:flutter/widgets.dart';
 //   }
 // }
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:redline/authenticationScreen/birthdaycal.dart';
 
 class CustomTextFieldWidget extends StatelessWidget {
   final TextEditingController? editingController;
@@ -122,7 +123,91 @@ class CustomTextFieldWidget extends StatelessWidget {
     );
   }
 
-  static buildTextField(TextEditingController controller, String label) {
+  // static buildTextField(TextEditingController controller, String label) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: Colors.grey.withOpacity(0.8), // Shadow color
+  //             spreadRadius: 1, // Spread radius
+  //             blurRadius: 6, // Blur radius
+  //             offset: const Offset(6, 6), // Shadow position (x, y)
+  //           ),
+  //         ],
+  //         borderRadius: const BorderRadius.only(
+  //           topLeft: Radius.circular(34),
+  //           topRight: Radius.circular(18),
+  //           bottomLeft: Radius.circular(18),
+  //           bottomRight: Radius.circular(18),
+  //         ),
+  //       ),
+  //       child: TextField(
+  //         controller: controller,
+  //         style: const TextStyle(
+  //           color: Color.fromARGB(255, 80, 80, 80), // Text color
+  //           fontSize: 16, // Font size for input text
+  //           fontWeight: FontWeight.w500, // Font weight
+  //         ),
+  //         decoration: InputDecoration(
+  //           labelText: label,
+  //           labelStyle: TextStyle(
+  //             color: Color.fromARGB(255, 255, 140, 140), // Label text color
+  //             fontSize: 14, // Font size for label
+  //           ),
+  //           hintText: "Enter $label", // Placeholder text
+  //           hintStyle: TextStyle(
+  //             color: Colors.grey[600], // Placeholder text color
+  //             fontSize: 14, // Font size for placeholder
+  //           ),
+  //           fillColor:
+  //               Colors.grey[300], // Background color inside the TextField
+  //           filled: true, // Enables the fillColor property
+  //           border: OutlineInputBorder(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(34),
+  //               topRight: Radius.circular(18),
+  //               bottomLeft: Radius.circular(18),
+  //               bottomRight: Radius.circular(18),
+  //             ),
+  //             borderSide: const BorderSide(
+  //               color: Colors.grey, // Outline border color
+  //               width: 2, // Outline border width
+  //             ),
+  //           ),
+  //           enabledBorder: OutlineInputBorder(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(34),
+  //               topRight: Radius.circular(18),
+  //               bottomLeft: Radius.circular(18),
+  //               bottomRight: Radius.circular(18),
+  //             ),
+  //             borderSide: const BorderSide(
+  //               color: Colors.grey, // Outline border color
+  //               width: 2, // Outline border width
+  //             ),
+  //           ),
+  //           focusedBorder: OutlineInputBorder(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(34),
+  //               topRight: Radius.circular(34),
+  //               bottomLeft: Radius.circular(34),
+  //               bottomRight: Radius.circular(34),
+  //             ),
+  //             borderSide: const BorderSide(
+  //               color: Color.fromARGB(
+  //                   255, 238, 80, 159), // Border color when focused
+  //               width: 2, // Border width when focused
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  static buildTextField(TextEditingController controller, String label,
+      {IconData? icon}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -152,7 +237,7 @@ class CustomTextFieldWidget extends StatelessWidget {
           decoration: InputDecoration(
             labelText: label,
             labelStyle: TextStyle(
-              color: Color.fromARGB(255, 255, 140, 140), // Label text color
+              color: const Color.fromARGB(255, 169, 180, 9), // Label text color
               fontSize: 14, // Font size for label
             ),
             hintText: "Enter $label", // Placeholder text
@@ -163,6 +248,13 @@ class CustomTextFieldWidget extends StatelessWidget {
             fillColor:
                 Colors.grey[300], // Background color inside the TextField
             filled: true, // Enables the fillColor property
+            prefixIcon: icon != null
+                ? Icon(
+                    icon,
+                    color:
+                        const Color.fromARGB(255, 192, 12, 102), // Icon color
+                  )
+                : null, // If icon is not provided, no prefix icon will be displayed
             border: OutlineInputBorder(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(34),
@@ -198,6 +290,100 @@ class CustomTextFieldWidget extends StatelessWidget {
                 color: Color.fromARGB(
                     255, 238, 80, 159), // Border color when focused
                 width: 2, // Border width when focused
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static buildbdField(BuildContext context,
+      TextEditingController dateController, String label) {
+    final FocusNode focusNode = FocusNode();
+
+    return GestureDetector(
+      onTap: () async {
+        // Trigger focus for visual feedback
+        focusNode.requestFocus();
+
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900), // Earliest selectable date
+          lastDate: DateTime(2100), // Latest selectable date
+        );
+
+        // Remove focus after date selection
+        focusNode.unfocus();
+
+        if (pickedDate != null) {
+          final String formattedDate =
+              "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+          dateController.text = formattedDate;
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: AbsorbPointer(
+          child: TextField(
+            controller: dateController,
+            focusNode: focusNode,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 80, 80, 80), // Text color
+              fontSize: 16, // Font size for input text
+              fontWeight: FontWeight.w500, // Font weight
+            ),
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: TextStyle(
+                color: Colors.grey[800], // Label text color
+                fontSize: 14, // Font size for label
+              ),
+              hintText: "Enter $label", // Placeholder text
+              hintStyle: TextStyle(
+                color: Colors.grey[600], // Placeholder text color
+                fontSize: 14, // Font size for placeholder
+              ),
+              fillColor:
+                  Colors.grey[300], // Background color inside the TextField
+              filled: true, // Enables the fillColor property
+              border: OutlineInputBorder(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(34),
+                  topRight: Radius.circular(18),
+                  bottomLeft: Radius.circular(18),
+                  bottomRight: Radius.circular(18),
+                ), // Apply custom border radius
+                borderSide: const BorderSide(
+                  color: Colors.grey, // Outline border color
+                  width: 2, // Outline border width
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(34),
+                  topRight: Radius.circular(18),
+                  bottomLeft: Radius.circular(18),
+                  bottomRight: Radius.circular(18),
+                ), // Border radius for enabled state
+                borderSide: const BorderSide(
+                  color: Colors.grey, // Outline border color
+                  width: 2, // Outline border
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(34),
+                  topRight: Radius.circular(34),
+                  bottomLeft: Radius.circular(34),
+                  bottomRight: Radius.circular(34),
+                ), // Border radius for focused state
+                borderSide: const BorderSide(
+                  color: Color.fromARGB(
+                      255, 238, 80, 159), // Border color when focused
+                  width: 2, // Border width when focused
+                ),
               ),
             ),
           ),
