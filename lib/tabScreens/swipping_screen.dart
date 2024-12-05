@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +11,6 @@ import 'package:swipe_cards/swipe_cards.dart';
 import 'package:redline/controller/profile-controller.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class SwipeableProfiles extends StatefulWidget {
   const SwipeableProfiles({Key? key}) : super(key: key);
@@ -45,10 +42,11 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   Profilecontroller profileController = Get.put(Profilecontroller());
 
   String selectedUserUid = "";
-  List<String> images = [];
 
   PageController pageController = PageController();
   CarouselController carouselController = CarouselController();
+  List<String> images = [];
+  List<Person> cachedProfiles = [];
 
   readUserData() async {
     await FirebaseFirestore.instance
@@ -136,7 +134,14 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
           profileKeys = userImageUrlsMap.keys.toList();
           isLoading = false;
         });
-        print("selectedUserUid assigned to ${userImageUrlsMap.keys.first}");
+        print(
+            "selectedUserUid assigned to ${userImageUrlsMap.keys.first} Function finished at: ${DateTime.now()} build, swipping_screen");
+
+        print(
+            "selectedUserUid: $selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen");
+
+        images =
+            profileController.userImageUrlsMap.value[selectedUserUid] ?? [];
       } else {
         print("userImageUrlsMap is empty");
       }
@@ -149,11 +154,6 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        // isLoading = false; // Set loading to false after 3 seconds
-      });
-    });
 
 // Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
 // I/flutter (11412): Like icon tapped!
@@ -163,7 +163,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         currentUserID = user.uid; // Set the global variable
         readUserData(); // Fetch user data after login
         setState(() {
-          updateSwipeItemsInitonly(); //
+          updateSwipeItemsInitonly();
         });
       } else {
         // User is logged out
@@ -177,17 +177,19 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     // readUserData();
 
     print("currentIndex$currentIndex at init");
-    // Future.delayed(Duration(seconds: 3), () {
-    //   setState(() {
-    //     isLoading = false; // Set loading to false after 3 seconds
-    //   });
-    // });
+
     final storage = GetStorage();
     print("storage.getValues()${storage.getValues()}");
 
     loadCachedProfiles();
     print(
         " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
+
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false; // Set loading to false after 3 seconds
+      });
+    });
   }
 
 // ----------- dont use Ever in init, this didchangeDependecies fix the tab change issue
@@ -202,7 +204,6 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     });
   }
 
-  List<Person> cachedProfiles = [];
   void loadCachedProfiles() {
     final storage = GetStorage();
     List<dynamic> cachedProfilesData = storage.read('cachedProfiles') ?? [];
@@ -249,29 +250,12 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    // double screenWidth = MediaQuery.of(context).size.width;
-    // List<String> images = userImageUrlsMap[selectedUserUid] ?? [];
-    // List<String>
-    images = profileController.userImageUrlsMap.value[selectedUserUid] ?? [];
-    // images = (selectedUserUid.isNotEmpty &&
-    //         userImageUrlsMap[selectedUserUid] != null)
-    //     ? userImageUrlsMap[selectedUserUid] ?? []
-    //     : [];
-    // images = userImageUrlsMap[selectedUserUid] ?? [];
-    // print(
-    //     "profileController.userImageUrlsMap.value[selectedUserUid] ${profileController.userImageUrlsMap.value}");
+
+    // images = profileController.userImageUrlsMap.value[selectedUserUid] ?? [];
+
     print("Function finished at: ${DateTime.now()} build, swipping_screen");
-    // print("User image URLs for $selectedUserUid: $images");
-
-    // print(profileController.userImageUrlsMap.value[selectedUserUid]);
-
-    // print("images:$images");
 
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: const Color.fromARGB(255, 255, 216, 216),
-      //   elevation: 0,
-      // ),
       appBar: PreferredSize(
         preferredSize:
             Size.fromHeight(40.0), // Set the height here (e.g., 50.0)
@@ -286,7 +270,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                 icon: Icon(
                   Icons.filter_alt,
                   size: 35.0, // Icon size
-                  color: Colors.blue, // Icon color
+                  color: const Color.fromARGB(255, 107, 107, 107), // Icon color
                 ),
                 onPressed: () {
                   _showPopup(context); // Call the popup function when clicked
@@ -315,12 +299,14 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                 margin: EdgeInsets.zero,
                 child: Padding(
                   padding:
-                      EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 15),
+                      EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (images.isNotEmpty)
+                        // if (images.isNotEmpty)
+
+                        if (cachedProfiles.isNotEmpty)
                           Column(
                             children: [
                               Padding(
@@ -340,7 +326,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                               ),
                               CarouselSlider(
                                 options: CarouselOptions(
-                                  height: screenHeight * 0.8,
+                                  height: screenHeight * 0.82,
                                   autoPlay: false,
                                   enlargeCenterPage: true,
                                   enableInfiniteScroll: true,
@@ -378,10 +364,11 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                             ),
                                             // First set of buttons - above the three
                                             Positioned(
-                                              top:
-                                                  30, // Positioning above the second row of buttons
+                                              top: screenHeight *
+                                                  0.5, // Positioning above the second row of buttons
                                               left: 0,
                                               right: 0,
+                                              bottom: 0,
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
@@ -412,8 +399,8 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                           EdgeInsets.all(10),
                                                       backgroundColor:
                                                           Color.fromARGB(255,
-                                                                  58, 225, 164)
-                                                              .withOpacity(1),
+                                                                  82, 82, 82)
+                                                              .withOpacity(0.8),
                                                       shadowColor:
                                                           const Color.fromARGB(
                                                                   255,
@@ -448,8 +435,8 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                           EdgeInsets.all(10),
                                                       backgroundColor:
                                                           Color.fromARGB(255,
-                                                                  58, 225, 164)
-                                                              .withOpacity(1),
+                                                                  82, 82, 82)
+                                                              .withOpacity(0.8),
                                                       shadowColor: Colors.black
                                                           .withOpacity(0.3),
                                                       elevation: 5,
@@ -473,12 +460,9 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                       padding:
                                                           EdgeInsets.all(10),
                                                       backgroundColor:
-                                                          const Color.fromARGB(
-                                                                  255,
-                                                                  58,
-                                                                  225,
-                                                                  164)
-                                                              .withOpacity(1),
+                                                          Color.fromARGB(255,
+                                                                  82, 82, 82)
+                                                              .withOpacity(0.8),
                                                       shadowColor: Colors.black
                                                           .withOpacity(0.3),
                                                       elevation: 5,
@@ -513,11 +497,10 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                           EdgeInsets.all(10),
                                                       backgroundColor:
                                                           const Color.fromARGB(
-                                                                  255,
-                                                                  255,
-                                                                  255,
-                                                                  255)
-                                                              .withOpacity(0.7),
+                                                              255,
+                                                              110,
+                                                              110,
+                                                              110),
                                                       shadowColor: Colors.black
                                                           .withOpacity(0.3),
                                                       elevation: 5,
@@ -547,7 +530,12 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                         selectedUserUid =
                                                             profileKeys[1];
                                                         print(
-                                                            'selectedUserUid:$selectedUserUid');
+                                                            'selectedUserUid:$selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen"');
+                                                        images = profileController
+                                                                    .userImageUrlsMap
+                                                                    .value[
+                                                                selectedUserUid] ??
+                                                            [];
                                                       });
                                                     },
                                                     style: ElevatedButton
@@ -555,9 +543,13 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                       shape: CircleBorder(),
                                                       padding:
                                                           EdgeInsets.all(10),
-                                                      backgroundColor: Colors
-                                                          .grey
-                                                          .withOpacity(0.7),
+                                                      backgroundColor:
+                                                          const Color.fromARGB(
+                                                                  255,
+                                                                  110,
+                                                                  110,
+                                                                  110)
+                                                              .withOpacity(0.7),
                                                       shadowColor: Colors.black
                                                           .withOpacity(0.3),
                                                       elevation: 5,
@@ -566,7 +558,10 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                       Icons.favorite,
                                                       color:
                                                           const Color.fromARGB(
-                                                              255, 255, 0, 0),
+                                                              255,
+                                                              255,
+                                                              134,
+                                                              134),
                                                       size: 30,
                                                     ),
                                                   ),
@@ -581,9 +576,10 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                       shape: CircleBorder(),
                                                       padding:
                                                           EdgeInsets.all(10),
-                                                      backgroundColor: Colors
-                                                          .grey
-                                                          .withOpacity(0.7),
+                                                      backgroundColor:
+                                                          Color.fromARGB(255,
+                                                                  110, 110, 110)
+                                                              .withOpacity(0.7),
                                                       shadowColor: Colors.black
                                                           .withOpacity(0.3),
                                                       elevation: 5,

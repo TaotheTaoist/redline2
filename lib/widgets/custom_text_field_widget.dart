@@ -121,4 +121,88 @@ class CustomTextFieldWidget extends StatelessWidget {
       ),
     );
   }
+
+  static buildTextField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.8), // Shadow color
+              spreadRadius: 1, // Spread radius
+              blurRadius: 6, // Blur radius
+              offset: const Offset(6, 6), // Shadow position (x, y)
+            ),
+          ],
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(34),
+            topRight: Radius.circular(18),
+            bottomLeft: Radius.circular(18),
+            bottomRight: Radius.circular(18),
+          ),
+        ),
+        child: TextField(
+          controller: controller,
+          style: const TextStyle(
+            color: Color.fromARGB(255, 80, 80, 80), // Text color
+            fontSize: 16, // Font size for input text
+            fontWeight: FontWeight.w500, // Font weight
+          ),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: TextStyle(
+              color: Color.fromARGB(255, 255, 140, 140), // Label text color
+              fontSize: 14, // Font size for label
+            ),
+            hintText: "Enter $label", // Placeholder text
+            hintStyle: TextStyle(
+              color: Colors.grey[600], // Placeholder text color
+              fontSize: 14, // Font size for placeholder
+            ),
+            fillColor:
+                Colors.grey[300], // Background color inside the TextField
+            filled: true, // Enables the fillColor property
+            border: OutlineInputBorder(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(34),
+                topRight: Radius.circular(18),
+                bottomLeft: Radius.circular(18),
+                bottomRight: Radius.circular(18),
+              ),
+              borderSide: const BorderSide(
+                color: Colors.grey, // Outline border color
+                width: 2, // Outline border width
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(34),
+                topRight: Radius.circular(18),
+                bottomLeft: Radius.circular(18),
+                bottomRight: Radius.circular(18),
+              ),
+              borderSide: const BorderSide(
+                color: Colors.grey, // Outline border color
+                width: 2, // Outline border width
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(34),
+                topRight: Radius.circular(34),
+                bottomLeft: Radius.circular(34),
+                bottomRight: Radius.circular(34),
+              ),
+              borderSide: const BorderSide(
+                color: Color.fromARGB(
+                    255, 238, 80, 159), // Border color when focused
+                width: 2, // Border width when focused
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

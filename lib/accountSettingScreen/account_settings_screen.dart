@@ -71,213 +71,227 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: Colors.white, // Background color for the rounded container
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(0),
-            topRight: Radius.circular(50),
-          ),
-          boxShadow: [
-            // BoxShadow(
-            //   color: Colors.black.withOpacity(0.1), // Shadow color
-            //   blurRadius: 10, // Shadow blur radius
-            //   offset: Offset(0, -5), // Shadow offset (above)
-            // ),
-          ],
+          color: Color.fromARGB(255, 255, 177, 177),
         ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                _buildImagePicker(),
-                SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton(
-                  onPressed: saveProfileImage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(
-                        255, 253, 157, 232), // Background color
-                    foregroundColor:
-                        const Color.fromARGB(255, 252, 47, 47), // Text color
-                    // padding: const EdgeInsets.symmetric(
-                    //   vertical: 12.0,
-                    //   horizontal: 24.0, // Adjust padding as needed
-                    // ),
-                    textStyle: const TextStyle(
-                      fontSize: 16, // Font size
-                      fontWeight: FontWeight.bold, // Font weight
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(20), // Rounded corners
-                    ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white, // Background color for the rounded container
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(0),
+              topRight: Radius.circular(50),
+            ),
+            boxShadow: [
+              // BoxShadow(
+              //   color: Colors.black.withOpacity(0.1), // Shadow color
+              //   blurRadius: 10, // Shadow blur radius
+              //   offset: Offset(0, -5), // Shadow offset (above)
+              // ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  _buildImagePicker(),
+                  SizedBox(
+                    height: 10,
                   ),
-                  child: const Text("Save Image"),
-                ),
-                const SizedBox(height: 20),
-                _buildTextField(nameTextEditingController, "Name"),
-                _buildTextField(emailTextEditingController, "Email"),
-                _buildTextField(passwordTextEditingController, "Password"),
-                _buildbdField(context, BDController, "Birthday"),
-                _buildTimeTextField(
-                  context,
-                  timeController,
-                  "Select Time",
-                ),
-                _buildSwitchField(
-                  sexController, // TextEditingController for sex
-                  "Sex",
-                  sex, // String value ("Male" or "Female")
-                  (bool newValue) {
-                    setState(() {
-                      sex =
-                          newValue ? "Male" : "Female"; // Update the sex value
-                    });
-                  },
-                ),
-                SizedBox(height: 20),
-                Container(
-                  width: MediaQuery.of(context).size.width - 36,
-                  decoration: BoxDecoration(
-                    color: Colors
-                        .transparent, // Keep the outer container transparent
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(34),
-                      topRight: Radius.circular(34),
-                      bottomLeft: Radius.circular(34),
-                      bottomRight: Radius.circular(34),
-                    ),
-                    border: Border.all(
-                      color: Colors.grey.withOpacity(0.8), // Outline color
-                      width: 2.0, // Outline width
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(
-                            137, 63, 63, 63), // Shadow color
-                        blurRadius: 6,
-                        offset: const Offset(8, 8),
+                  ElevatedButton(
+                    onPressed: saveProfileImage,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(
+                          255, 253, 157, 232), // Background color
+                      foregroundColor:
+                          const Color.fromARGB(255, 252, 47, 47), // Text color
+                      // padding: const EdgeInsets.symmetric(
+                      //   vertical: 12.0,
+                      //   horizontal: 24.0, // Adjust padding as needed
+                      // ),
+                      textStyle: const TextStyle(
+                        fontSize: 16, // Font size
+                        fontWeight: FontWeight.bold, // Font weight
                       ),
-                    ],
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(20), // Rounded corners
+                      ),
+                    ),
+                    child: const Text("Save Image"),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[
-                              200], // Customize inner gray area background
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(48),
-                            topRight: Radius.circular(34),
-                            bottomLeft: Radius.circular(34),
-                            bottomRight: Radius.circular(34),
-                          ),
+                  const SizedBox(height: 20),
+                  _buildTextField(nameTextEditingController, "Name"),
+                  _buildTextField(emailTextEditingController, "Email"),
+                  _buildTextField(passwordTextEditingController, "Password"),
+                  _buildbdField(context, BDController, "Birthday"),
+                  _buildTimeTextField(
+                    context,
+                    timeController,
+                    "Select Time",
+                  ),
+                  _buildSwitchField(
+                    sexController, // TextEditingController for sex
+                    "Sex",
+                    sex, // String value ("Male" or "Female")
+                    (bool newValue) {
+                      setState(() {
+                        sex = newValue
+                            ? "Male"
+                            : "Female"; // Update the sex value
+                      });
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    width: MediaQuery.of(context).size.width - 36,
+                    decoration: BoxDecoration(
+                      color: Colors
+                          .transparent, // Keep the outer container transparent
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(34),
+                        topRight: Radius.circular(34),
+                        bottomLeft: Radius.circular(34),
+                        bottomRight: Radius.circular(34),
+                      ),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.8), // Outline color
+                        width: 2.0, // Outline width
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(
+                              137, 63, 63, 63), // Shadow color
+                          blurRadius: 6,
+                          offset: const Offset(8, 8),
                         ),
-                        padding: const EdgeInsets.all(
-                            20), // Padding for the inner content
-                        child: Column(
-                          children: [
-                            Wrap(
-                              spacing: 10,
-                              children: interests.take(5).map((interest) {
-                                final isSelected =
-                                    selectedInterests.contains(interest);
-                                return GestureDetector(
-                                  onTap: () {
-                                    toggleInterest(
-                                        interest); // Toggle interest state
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      borderRadius: isSelected
-                                          ? const BorderRadius.all(
-                                              Radius.circular(
-                                                  34), // Fully rounded for selected state
-                                            )
-                                          : const BorderRadius.only(
-                                              topLeft: Radius.circular(34),
-                                              topRight: Radius.circular(18),
-                                              bottomLeft: Radius.circular(18),
-                                              bottomRight: Radius.circular(18),
-                                            ),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? const Color.fromARGB(255, 238, 80,
-                                                159) // Focused border color
-                                            : Colors
-                                                .grey, // Enabled border color
-                                        width: 2,
-                                      ),
-                                      color: isSelected
-                                          ? const Color.fromARGB(255, 231, 255,
-                                              19) // Background for selected state
-                                          : Colors.grey[
-                                              300], // Background for unselected state
-                                    ),
-                                    child: Text(
-                                      interest,
-                                      style: TextStyle(
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[
+                                200], // Customize inner gray area background
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(48),
+                              topRight: Radius.circular(34),
+                              bottomLeft: Radius.circular(34),
+                              bottomRight: Radius.circular(34),
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(
+                              20), // Padding for the inner content
+                          child: Column(
+                            children: [
+                              Wrap(
+                                spacing: 10,
+                                children: interests.take(5).map((interest) {
+                                  final isSelected =
+                                      selectedInterests.contains(interest);
+                                  return GestureDetector(
+                                    onTap: () {
+                                      toggleInterest(
+                                          interest); // Toggle interest state
+                                    },
+                                    child: AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        borderRadius: isSelected
+                                            ? const BorderRadius.all(
+                                                Radius.circular(
+                                                    34), // Fully rounded for selected state
+                                              )
+                                            : const BorderRadius.only(
+                                                topLeft: Radius.circular(34),
+                                                topRight: Radius.circular(18),
+                                                bottomLeft: Radius.circular(18),
+                                                bottomRight:
+                                                    Radius.circular(18),
+                                              ),
+                                        border: Border.all(
+                                          color: isSelected
+                                              ? const Color.fromARGB(
+                                                  255,
+                                                  238,
+                                                  80,
+                                                  159) // Focused border color
+                                              : Colors
+                                                  .grey, // Enabled border color
+                                          width: 2,
+                                        ),
                                         color: isSelected
                                             ? const Color.fromARGB(
-                                                255, 236, 116, 116)
-                                            : Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                                255,
+                                                231,
+                                                255,
+                                                19) // Background for selected state
+                                            : Colors.grey[
+                                                300], // Background for unselected state
+                                      ),
+                                      child: Text(
+                                        interest,
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? const Color.fromARGB(
+                                                  255, 236, 116, 116)
+                                              : Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(
+                                  height:
+                                      10), // Space between interests and button
+                              TextButton(
+                                onPressed: () => _showMoreInterests(
+                                    context), // Show more interests
+                                child: const Text(
+                                  "Show More",
+                                  style: TextStyle(
+                                    color: Colors.blue, // Button text color
                                   ),
-                                );
-                              }).toList(),
-                            ),
-                            const SizedBox(
-                                height:
-                                    10), // Space between interests and button
-                            TextButton(
-                              onPressed: () => _showMoreInterests(
-                                  context), // Show more interests
-                              child: const Text(
-                                "Show More",
-                                style: TextStyle(
-                                  color: Colors.blue, // Button text color
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton(
-                  onPressed: saveProfileData,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(
-                        255, 253, 157, 232), // Background color
-                    foregroundColor:
-                        const Color.fromARGB(255, 243, 91, 91), // Text color
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
+                    onPressed: saveProfileData,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(
+                          255, 253, 157, 232), // Background color
+                      foregroundColor:
+                          const Color.fromARGB(255, 243, 91, 91), // Text color
 
-                    textStyle: const TextStyle(
-                      fontSize: 16, // Font size
-                      fontWeight: FontWeight.bold, // Font weight
+                      textStyle: const TextStyle(
+                        fontSize: 16, // Font size
+                        fontWeight: FontWeight.bold, // Font weight
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(20), // Rounded corners
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(20), // Rounded corners
-                    ),
+                    child: const Text("Save Profile"),
                   ),
-                  child: const Text("Save Profile"),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

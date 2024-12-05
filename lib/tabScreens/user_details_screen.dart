@@ -17,6 +17,7 @@ import 'package:get/get.dart';
 import 'package:redline/homeScreen/home_screen.dart';
 import 'package:redline/models/person.dart';
 
+// ignore: must_be_immutable
 class UserDetailsScreen extends StatefulWidget {
   String? userID;
   UserDetailsScreen({
