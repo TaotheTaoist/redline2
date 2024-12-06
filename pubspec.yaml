@@ -46,3 +46,4 @@ flutter:
     
     - lib/image/logo.png
     - lib/image/profileAvatar.png
+    - lib/image/loginbackground.png

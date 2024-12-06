@@ -582,7 +582,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
       backgroundColor: Colors.grey[350],
       body: Container(
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 255, 177, 177),
+          color: Colors.pink[300],
         ),
         child: Container(
           decoration: BoxDecoration(
@@ -693,7 +693,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         //   birthdayController,
                         //   "Birthday",
                         // ),
-
                         GestureDetector(
                           onTap: () async {
                             // Call the selectDate function
@@ -722,8 +721,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                   horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20.0),
-                                border: Border.all(color: Colors.grey),
-                                color: Colors.white,
+                                color: Colors.white, // Removed the border
                               ),
                               child: Row(
                                 children: [
@@ -772,8 +770,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                   horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20.0),
-                                border: Border.all(color: Colors.grey),
-                                color: Colors.white,
+                                color: Colors.white, // Removed the border
                               ),
                               child: Row(
                                 children: [
@@ -796,7 +793,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                     ),
                                   ),
                                   Icon(
-                                    Icons.access_time,
+                                    Icons.access_alarm,
                                     color: Colors.blue,
                                   ),
                                 ],
@@ -908,68 +905,196 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         ),
                       ),
 
-                      // Container for interests
                       Container(
                         width: MediaQuery.of(context).size.width - 36,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(
-                              255, 255, 255, 255), // Dark gray background
-                          borderRadius: BorderRadius.circular(12),
+                          color: Colors
+                              .transparent, // Keep the outer container transparent
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(34),
+                            topRight: Radius.circular(34),
+                            bottomLeft: Radius.circular(34),
+                            bottomRight: Radius.circular(34),
+                          ),
+                          border: Border.all(
+                            color:
+                                Colors.grey.withOpacity(0.8), // Outline color
+                            width: 2.0, // Outline width
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black54,
-                              blurRadius: 8,
-                              offset: Offset(0, 4),
+                              color: const Color.fromARGB(
+                                  137, 63, 63, 63), // Shadow color
+                              blurRadius: 6,
+                              offset: const Offset(8, 8),
                             ),
                           ],
                         ),
-                        padding: const EdgeInsets.all(20.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Wrap(
-                              spacing: 10,
-                              children: interests.take(5).map((interest) {
-                                final isSelected =
-                                    selectedInterests.contains(interest);
-                                return GestureDetector(
-                                  onTap: () {
-                                    toggleInterest(
-                                        interest); // Call the function to toggle interest
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? Colors.blue
-                                          : Colors.grey[
-                                              300], // Change color based on selection
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Text(
-                                      interest,
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[
+                                    200], // Customize inner gray area background
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(48),
+                                  topRight: Radius.circular(34),
+                                  bottomLeft: Radius.circular(34),
+                                  bottomRight: Radius.circular(34),
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(
+                                  20), // Padding for the inner content
+                              child: Column(
+                                children: [
+                                  Wrap(
+                                    spacing: 10,
+                                    children: interests.take(5).map((interest) {
+                                      final isSelected =
+                                          selectedInterests.contains(interest);
+                                      return GestureDetector(
+                                        onTap: () {
+                                          toggleInterest(
+                                              interest); // Toggle interest state
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            borderRadius: isSelected
+                                                ? const BorderRadius.all(
+                                                    Radius.circular(
+                                                        34), // Fully rounded for selected state
+                                                  )
+                                                : const BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(34),
+                                                    topRight:
+                                                        Radius.circular(18),
+                                                    bottomLeft:
+                                                        Radius.circular(18),
+                                                    bottomRight:
+                                                        Radius.circular(18),
+                                                  ),
+                                            border: Border.all(
+                                              color: isSelected
+                                                  ? const Color.fromARGB(
+                                                      255,
+                                                      238,
+                                                      80,
+                                                      159) // Focused border color
+                                                  : Colors
+                                                      .grey, // Enabled border color
+                                              width: 2,
+                                            ),
+                                            color: isSelected
+                                                ? const Color.fromARGB(
+                                                    255,
+                                                    231,
+                                                    255,
+                                                    19) // Background for selected state
+                                                : Colors.grey[
+                                                    300], // Background for unselected state
+                                          ),
+                                          child: Text(
+                                            interest,
+                                            style: TextStyle(
+                                              color: isSelected
+                                                  ? const Color.fromARGB(
+                                                      255, 236, 116, 116)
+                                                  : Colors.black,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                  const SizedBox(
+                                      height:
+                                          10), // Space between interests and button
+                                  TextButton(
+                                    onPressed: () => _showMoreInterests(
+                                        context), // Show more interests
+                                    child: const Text(
+                                      "Show More",
                                       style: TextStyle(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.black,
+                                        color: Colors.blue, // Button text color
                                       ),
                                     ),
                                   ),
-                                );
-                              }).toList(),
-                            ),
-                            TextButton(
-                              onPressed: () => _showMoreInterests(
-                                  context), // Call the function to show more interests
-                              child: Text(
-                                "Show More",
-                                style: TextStyle(
-                                    color: Colors.blue), // Style for the button
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width - 36,
+                      //   decoration: BoxDecoration(
+                      //     color: Color.fromARGB(
+                      //         255, 255, 255, 255), // Dark gray background
+                      //     borderRadius: BorderRadius.circular(12),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.black54,
+                      //         blurRadius: 8,
+                      //         offset: Offset(0, 4),
+                      //       ),
+                      //     ],
+                      //   ),
+                      //   padding: const EdgeInsets.all(20.0),
+                      //   child: Column(
+                      //     children: [
+                      //       Wrap(
+                      //         spacing: 10,
+                      //         children: interests.take(5).map((interest) {
+                      //           final isSelected =
+                      //               selectedInterests.contains(interest);
+                      //           return GestureDetector(
+                      //             onTap: () {
+                      //               toggleInterest(
+                      //                   interest); // Call the function to toggle interest
+                      //             },
+                      //             child: Container(
+                      //               padding: EdgeInsets.symmetric(
+                      //                   horizontal: 8, vertical: 4),
+                      //               decoration: BoxDecoration(
+                      //                 color: isSelected
+                      //                     ? Colors.blue
+                      //                     : Colors.grey[
+                      //                         300], // Change color based on selection
+                      //                 borderRadius: BorderRadius.circular(16),
+                      //               ),
+                      //               child: Text(
+                      //                 interest,
+                      //                 style: TextStyle(
+                      //                   color: isSelected
+                      //                       ? Colors.white
+                      //                       : Colors.black,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           );
+                      //         }).toList(),
+                      //       ),
+                      //       TextButton(
+                      //         onPressed: () => _showMoreInterests(
+                      //             context), // Call the function to show more interests
+                      //         child: Text(
+                      //           "Show More",
+                      //           style: TextStyle(
+                      //               color: Colors.blue), // Style for the button
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                   Column(
