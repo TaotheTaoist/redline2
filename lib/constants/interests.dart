@@ -36,21 +36,6 @@ List<String> lifestyleInterests = [
   "Sports & Outdoor Activities",
   "Volunteering & Community Service",
   "Interior Design",
-  "Cooking & Baking",
-  "Camping & Hiking",
-  "Cultural Exploration",
-  "Networking & Career Development",
-  "Language Learning",
-  "Gaming & Esports",
-  "Social Media & Influencing",
-  "Travel Photography",
-  "Adventure & Extreme Sports",
-  "Luxury Lifestyle",
-  "Minimalism",
-  "Digital Nomad Lifestyle",
-  "Vintage & Retro",
-  "Collecting (e.g., stamps, coins, antiques)",
-  "Crafting & Handmade Goods",
 ];
 
 List<String> toysInterests = [

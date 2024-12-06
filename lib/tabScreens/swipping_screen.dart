@@ -384,7 +384,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                               ),
                               CarouselSlider(
                                 options: CarouselOptions(
-                                  height: screenHeight * 0.82,
+                                  height: screenHeight * 0.72,
                                   autoPlay: false,
                                   enlargeCenterPage: true,
                                   enableInfiniteScroll: true,

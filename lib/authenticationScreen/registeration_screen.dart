@@ -303,10 +303,121 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   //     ],
   //   );
   // }
+  // void _showMoreInterests(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(
+  //         top: Radius.circular(12),
+  //       ),
+  //     ),
+  //     builder: (context) {
+  //       return StatefulBuilder(
+  //         builder: (BuildContext context, StateSetter setState) {
+  //           return SingleChildScrollView(
+  //             child: Container(
+  //               padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+  //               decoration: BoxDecoration(
+  //                 color: Colors.white,
+  //                 borderRadius: BorderRadius.only(
+  //                   topLeft: Radius.circular(12),
+  //                   topRight: Radius.circular(12),
+  //                 ),
+  //               ),
+  //               child: Column(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 children: [
+  //                   // Back Button and Title Row
+  //                   Row(
+  //                     children: [
+  //                       IconButton(
+  //                         color: Colors.black,
+  //                         icon: Icon(Icons.arrow_back),
+  //                         onPressed: () {
+  //                           Navigator.pop(context);
+  //                         },
+  //                       ),
+  //                       Expanded(
+  //                         child: Text(
+  //                           "興趣",
+  //                           style: TextStyle(
+  //                             color: Colors.black,
+  //                             fontSize: 20,
+  //                             fontWeight: FontWeight.bold,
+  //                           ),
+  //                           textAlign: TextAlign.center,
+  //                         ),
+  //                       ),
+  //                       SizedBox(width: 48), // Placeholder for spacing
+  //                     ],
+  //                   ),
+  //                   SizedBox(height: 20),
+
+  //                   // Horizontal Category Selector
+  //                   SingleChildScrollView(
+  //                     scrollDirection: Axis.horizontal,
+  //                     child: Row(
+  //                       children: [
+  //                         _buildCategorySelector(
+  //                           setState,
+  //                           "Lifestyle",
+  //                           "Lifestyle Interests",
+  //                         ),
+  //                         SizedBox(width: 10),
+  //                         _buildCategorySelector(
+  //                           setState,
+  //                           "Toys",
+  //                           "Toys Interests",
+  //                         ),
+  //                         SizedBox(width: 10),
+  //                         _buildCategorySelector(
+  //                           setState,
+  //                           "occ",
+  //                           "職業",
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 20),
+
+  //                   // Category Items
+  //                   if (selectedCategory == "Lifestyle")
+  //                     _buildInterestSection(
+  //                         "Lifestyle Interests", lifestyleInterests, setState),
+  //                   if (selectedCategory == "Toys")
+  //                     _buildInterestSection(
+  //                         "Toys Interests", toysInterests, setState),
+  //                   if (selectedCategory == "occ")
+  //                     _buildInterestSection("職業", occupations, setState),
+
+  //                   SizedBox(height: 20),
+
+  //                   // Done Button
+  //                   ElevatedButton(
+  //                     onPressed: () {
+  //                       Navigator.pop(context); // Close the bottom sheet
+  //                     },
+  //                     child: Text("Done"),
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor: Colors.blue,
+  //                       padding:
+  //                           EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
   void _showMoreInterests(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      isScrollControlled: true, // Allows the modal to take full height
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(12),
@@ -315,105 +426,233 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Back Button and Title Row
-                    Row(
+            return DraggableScrollableSheet(
+              initialChildSize: 1.0, // Full-screen modal
+              minChildSize: 0.5, // Minimum size of the sheet
+              maxChildSize: 1.0, // Maximum size of the sheet
+              builder: (context, scrollController) {
+                return SingleChildScrollView(
+                  controller: scrollController,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                    ),
+                    child: Column(
                       children: [
-                        IconButton(
-                          color: Colors.black,
-                          icon: Icon(Icons.arrow_back),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        Expanded(
-                          child: Text(
-                            "興趣",
-                            style: TextStyle(
+                        // Back Button and Title Row
+                        Row(
+                          children: [
+                            IconButton(
                               color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                              icon: Icon(Icons.arrow_back),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
-                            textAlign: TextAlign.center,
+                            Expanded(
+                              child: Text(
+                                "興趣",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(width: 48), // Placeholder for spacing
+                          ],
+                        ),
+                        SizedBox(height: 20),
+
+                        // Horizontal Category Selector
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              _buildCategorySelector(
+                                setState,
+                                "Lifestyle",
+                                "Lifestyle Interests",
+                              ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "Toys",
+                                "Toys Interests",
+                              ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "occ",
+                                "職業",
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(width: 48), // Placeholder for spacing
+                        SizedBox(height: 20),
+
+                        // Category Items
+                        if (selectedCategory == "Lifestyle")
+                          _buildInterestSection("Lifestyle Interests",
+                              lifestyleInterests, setState),
+                        if (selectedCategory == "Toys")
+                          _buildInterestSection(
+                              "Toys Interests", toysInterests, setState),
+                        if (selectedCategory == "occ")
+                          _buildInterestSection("職業", occupations, setState),
+
+                        SizedBox(height: 20),
+
+                        // Done Button
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context); // Close the bottom sheet
+                          },
+                          child: Text("Done"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 10),
+                          ),
+                        ),
                       ],
                     ),
-                    SizedBox(height: 20),
-
-                    // Horizontal Category Selector
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildCategorySelector(
-                            setState,
-                            "Lifestyle",
-                            "Lifestyle Interests",
-                          ),
-                          SizedBox(width: 10),
-                          _buildCategorySelector(
-                            setState,
-                            "Toys",
-                            "Toys Interests",
-                          ),
-                          SizedBox(width: 10),
-                          _buildCategorySelector(
-                            setState,
-                            "occ",
-                            "職業",
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-
-                    // Category Items
-                    if (selectedCategory == "Lifestyle")
-                      _buildInterestSection(
-                          "Lifestyle Interests", lifestyleInterests, setState),
-                    if (selectedCategory == "Toys")
-                      _buildInterestSection(
-                          "Toys Interests", toysInterests, setState),
-                    if (selectedCategory == "occ")
-                      _buildInterestSection("職業", occupations, setState),
-
-                    SizedBox(height: 20),
-
-                    // Done Button
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close the bottom sheet
-                      },
-                      child: Text("Done"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             );
           },
         );
       },
     );
   }
+
+  // workingversion
+  // void _showMoreInterests(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true, // Allows the modal to take full height
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(
+  //         top: Radius.circular(12),
+  //       ),
+  //     ),
+  //     builder: (context) {
+  //       return StatefulBuilder(
+  //         builder: (BuildContext context, StateSetter setState) {
+  //           return DraggableScrollableSheet(
+  //             initialChildSize: 1.0, // Full-screen modal
+  //             minChildSize: 1.0, // Ensures it doesn't collapse
+  //             maxChildSize: 1.0, // Keeps it full height
+  //             builder: (context, scrollController) {
+  //               return SingleChildScrollView(
+  //                 controller: scrollController,
+  //                 child: Container(
+  //                   height: MediaQuery.of(context).size.height, // Full height
+  //                   padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.white,
+  //                     borderRadius: BorderRadius.only(
+  //                       topLeft: Radius.circular(12),
+  //                       topRight: Radius.circular(12),
+  //                     ),
+  //                   ),
+  //                   child: Column(
+  //                     children: [
+  //                       // Back Button and Title Row
+  //                       Row(
+  //                         children: [
+  //                           IconButton(
+  //                             color: Colors.black,
+  //                             icon: Icon(Icons.arrow_back),
+  //                             onPressed: () {
+  //                               Navigator.pop(context);
+  //                             },
+  //                           ),
+  //                           Expanded(
+  //                             child: Text(
+  //                               "興趣",
+  //                               style: TextStyle(
+  //                                 color: Colors.black,
+  //                                 fontSize: 20,
+  //                                 fontWeight: FontWeight.bold,
+  //                               ),
+  //                               textAlign: TextAlign.center,
+  //                             ),
+  //                           ),
+  //                           SizedBox(width: 48), // Placeholder for spacing
+  //                         ],
+  //                       ),
+  //                       SizedBox(height: 20),
+
+  //                       // Horizontal Category Selector
+  //                       SingleChildScrollView(
+  //                         scrollDirection: Axis.horizontal,
+  //                         child: Row(
+  //                           children: [
+  //                             _buildCategorySelector(
+  //                               setState,
+  //                               "Lifestyle",
+  //                               "Lifestyle Interests",
+  //                             ),
+  //                             SizedBox(width: 10),
+  //                             _buildCategorySelector(
+  //                               setState,
+  //                               "Toys",
+  //                               "Toys Interests",
+  //                             ),
+  //                             SizedBox(width: 10),
+  //                             _buildCategorySelector(
+  //                               setState,
+  //                               "occ",
+  //                               "職業",
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       SizedBox(height: 20),
+
+  //                       // Category Items
+  //                       if (selectedCategory == "Lifestyle")
+  //                         _buildInterestSection("Lifestyle Interests",
+  //                             lifestyleInterests, setState),
+  //                       if (selectedCategory == "Toys")
+  //                         _buildInterestSection(
+  //                             "Toys Interests", toysInterests, setState),
+  //                       if (selectedCategory == "occ")
+  //                         _buildInterestSection("職業", occupations, setState),
+
+  //                       SizedBox(height: 20),
+
+  //                       // Done Button
+  //                       ElevatedButton(
+  //                         onPressed: () {
+  //                           Navigator.pop(context); // Close the bottom sheet
+  //                         },
+  //                         child: Text("Done"),
+  //                         style: ElevatedButton.styleFrom(
+  //                           backgroundColor: Colors.blue,
+  //                           padding: EdgeInsets.symmetric(
+  //                               horizontal: 40, vertical: 10),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               );
+  //             },
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   // Method to build category selector buttons
   Widget _buildCategorySelector(

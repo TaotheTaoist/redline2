@@ -1,21 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
+
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/constants/interests.dart';
-import 'package:redline/controller/profile-controller.dart';
+
 import 'package:redline/global.dart';
-import 'package:redline/homeScreen/home_screen.dart';
-import 'package:redline/models/person.dart';
-import 'package:redline/tabScreens/user_details_screen.dart';
-import 'package:redline/widgets/custom_text_field_widget.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   String? userID;

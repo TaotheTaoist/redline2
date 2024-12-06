@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:redline/authenticationScreen/ProfileCompletionScreen.dart';
+import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/authenticationScreen/registeration_screen.dart';
 import 'package:redline/controller/authenticationController.dart';
 import 'package:redline/widgets/custom_text_field_widget.dart';
@@ -170,13 +171,19 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 255, 177, 177),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: Stack(children: [
           // Background image
-          Positioned.fill(
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
             child: Image.asset(
               "lib/image/loginbackground.png",
-              fit: BoxFit.cover, // Ensures the image covers the entire screen
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+              height: 490,
+              width: 300,
             ),
           ),
 
@@ -184,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Center(
               child: Column(
                 children: [
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 150),
                   ClipOval(
                     child: Image.asset(
                       "lib/image/logo.png",
@@ -193,6 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       fit: BoxFit.cover,
                     ),
                   ),
+                  const SizedBox(height: 15),
                   const Text(
                     "Welcome",
                     style: TextStyle(
@@ -200,175 +208,344 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 200),
-                  const Text(
-                    "Login",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  const SizedBox(height: 180),
+                  // const Text(
+                  //   "Login",
+                  //   style: TextStyle(
+                  //     fontSize: 22,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
                   const SizedBox(height: 20),
-                  // Email Input Field
-                  Container(
-                    width: MediaQuery.of(context).size.width - 36,
-                    child: CustomTextFieldWidget(
-                      editingController: emailTextEditingController,
-                      labelText: "Email",
-                      iconData: Icons.email_outlined,
-                      isObscure: false,
-                      borderRadius: 20.0,
-                    ),
-                  ),
+                  CustomTextFieldWidget.buildTextField(
+                      emailTextEditingController, "Email",
+                      icon: Icons.email_outlined,
+                      width: MediaQuery.of(context).size.width - 36),
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width - 36,
+                  //   child: CustomTextFieldWidget(
+                  //     editingController: emailTextEditingController,
+                  //     labelText: "Email",
+                  //     iconData: Icons.email_outlined,
+                  //     isObscure: false,
+                  //     borderRadius: 20.0,
+                  //   ),
+                  // ),
                   const SizedBox(height: 20),
-                  Container(
-                    width: MediaQuery.of(context).size.width - 36,
-                    child: CustomTextFieldWidget(
-                      editingController:
-                          passwordTextEditingController, // Your password field controller
-                      labelText: "Password", // Field label
-                      iconData: Icons.lock_outline, // Lock icon for password
-                      isObscure: true, // Hides the input for password
-                      borderRadius: 20.0, // Set to 20 for more rounded borders
-                    ),
-                  ),
+                  CustomTextFieldWidget.buildTextField(
+                      passwordTextEditingController, "密碼",
+                      icon: Icons.lock_outline,
+                      width: MediaQuery.of(context).size.width - 36),
+
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width - 36,
+                  //   child: CustomTextFieldWidget(
+                  //     editingController:
+                  //         passwordTextEditingController, // Your password field controller
+                  //     labelText: "Password", // Field label
+                  //     iconData: Icons.lock_outline, // Lock icon for password
+                  //     isObscure: true, // Hides the input for password
+                  //     borderRadius: 20.0, // Set to 20 for more rounded borders
+                  //   ),
+                  // ),
 
                   const SizedBox(height: 20),
                   // Login Button
-                  Container(
-                    width: MediaQuery.of(context).size.width - 36,
-                    height: 55,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(12),
-                      ),
-                    ),
-                    child: InkWell(
-                      onTap: () async {
-                        String email = emailTextEditingController.text.trim();
-                        String password =
-                            passwordTextEditingController.text.trim();
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width - 36,
+                  //   height: 55,
+                  //   decoration: BoxDecoration(
+                  //     color: Color.fromARGB(255, 255, 187, 178),
+                  //     borderRadius: const BorderRadius.all(
+                  //       Radius.circular(30),
+                  //     ),
+                  //   ),
+                  //   child: InkWell(
+                  //     onTap: () async {
+                  //       String email = emailTextEditingController.text.trim();
+                  //       String password =
+                  //           passwordTextEditingController.text.trim();
 
-                        if (email.isNotEmpty && password.isNotEmpty) {
-                          setState(() {
-                            showProgressBar = true; // Show progress bar
-                          });
+                  //       if (email.isNotEmpty && password.isNotEmpty) {
+                  //         setState(() {
+                  //           showProgressBar = true; // Show progress bar
+                  //         });
 
-                          try {
-                            // Call the login function
-                            await controllerAuth.loginUser(email, password);
+                  //         try {
+                  //           // Call the login function
+                  //           await controllerAuth.loginUser(email, password);
 
-                            setState(() {
-                              showProgressBar =
-                                  false; // Hide progress bar after success
-                            });
-                          } catch (e) {
-                            setState(() {
-                              showProgressBar =
-                                  false; // Hide progress bar after error
-                            });
-                            Get.snackbar(
-                                "Error", "Login failed. Please try again.");
-                          }
-                        } else {
-                          Get.snackbar(
-                              "Error", "Please enter both email and password");
-                        }
-                      },
-                      child: const Center(
-                        child: Text(
-                          "Login",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                  //           setState(() {
+                  //             showProgressBar =
+                  //                 false; // Hide progress bar after success
+                  //           });
+                  //         } catch (e) {
+                  //           setState(() {
+                  //             showProgressBar =
+                  //                 false; // Hide progress bar after error
+                  //           });
+                  //           Get.snackbar(
+                  //               "Error", "Login failed. Please try again.");
+                  //         }
+                  //       } else {
+                  //         Get.snackbar(
+                  //             "Error", "Please enter both email and password");
+                  //       }
+                  //     },
+                  //     child: const Center(
+                  //       child: Text(
+                  //         "Login",
+                  //         style: TextStyle(
+                  //           fontSize: 20,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Colors.black,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 10),
+                  // // Google Sign-In Button
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width - 36,
+                  //   height: 55,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.blue, // Google button background color
+                  //     borderRadius: BorderRadius.circular(12),
+                  //   ),
+                  //   child: InkWell(
+                  //     onTap: () async {
+                  //       setState(() {
+                  //         showProgressBar = true; // Show progress bar
+                  //       });
+
+                  //       // Call the Google login function
+                  //       User? user = await loginWithGoogle();
+
+                  //       if (user != null) {
+                  //         Get.snackbar(
+                  //           "Success",
+                  //           "Logged in successfully with Google!",
+                  //           snackPosition: SnackPosition
+                  //               .TOP, // Position of the snackbar (TOP or BOTTOM)
+                  //           backgroundColor: Colors.green, // Background color
+                  //           colorText: Colors.white, // Text color
+                  //           borderRadius: 12, // Rounded corners
+                  //           margin: const EdgeInsets.all(
+                  //               10), // Margin around the snackbar
+                  //           icon: const Icon(Icons.check_circle,
+                  //               color: Colors.white), // Add an icon
+                  //           duration: const Duration(
+                  //               seconds:
+                  //                   3), // Duration the snackbar is displayed
+                  //           isDismissible: true, // Allow manual dismissal
+                  //           forwardAnimationCurve:
+                  //               Curves.easeInOut, // Animation curve
+                  //         );
+                  //       } else {
+                  //         Get.snackbar(
+                  //           "Success",
+                  //           "Failed",
+                  //           snackPosition: SnackPosition
+                  //               .TOP, // Position of the snackbar (TOP or BOTTOM)
+                  //           backgroundColor: const Color.fromARGB(
+                  //               255, 250, 142, 0), // Background color
+                  //           colorText: Colors.white, // Text color
+                  //           borderRadius: 12, // Rounded corners
+                  //           margin: const EdgeInsets.all(
+                  //               10), // Margin around the snackbar
+                  //           icon: const Icon(Icons.check_circle,
+                  //               color: Colors.white), // Add an icon
+                  //           duration: const Duration(
+                  //               seconds:
+                  //                   3), // Duration the snackbar is displayed
+                  //           isDismissible: true, // Allow manual dismissal
+                  //           forwardAnimationCurve:
+                  //               Curves.easeInOut, // Animation curve
+                  //         );
+                  //       }
+                  //       if (mounted) {
+                  //         setState(() {
+                  //           showProgressBar = false; // Hide progress bar af
+                  //         });
+                  //       }
+                  //       // setState(() {
+                  //       //   showProgressBar = false; // Hide progress bar after login
+                  //       // });
+                  //     },
+                  //     child: const Center(
+                  //       child: Text(
+                  //         "Login with Google",
+                  //         style: TextStyle(
+                  //           fontSize: 20,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Colors.white,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment
+                        .start, // Align all children to the left
+                    children: [
+                      Align(
+                        alignment:
+                            Alignment.centerLeft, // Align container to the left
+                        child: Container(
+                          width: MediaQuery.of(context).size.width - 36,
+                          height: 55,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey
+                                    .withOpacity(0.8), // Shadow color
+                                spreadRadius: 1, // Spread radius
+                                blurRadius: 6, // Blur radius
+                                offset: const Offset(
+                                    6, 6), // Shadow position (x, y)
+                              ),
+                            ],
+                            color: Color.fromARGB(255, 255, 187, 178),
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(30),
+                              bottomRight: Radius.circular(30),
+                            ),
+                          ),
+                          child: InkWell(
+                            onTap: () async {
+                              String email =
+                                  emailTextEditingController.text.trim();
+                              String password =
+                                  passwordTextEditingController.text.trim();
+
+                              if (email.isNotEmpty && password.isNotEmpty) {
+                                setState(() {
+                                  showProgressBar = true; // Show progress bar
+                                });
+
+                                try {
+                                  // Call the login function
+                                  await controllerAuth.loginUser(
+                                      email, password);
+
+                                  setState(() {
+                                    showProgressBar =
+                                        false; // Hide progress bar after success
+                                  });
+                                } catch (e) {
+                                  setState(() {
+                                    showProgressBar =
+                                        false; // Hide progress bar after error
+                                  });
+                                  Get.snackbar("Error",
+                                      "Login failed. Please try again.");
+                                }
+                              } else {
+                                Get.snackbar("Error",
+                                    "Please enter both email and password");
+                              }
+                            },
+                            child: const Center(
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Google Sign-In Button
-                  Container(
-                    width: MediaQuery.of(context).size.width - 36,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      color: Colors.blue, // Google button background color
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: InkWell(
-                      onTap: () async {
-                        setState(() {
-                          showProgressBar = true; // Show progress bar
-                        });
+                      const SizedBox(height: 10), // Add vertical spacing
+                      Align(
+                        alignment:
+                            Alignment.centerLeft, // Align container to the left
+                        child: Container(
+                          width: MediaQuery.of(context).size.width - 36,
+                          height: 55,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey
+                                    .withOpacity(0.8), // Shadow color
+                                spreadRadius: 1, // Spread radius
+                                blurRadius: 6, // Blur radius
+                                offset: const Offset(
+                                    6, 6), // Shadow position (x, y)
+                              ),
+                            ],
+                            color: Colors.blue,
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(30),
+                              bottomRight: Radius.circular(30),
+                            ),
+                          ),
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                showProgressBar = true; // Show progress bar
+                              });
 
-                        // Call the Google login function
-                        User? user = await loginWithGoogle();
+                              // Call the Google login function
+                              User? user = await loginWithGoogle();
 
-                        if (user != null) {
-                          Get.snackbar(
-                            "Success",
-                            "Logged in successfully with Google!",
-                            snackPosition: SnackPosition
-                                .TOP, // Position of the snackbar (TOP or BOTTOM)
-                            backgroundColor: Colors.green, // Background color
-                            colorText: Colors.white, // Text color
-                            borderRadius: 12, // Rounded corners
-                            margin: const EdgeInsets.all(
-                                10), // Margin around the snackbar
-                            icon: const Icon(Icons.check_circle,
-                                color: Colors.white), // Add an icon
-                            duration: const Duration(
-                                seconds:
-                                    3), // Duration the snackbar is displayed
-                            isDismissible: true, // Allow manual dismissal
-                            forwardAnimationCurve:
-                                Curves.easeInOut, // Animation curve
-                          );
-                        } else {
-                          Get.snackbar(
-                            "Success",
-                            "Failed",
-                            snackPosition: SnackPosition
-                                .TOP, // Position of the snackbar (TOP or BOTTOM)
-                            backgroundColor: const Color.fromARGB(
-                                255, 250, 142, 0), // Background color
-                            colorText: Colors.white, // Text color
-                            borderRadius: 12, // Rounded corners
-                            margin: const EdgeInsets.all(
-                                10), // Margin around the snackbar
-                            icon: const Icon(Icons.check_circle,
-                                color: Colors.white), // Add an icon
-                            duration: const Duration(
-                                seconds:
-                                    3), // Duration the snackbar is displayed
-                            isDismissible: true, // Allow manual dismissal
-                            forwardAnimationCurve:
-                                Curves.easeInOut, // Animation curve
-                          );
-                        }
-                        if (mounted) {
-                          setState(() {
-                            showProgressBar = false; // Hide progress bar af
-                          });
-                        }
-                        // setState(() {
-                        //   showProgressBar = false; // Hide progress bar after login
-                        // });
-                      },
-                      child: const Center(
-                        child: Text(
-                          "Login with Google",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                              if (user != null) {
+                                Get.snackbar(
+                                  "Success",
+                                  "Logged in successfully with Google!",
+                                  snackPosition: SnackPosition.TOP,
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                  borderRadius: 12,
+                                  margin: const EdgeInsets.all(10),
+                                  icon: const Icon(Icons.check_circle,
+                                      color: Colors.white),
+                                  duration: const Duration(seconds: 3),
+                                  isDismissible: true,
+                                  forwardAnimationCurve: Curves.easeInOut,
+                                );
+                              } else {
+                                Get.snackbar(
+                                  "Error",
+                                  "Google login failed",
+                                  snackPosition: SnackPosition.TOP,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                  borderRadius: 12,
+                                  margin: const EdgeInsets.all(10),
+                                  icon: const Icon(Icons.error,
+                                      color: Colors.white),
+                                  duration: const Duration(seconds: 3),
+                                  isDismissible: true,
+                                  forwardAnimationCurve: Curves.easeInOut,
+                                );
+                              }
+
+                              if (mounted) {
+                                setState(() {
+                                  showProgressBar = false; // Hide progress bar
+                                });
+                              }
+                            },
+                            child: const Center(
+                              child: Text(
+                                "Login with Google",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
+
                   const SizedBox(height: 10),
                   // Display the progress bar if showProgressBar is true
                   showProgressBar
@@ -398,7 +575,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           "Create an account",
                           style: TextStyle(
                             fontSize: 18,
-                            color: Colors.white,
+                            color: Color.fromARGB(255, 28, 222, 76),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -406,11 +583,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
 
-                  // Add the following lines at the end of your build method
-
                   const SizedBox(height: 10),
-
-                  // **Phone Login Button** (Add this section)
                 ],
               ),
             ),
