@@ -334,7 +334,7 @@ class CustomTextFieldWidget extends StatelessWidget {
           decoration: InputDecoration(
             labelText: label,
             labelStyle: TextStyle(
-              color: const Color.fromARGB(255, 169, 180, 9), // Label text color
+              color: const Color.fromARGB(255, 0, 0, 0), // Label text color
               fontSize: 14, // Font size for label
             ),
             hintText: "Enter $label", // Placeholder text

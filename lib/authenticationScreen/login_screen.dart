@@ -171,6 +171,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // appBar: AppBar(
+        //   backgroundColor: Color.fromARGB(255, 231, 94, 94),
+        // ),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: Stack(children: [
           // Background image
@@ -182,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
               "lib/image/loginbackground.png",
               fit: BoxFit.cover,
               alignment: Alignment.topCenter,
-              height: 490,
+              height: 540,
               width: 300,
             ),
           ),
@@ -195,14 +198,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ClipOval(
                     child: Image.asset(
                       "lib/image/logo.png",
-                      width: 70,
-                      height: 70,
+                      width: 88,
+                      height: 88,
                       fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: 15),
                   const Text(
-                    "Welcome",
+                    "來",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -216,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   //     fontWeight: FontWeight.bold,
                   //   ),
                   // ),
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
                   CustomTextFieldWidget.buildTextField(
                       emailTextEditingController, "Email",
                       icon: Icons.email_outlined,
@@ -438,12 +441,36 @@ class _LoginScreenState extends State<LoginScreen> {
                                     showProgressBar =
                                         false; // Hide progress bar after error
                                   });
-                                  Get.snackbar("Error",
-                                      "Login failed. Please try again.");
+                                  Get.snackbar(
+                                    "Error",
+                                    "Login failed. Please try again.",
+                                    snackPosition: SnackPosition.TOP,
+                                    backgroundColor: Colors.green,
+                                    colorText: Colors.white,
+                                    borderRadius: 12,
+                                    margin: const EdgeInsets.all(10),
+                                    icon: const Icon(Icons.check_circle,
+                                        color: Colors.white),
+                                    duration: const Duration(seconds: 3),
+                                    isDismissible: true,
+                                    forwardAnimationCurve: Curves.easeInOut,
+                                  );
                                 }
                               } else {
-                                Get.snackbar("Error",
-                                    "Please enter both email and password");
+                                Get.snackbar(
+                                  "Error",
+                                  "Please enter both email and password",
+                                  snackPosition: SnackPosition.TOP,
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                  borderRadius: 12,
+                                  margin: const EdgeInsets.all(10),
+                                  icon: const Icon(Icons.check_circle,
+                                      color: Colors.white),
+                                  duration: const Duration(seconds: 3),
+                                  isDismissible: true,
+                                  forwardAnimationCurve: Curves.easeInOut,
+                                );
                               }
                             },
                             child: const Center(

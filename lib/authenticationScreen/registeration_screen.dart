@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:redline/constants/interests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,14 +42,24 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   var authenticationcontroller =
       Authenticationcontroller.authenticationcontroller;
 
-  final List<String> myInterests = interests;
-
-  final List<String> iExercise = exercise;
-
   final TextEditingController interestTextEditingController =
       TextEditingController();
 
   final List<String> selectedInterests = [];
+  final List<String> selectedoccu = [];
+  final List<String> selectmbti = [];
+  final List<String> selectlanguage = [];
+
+  final List<String> selectbloodtype = [];
+  final List<String> selectexercise = [];
+  final List<String> selectreligion = [];
+  final List<String> selectdiet = [];
+  final List<String> selectlooking = [];
+  final List<String> selectblood = [];
+
+  final List<String> selecteducation = [];
+
+  final List<String> selectedpersonality = [];
 
   String selectedCategory = "Lifestyle";
 
@@ -57,363 +68,71 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   late int age;
 
   // Toggle selection on tap
+  // void toggleInterest(String interest) {
+  //   setState(() {
+  //     if (selectedInterests.contains(interest)) {
+  //       selectedInterests.remove(interest);
+  //     } else {
+  //       selectedInterests.add(interest);
+  //     }
+  //   });
+  // }
+
+  // void toggleInterest(String interest) {
+  //   setState(() {
+  //     // Check the selected category
+  //     if (selectedCategory == "Lifestyle") {
+  //       // Toggle interest for lifestyleInterests
+  //       if (selectedInterests.contains(interest)) {
+  //         selectedInterests.remove(interest);
+  //       } else {
+  //         selectedInterests.add(interest);
+  //       }
+  //     } else if (selectedCategory == "personality") {
+  //       // Toggle interest for personalityInterests
+  //       if (selectedoccu.contains(interest)) {
+  //         selectedoccu.remove(interest);
+  //       } else {
+  //         selectedoccu.add(interest);
+  //       }
+  //     } else if (selectedCategory == "occ") {
+  //       // Toggle interest for occupations
+  //       if (selectedpersonality.contains(interest)) {
+  //         selectedpersonality.remove(interest);
+  //       } else {
+  //         selectedpersonality.add(interest);
+  //       }
+  //     }
+  //   });
+  // }
   void toggleInterest(String interest) {
-    setState(() {
-      if (selectedInterests.contains(interest)) {
-        selectedInterests.remove(interest);
-      } else {
-        selectedInterests.add(interest);
-      }
-    });
+    setState(() {});
   }
 
-  // void addInterest() {
-  //   // Get the interest from the text controller and add it to the list if not empty
-  //   String newInterest = interestTextEditingController.text.trim();
-  //   if (newInterest.isNotEmpty && !interests.contains(newInterest)) {
-  //     interests.add(newInterest);
-  //     interestTextEditingController
-  //         .clear(); // Clear the text field after adding
-  //   }
-  // }
+  Future<bool> _checkIfEmailExistsInAuthAndFirestore(String email) async {
+    try {
+      // Check if email exists in Firestore
+      final firestoreResult = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
 
-  Future<bool> _checkIfEmailExists(String email, String currentUserId) async {
-    final QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-    return result.docs.isNotEmpty && result.docs.first.id != currentUserId;
+      bool existsInFirestore = firestoreResult.docs.isNotEmpty;
+
+      // Check if email exists in Firebase Authentication
+      final signInMethods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+
+      bool existsInAuth = signInMethods.isNotEmpty;
+
+      return existsInFirestore || existsInAuth;
+    } catch (e) {
+      // Handle potential errors gracefully
+      print('Error checking email existence: $e');
+      return false;
+    }
   }
 
-  // void _showMoreInterests(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(
-  //         top: Radius.circular(12),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return StatefulBuilder(
-  //         builder: (BuildContext context, StateSetter setState) {
-  //           return SingleChildScrollView(
-  //             child: Container(
-  //               padding: const EdgeInsets.fromLTRB(
-  //                   20, 40, 20, 20), // Top padding added here
-  //               decoration: BoxDecoration(
-  //                 color: Colors.white,
-  //                 borderRadius: BorderRadius.only(
-  //                   topLeft: Radius.circular(12),
-  //                   topRight: Radius.circular(12),
-  //                 ),
-  //               ),
-  //               child: Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 children: [
-  //                   // Back Button and Title Row
-  //                   Row(
-  //                     children: [
-  //                       IconButton(
-  //                         color: Colors.black,
-  //                         icon: Icon(Icons.arrow_back),
-  //                         onPressed: () {
-  //                           Navigator.pop(
-  //                               context); // Pop the modal bottom sheet
-  //                         },
-  //                       ),
-  //                       Expanded(
-  //                         child: Text(
-  //                           "興趣",
-  //                           style: TextStyle(
-  //                             color: Colors.black,
-  //                             fontSize: 20,
-  //                             fontWeight: FontWeight.bold,
-  //                           ),
-  //                           textAlign: TextAlign.center,
-  //                         ),
-  //                       ),
-  //                       SizedBox(
-  //                           width:
-  //                               48), // Placeholder for spacing (to balance the back button)
-  //                     ],
-  //                   ),
-  //                   SizedBox(height: 20),
-
-  //                   // Horizontal Category Selector
-  //                   SingleChildScrollView(
-  //                     scrollDirection: Axis.horizontal,
-  //                     child: Row(
-  //                       children: [
-  //                         // Lifestyle Interests
-  //                         GestureDetector(
-  //                           onTap: () {
-  //                             setState(() {
-  //                               selectedCategory =
-  //                                   "Lifestyle"; // Correct category key
-  //                             });
-  //                           },
-  //                           child: Container(
-  //                             padding: const EdgeInsets.symmetric(
-  //                                 horizontal: 20, vertical: 10),
-  //                             decoration: BoxDecoration(
-  //                               color: selectedCategory == "Lifestyle"
-  //                                   ? Colors.blue
-  //                                   : Colors.grey.shade300,
-  //                               borderRadius: BorderRadius.circular(8),
-  //                             ),
-  //                             child: Text(
-  //                               "Lifestyle Interests",
-  //                               style: TextStyle(
-  //                                 color: selectedCategory == "Lifestyle"
-  //                                     ? Colors.white
-  //                                     : Colors.black,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                         SizedBox(width: 10),
-  //                         // Toys Interests
-  //                         GestureDetector(
-  //                           onTap: () {
-  //                             setState(() {
-  //                               selectedCategory =
-  //                                   "Toys"; // Correct category key
-  //                             });
-  //                           },
-  //                           child: Container(
-  //                             padding: const EdgeInsets.symmetric(
-  //                                 horizontal: 20, vertical: 10),
-  //                             decoration: BoxDecoration(
-  //                               color: selectedCategory == "Toys"
-  //                                   ? Colors.blue
-  //                                   : Colors.grey.shade300,
-  //                               borderRadius: BorderRadius.circular(8),
-  //                             ),
-  //                             child: Text(
-  //                               "Toys Interests",
-  //                               style: TextStyle(
-  //                                 color: selectedCategory == "Toys"
-  //                                     ? Colors.white
-  //                                     : Colors.black,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                         GestureDetector(
-  //                           onTap: () {
-  //                             setState(() {
-  //                               selectedCategory =
-  //                                   "Toys"; // Correct category key
-  //                             });
-  //                           },
-  //                           child: Container(
-  //                             padding: const EdgeInsets.symmetric(
-  //                                 horizontal: 20, vertical: 10),
-  //                             decoration: BoxDecoration(
-  //                               color: selectedCategory == "occ"
-  //                                   ? Colors.blue
-  //                                   : Colors.grey.shade300,
-  //                               borderRadius: BorderRadius.circular(8),
-  //                             ),
-  //                             child: Text(
-  //                               "職業",
-  //                               style: TextStyle(
-  //                                 color: selectedCategory == "occ"
-  //                                     ? Colors.white
-  //                                     : Colors.black,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   SizedBox(height: 20),
-
-  //                   // Category Items
-  //                   if (selectedCategory == "Lifestyle")
-  //                     _buildInterestSection(
-  //                         "Lifestyle Interests", lifestyleInterests, setState),
-  //                   if (selectedCategory == "Toys")
-  //                     _buildInterestSection(
-  //                         "Toys Interests", toysInterests, setState),
-  //                   if (selectedCategory == "occ")
-  //                     _buildInterestSection("職業", occupations, setState),
-
-  //                   SizedBox(height: 20),
-
-  //                   // Done Button
-  //                   ElevatedButton(
-  //                     onPressed: () {
-  //                       Navigator.pop(context); // Close the bottom sheet
-  //                     },
-  //                     child: Text("Done"),
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor: Colors.blue, // Button color
-  //                       padding:
-  //                           EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
-  // Widget _buildInterestSection(
-  //     String title, List<String> interests, StateSetter setState) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         title,
-  //         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //       ),
-  //       SizedBox(height: 10),
-  //       Wrap(
-  //         spacing: 10,
-  //         children: interests.map((interest) {
-  //           final isSelected = selectedInterests.contains(interest);
-  //           return ElevatedButton(
-  //             onPressed: () {
-  //               setState(() {
-  //                 toggleInterest(
-  //                     interest); // Call toggleInterest and update state
-  //               });
-  //             },
-  //             child: Text(
-  //               interest,
-  //               style: TextStyle(
-  //                 color: isSelected ? Colors.white : Colors.black,
-  //               ),
-  //             ),
-  //             style: ElevatedButton.styleFrom(
-  //               backgroundColor:
-  //                   isSelected ? Colors.blue : Colors.grey.shade300,
-  //               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-  //             ),
-  //           );
-  //         }).toList(),
-  //       ),
-  //     ],
-  //   );
-  // }
-  // void _showMoreInterests(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(
-  //         top: Radius.circular(12),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return StatefulBuilder(
-  //         builder: (BuildContext context, StateSetter setState) {
-  //           return SingleChildScrollView(
-  //             child: Container(
-  //               padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.white,
-  //                 borderRadius: BorderRadius.only(
-  //                   topLeft: Radius.circular(12),
-  //                   topRight: Radius.circular(12),
-  //                 ),
-  //               ),
-  //               child: Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 children: [
-  //                   // Back Button and Title Row
-  //                   Row(
-  //                     children: [
-  //                       IconButton(
-  //                         color: Colors.black,
-  //                         icon: Icon(Icons.arrow_back),
-  //                         onPressed: () {
-  //                           Navigator.pop(context);
-  //                         },
-  //                       ),
-  //                       Expanded(
-  //                         child: Text(
-  //                           "興趣",
-  //                           style: TextStyle(
-  //                             color: Colors.black,
-  //                             fontSize: 20,
-  //                             fontWeight: FontWeight.bold,
-  //                           ),
-  //                           textAlign: TextAlign.center,
-  //                         ),
-  //                       ),
-  //                       SizedBox(width: 48), // Placeholder for spacing
-  //                     ],
-  //                   ),
-  //                   SizedBox(height: 20),
-
-  //                   // Horizontal Category Selector
-  //                   SingleChildScrollView(
-  //                     scrollDirection: Axis.horizontal,
-  //                     child: Row(
-  //                       children: [
-  //                         _buildCategorySelector(
-  //                           setState,
-  //                           "Lifestyle",
-  //                           "Lifestyle Interests",
-  //                         ),
-  //                         SizedBox(width: 10),
-  //                         _buildCategorySelector(
-  //                           setState,
-  //                           "Toys",
-  //                           "Toys Interests",
-  //                         ),
-  //                         SizedBox(width: 10),
-  //                         _buildCategorySelector(
-  //                           setState,
-  //                           "occ",
-  //                           "職業",
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   SizedBox(height: 20),
-
-  //                   // Category Items
-  //                   if (selectedCategory == "Lifestyle")
-  //                     _buildInterestSection(
-  //                         "Lifestyle Interests", lifestyleInterests, setState),
-  //                   if (selectedCategory == "Toys")
-  //                     _buildInterestSection(
-  //                         "Toys Interests", toysInterests, setState),
-  //                   if (selectedCategory == "occ")
-  //                     _buildInterestSection("職業", occupations, setState),
-
-  //                   SizedBox(height: 20),
-
-  //                   // Done Button
-  //                   ElevatedButton(
-  //                     onPressed: () {
-  //                       Navigator.pop(context); // Close the bottom sheet
-  //                     },
-  //                     child: Text("Done"),
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor: Colors.blue,
-  //                       padding:
-  //                           EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
   void _showMoreInterests(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -478,13 +197,13 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                               _buildCategorySelector(
                                 setState,
                                 "Lifestyle",
-                                "Lifestyle Interests",
+                                "生活",
                               ),
                               SizedBox(width: 10),
                               _buildCategorySelector(
                                 setState,
-                                "Toys",
-                                "Toys Interests",
+                                "personality",
+                                "個性",
                               ),
                               SizedBox(width: 10),
                               _buildCategorySelector(
@@ -492,20 +211,94 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                 "occ",
                                 "職業",
                               ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "MBTI",
+                                "MBTI",
+                              ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "language",
+                                "語言",
+                              ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "religion",
+                                "信仰",
+                              ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "education",
+                                "教育",
+                              ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "bloodtype",
+                                "血型",
+                              ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "lookingfor",
+                                "lookingFor",
+                              ),
+                              SizedBox(width: 10),
+                              _buildCategorySelector(
+                                setState,
+                                "diet",
+                                "飲食",
+                              ),
                             ],
                           ),
                         ),
                         SizedBox(height: 20),
 
                         // Category Items
-                        if (selectedCategory == "Lifestyle")
-                          _buildInterestSection("Lifestyle Interests",
-                              lifestyleInterests, setState),
-                        if (selectedCategory == "Toys")
+                        if (selectedCategory == "Lifestyle") ...[
                           _buildInterestSection(
-                              "Toys Interests", toysInterests, setState),
+                              "出門", lifestyleInterests, setState),
+                          const SizedBox(height: 20),
+                          _buildInterestSection("靈修", innerInterests, setState),
+                          const SizedBox(height: 20),
+                          _buildInterestSectionGeneric(
+                              "exercise", exercise, selectexercise, setState),
+                        ],
+                        if (selectedCategory == "personality")
+                          _buildInterestSectionType(
+                              "個性", toysInterests, setState),
+                        // if (selectedCategory == "occ")
+                        //   _buildInterestSectionType(
+                        //       "職業", occupations, setState),
+
                         if (selectedCategory == "occ")
-                          _buildInterestSection("職業", occupations, setState),
+                          _buildInterestSectionGeneric(
+                              "occ", occupations, selectedoccu, setState),
+                        if (selectedCategory == "MBTI")
+                          _buildInterestSectionGeneric(
+                              "MBTI", mbti, selectmbti, setState),
+                        if (selectedCategory == "diet")
+                          _buildInterestSectionGeneric(
+                              "diet", diet, selectdiet, setState),
+                        if (selectedCategory == "religion")
+                          _buildInterestSectionGeneric(
+                              "religion", religions, selectreligion, setState),
+                        if (selectedCategory == "language")
+                          _buildInterestSectionGeneric(
+                              "language", languages, selectlanguage, setState),
+                        if (selectedCategory == "education")
+                          _buildInterestSectionGeneric("education",
+                              educationLevels, selecteducation, setState),
+                        if (selectedCategory == "lookingfor")
+                          _buildInterestSectionGeneric("lookingfor", lookingfor,
+                              selectlooking, setState),
+                        if (selectedCategory == "bloodtype")
+                          _buildInterestSectionGeneric(
+                              "bloodtype", bloodTypes, selectblood, setState),
 
                         SizedBox(height: 20),
 
@@ -533,127 +326,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
     );
   }
 
-  // workingversion
-  // void _showMoreInterests(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true, // Allows the modal to take full height
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(
-  //         top: Radius.circular(12),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return StatefulBuilder(
-  //         builder: (BuildContext context, StateSetter setState) {
-  //           return DraggableScrollableSheet(
-  //             initialChildSize: 1.0, // Full-screen modal
-  //             minChildSize: 1.0, // Ensures it doesn't collapse
-  //             maxChildSize: 1.0, // Keeps it full height
-  //             builder: (context, scrollController) {
-  //               return SingleChildScrollView(
-  //                 controller: scrollController,
-  //                 child: Container(
-  //                   height: MediaQuery.of(context).size.height, // Full height
-  //                   padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-  //                   decoration: BoxDecoration(
-  //                     color: Colors.white,
-  //                     borderRadius: BorderRadius.only(
-  //                       topLeft: Radius.circular(12),
-  //                       topRight: Radius.circular(12),
-  //                     ),
-  //                   ),
-  //                   child: Column(
-  //                     children: [
-  //                       // Back Button and Title Row
-  //                       Row(
-  //                         children: [
-  //                           IconButton(
-  //                             color: Colors.black,
-  //                             icon: Icon(Icons.arrow_back),
-  //                             onPressed: () {
-  //                               Navigator.pop(context);
-  //                             },
-  //                           ),
-  //                           Expanded(
-  //                             child: Text(
-  //                               "興趣",
-  //                               style: TextStyle(
-  //                                 color: Colors.black,
-  //                                 fontSize: 20,
-  //                                 fontWeight: FontWeight.bold,
-  //                               ),
-  //                               textAlign: TextAlign.center,
-  //                             ),
-  //                           ),
-  //                           SizedBox(width: 48), // Placeholder for spacing
-  //                         ],
-  //                       ),
-  //                       SizedBox(height: 20),
-
-  //                       // Horizontal Category Selector
-  //                       SingleChildScrollView(
-  //                         scrollDirection: Axis.horizontal,
-  //                         child: Row(
-  //                           children: [
-  //                             _buildCategorySelector(
-  //                               setState,
-  //                               "Lifestyle",
-  //                               "Lifestyle Interests",
-  //                             ),
-  //                             SizedBox(width: 10),
-  //                             _buildCategorySelector(
-  //                               setState,
-  //                               "Toys",
-  //                               "Toys Interests",
-  //                             ),
-  //                             SizedBox(width: 10),
-  //                             _buildCategorySelector(
-  //                               setState,
-  //                               "occ",
-  //                               "職業",
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                       SizedBox(height: 20),
-
-  //                       // Category Items
-  //                       if (selectedCategory == "Lifestyle")
-  //                         _buildInterestSection("Lifestyle Interests",
-  //                             lifestyleInterests, setState),
-  //                       if (selectedCategory == "Toys")
-  //                         _buildInterestSection(
-  //                             "Toys Interests", toysInterests, setState),
-  //                       if (selectedCategory == "occ")
-  //                         _buildInterestSection("職業", occupations, setState),
-
-  //                       SizedBox(height: 20),
-
-  //                       // Done Button
-  //                       ElevatedButton(
-  //                         onPressed: () {
-  //                           Navigator.pop(context); // Close the bottom sheet
-  //                         },
-  //                         child: Text("Done"),
-  //                         style: ElevatedButton.styleFrom(
-  //                           backgroundColor: Colors.blue,
-  //                           padding: EdgeInsets.symmetric(
-  //                               horizontal: 40, vertical: 10),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               );
-  //             },
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   // Method to build category selector buttons
   Widget _buildCategorySelector(
       StateSetter setState, String categoryKey, String label) {
@@ -669,7 +341,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
           color: selectedCategory == categoryKey
               ? Colors.blue
               : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
           label,
@@ -682,9 +354,75 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
     );
   }
 
-  // Method to build interest sections dynamically
+  Widget _buildInterestSectionGeneric(
+    String title,
+    List<String> items,
+    List<String> selectedItems,
+    StateSetter setState, {
+    Color selectedColor = Colors.blue,
+    Color unselectedColor = const Color.fromARGB(255, 204, 204, 204),
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title Text with Custom Colors
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: (title == "Lifestyle Interests" || title == "職業")
+                ? Colors
+                    .green // Custom color for "Lifestyle Interests" and "職業"
+                : Colors.black, // Default color for other titles
+          ),
+        ),
+        SizedBox(height: 10),
+
+        // Wrap for Displaying the Items
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: items.map((item) {
+            bool isSelected = selectedItems.contains(item);
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedItems.remove(item);
+                    print("Removed: $item");
+                  } else {
+                    selectedItems.add(item);
+                    print("Added: $item");
+                  }
+                });
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? selectedColor : unselectedColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  item,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
   Widget _buildInterestSection(
-      String title, List<String> interests, StateSetter setState) {
+    String title,
+    List<String> interests,
+    StateSetter setState,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -693,6 +431,12 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: (title == "Lifestyle Interests")
+                ? Colors.green // Custom color for "Lifestyle Interests"
+                : (title == "Inner Lifestyle Interests")
+                    ? Colors
+                        .blue // Custom color for "Inner Lifestyle Interests"
+                    : Colors.black, // Default color for other titles
           ),
         ),
         SizedBox(height: 10),
@@ -732,59 +476,59 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
     );
   }
 
-  void _showMoreexercise(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[900],
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
+  Widget _buildInterestSectionType(
+    String title,
+    List<String> occupation,
+    StateSetter setState,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: (title == "職業") ? Colors.green : Colors.black,
+          ),
+        ),
+        SizedBox(height: 10),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: occupation.map((occu) {
+            bool isSelected = selectedoccu.contains(occu);
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedoccu.remove(occu);
+                    print("Removed: $occu");
+                  } else {
+                    selectedoccu.add(occu);
+                    print("Added: $occu");
+                  }
+                  print("Current selectedoccu: $selectedoccu");
+                });
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.blue : Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ),
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Select More Exercise",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-
-                    // Lifestyle Category
-                    _buildInterestSection("Exercise", exercise, setState),
-                    SizedBox(height: 20),
-
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close the bottom sheet
-                      },
-                      child: Text("Done"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue, // Button color
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                        textStyle: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  occu,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
             );
-          },
-        );
-      },
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -815,7 +559,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
           style: TextStyle(
               color: Color.fromARGB(255, 252, 252, 252), fontSize: 22),
         ),
-        // automaticallyImplyLeading: false,
         actions: [],
       ),
       backgroundColor: Colors.grey[350],
@@ -907,31 +650,16 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         CustomTextFieldWidget.buildTextField(
                             nameTextEditingController, "Name",
                             icon: Icons.person),
-                        const SizedBox(height: 20),
-                        // CustomTextFieldWidget(
-                        //   editingController: nameTextEditingController,
-                        //   labelText: "Name",
-                        //   iconData: Icons.person,
-                        //   borderRadius: 20.0,
-                        // ),
+                        const SizedBox(height: 10),
 
                         CustomTextFieldWidget.buildTextField(
                           emailTextEditingController,
                           "Email",
                           icon: Icons.email_outlined,
                         ),
-                        // CustomTextFieldWidget(
-                        //   editingController: emailTextEditingController,
-                        //   labelText: "Email",
-                        //   iconData: Icons.email_outlined,
-                        //   borderRadius: 20.0,
-                        // ),
-                        const SizedBox(height: 20),
-                        // buildbdField(
-                        //   context,
-                        //   birthdayController,
-                        //   "Birthday",
-                        // ),
+
+                        const SizedBox(height: 10),
+
                         GestureDetector(
                           onTap: () async {
                             // Call the selectDate function
@@ -972,7 +700,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                   Expanded(
                                     child: Text(
                                       birthdayController.text.isEmpty
-                                          ? "Select Birthday"
+                                          ? "生日"
                                           : birthdayController.text,
                                       style: TextStyle(
                                         color: birthdayController.text.isEmpty
@@ -998,7 +726,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                 context, timeController);
                             setState(() {
                               labelText = timeController.text.isEmpty
-                                  ? "Time (optional)"
+                                  ? "出生時間 (不知不用填)"
                                   : timeController
                                       .text; // Update label text based on selection
                             });
@@ -1021,7 +749,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                   Expanded(
                                     child: Text(
                                       timeController.text.isEmpty
-                                          ? "Select Time (optional)"
+                                          ? "出生時間 (不知不用填)"
                                           : timeController.text,
                                       style: TextStyle(
                                         color: timeController.text.isEmpty
@@ -1095,7 +823,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         //     ),
                         //   ),
                         // ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
                         CustomTextFieldWidget.buildTextField(
                           passwordlTextEditingController,
                           "密碼",
@@ -1108,7 +836,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         //   isObscure: true,
                         //   borderRadius: 20.0,
                         // ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
                         CustomTextFieldWidget.buildTextField(
                           confirmPasswordController,
                           "密碼",
@@ -1129,12 +857,11 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     crossAxisAlignment:
                         CrossAxisAlignment.start, // Align title to the start
                     children: [
-                      // Title for the container
                       Padding(
                         padding: const EdgeInsets.only(
                             bottom: 8.0), // Space between title and container
                         child: Text(
-                          "Your Interests", // Change this to your desired title
+                          "生活&&興趣", // Change this to your desired title
                           style: TextStyle(
                             fontSize: 18, // Font size of the title
                             fontWeight: FontWeight.bold, // Bold font style
@@ -1143,7 +870,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                           ),
                         ),
                       ),
-
                       Container(
                         width: MediaQuery.of(context).size.width - 36,
                         decoration: BoxDecoration(
@@ -1195,8 +921,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                           selectedInterests.contains(interest);
                                       return GestureDetector(
                                         onTap: () {
-                                          toggleInterest(
-                                              interest); // Toggle interest state
+                                          toggleInterest(interest);
                                         },
                                         child: AnimatedContainer(
                                           duration:
@@ -1273,166 +998,12 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                           ],
                         ),
                       ),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width - 36,
-                      //   decoration: BoxDecoration(
-                      //     color: Color.fromARGB(
-                      //         255, 255, 255, 255), // Dark gray background
-                      //     borderRadius: BorderRadius.circular(12),
-                      //     boxShadow: [
-                      //       BoxShadow(
-                      //         color: Colors.black54,
-                      //         blurRadius: 8,
-                      //         offset: Offset(0, 4),
-                      //       ),
-                      //     ],
-                      //   ),
-                      //   padding: const EdgeInsets.all(20.0),
-                      //   child: Column(
-                      //     children: [
-                      //       Wrap(
-                      //         spacing: 10,
-                      //         children: interests.take(5).map((interest) {
-                      //           final isSelected =
-                      //               selectedInterests.contains(interest);
-                      //           return GestureDetector(
-                      //             onTap: () {
-                      //               toggleInterest(
-                      //                   interest); // Call the function to toggle interest
-                      //             },
-                      //             child: Container(
-                      //               padding: EdgeInsets.symmetric(
-                      //                   horizontal: 8, vertical: 4),
-                      //               decoration: BoxDecoration(
-                      //                 color: isSelected
-                      //                     ? Colors.blue
-                      //                     : Colors.grey[
-                      //                         300], // Change color based on selection
-                      //                 borderRadius: BorderRadius.circular(16),
-                      //               ),
-                      //               child: Text(
-                      //                 interest,
-                      //                 style: TextStyle(
-                      //                   color: isSelected
-                      //                       ? Colors.white
-                      //                       : Colors.black,
-                      //                 ),
-                      //               ),
-                      //             ),
-                      //           );
-                      //         }).toList(),
-                      //       ),
-                      //       TextButton(
-                      //         onPressed: () => _showMoreInterests(
-                      //             context), // Call the function to show more interests
-                      //         child: Text(
-                      //           "Show More",
-                      //           style: TextStyle(
-                      //               color: Colors.blue), // Style for the button
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                     ],
                   ),
-                  Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start, // Align title to the start
-                    children: [
-                      // Title for the container
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 8.0), // Space between title and container
-                        child: Text(
-                          "Exercise", // Change this to your desired title
-                          style: TextStyle(
-                            fontSize: 18, // Font size of the title
-                            fontWeight: FontWeight.bold, // Bold font style
-                            color: Colors.white, // Title color
-                          ),
-                        ),
-                      ),
+                  SizedBox(
+                    height: 10,
+                  ),
 
-                      // Container for interests
-                      Container(
-                        width: MediaQuery.of(context).size.width - 36,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(
-                              255, 255, 255, 255), // Dark gray background
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black54,
-                              blurRadius: 8,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          children: [
-                            Wrap(
-                              spacing: 10,
-                              children: exercise.take(5).map((exercise) {
-                                final isSelected =
-                                    selectedInterests.contains(exercise);
-                                return GestureDetector(
-                                  onTap: () {
-                                    toggleInterest(
-                                        exercise); // Call the function to toggle interest
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? Colors.blue
-                                          : Colors.grey[
-                                              300], // Change color based on selection
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Text(
-                                      exercise,
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                            TextButton(
-                              onPressed: () => _showMoreexercise(
-                                  context), // Call the function to show more interests
-                              child: Text(
-                                "Show More",
-                                style: TextStyle(
-                                    color: Colors.blue), // Style for the button
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Switch(
-                        value:
-                            isMale, // Boolean value controlling the switch state
-                        onChanged: (bool value) {
-                          setState(() {
-                            isMale = value; // Update the boolean value
-                            sexController.text = isMale ? "Female" : "Male";
-                          });
-                        },
-                        activeColor:
-                            Colors.blue, // Color of the toggle when active
-                        inactiveThumbColor:
-                            Colors.grey, // Color of the toggle when inactive
-                      ),
-                    ],
-                  ),
-                  // const SizedBox(height: 10),
                   Container(
                     width: MediaQuery.of(context).size.width - 36,
                     height: 40,
@@ -1442,6 +1013,189 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         Radius.circular(12),
                       ),
                     ),
+                    // child: InkWell(
+                    //   onTap: () async {
+                    //     if (authenticationcontroller.profileImage != null) {
+                    //       String missingFields =
+                    //           ''; // Variable to collect missing field names
+
+                    //       // Check for missing fields
+                    //       if (nameTextEditingController.text.trim().isEmpty) {
+                    //         missingFields += 'Name, ';
+                    //       }
+                    //       if (emailTextEditingController.text.trim().isEmpty) {
+                    //         missingFields += 'Email, ';
+                    //       }
+                    //       if (passwordlTextEditingController.text
+                    //           .trim()
+                    //           .isEmpty) {
+                    //         missingFields += 'Password, ';
+                    //       }
+
+                    //       if (missingFields.isNotEmpty) {
+                    //         // Remove trailing comma and space
+                    //         missingFields = missingFields.substring(
+                    //             0, missingFields.length - 2);
+
+                    //         // Show snackbar with the list of missing fields
+                    //         Get.snackbar(
+                    //           "Error", // Title of the Snackbar
+                    //           "Please fill in the following fields: $missingFields", // Message of the Snackbar
+                    //           snackPosition: SnackPosition
+                    //               .BOTTOM, // Position of the Snackbar
+                    //           backgroundColor: Colors
+                    //               .white, // Background color of the Snackbar
+                    //           titleText: Text(
+                    //             "Error",
+                    //             style: TextStyle(
+                    //               color: Colors
+                    //                   .red, // Red color for the title text
+                    //               fontWeight: FontWeight.bold,
+                    //             ),
+                    //           ),
+                    //           messageText: Text(
+                    //             "Please fill in the following fields: $missingFields",
+                    //             style: TextStyle(
+                    //               color: Colors
+                    //                   .red, // Red color for the message text
+                    //             ),
+                    //           ),
+                    //         );
+                    //       } else {
+                    //         // All fields are filled, proceed to create new user
+                    //         setState(() {
+                    //           showProgressBar = true; // Show progress bar
+                    //         });
+                    //         bool emailExists =
+                    //             await _checkIfEmailExistsInAuthAndFirestore(
+                    //           emailTextEditingController.text.trim(),
+                    //         );
+
+                    //         if (emailExists) {
+                    //           setState(() {
+                    //             showProgressBar = false;
+                    //           });
+
+                    //           Get.snackbar(
+                    //             "Error",
+                    //             "The email already exists. Please use a different email.",
+                    //             snackPosition: SnackPosition.BOTTOM,
+                    //             backgroundColor: Colors.white,
+                    //             titleText: const Text(
+                    //               "Error",
+                    //               style: TextStyle(
+                    //                   color: Colors.red,
+                    //                   fontWeight: FontWeight.bold),
+                    //             ),
+                    //             messageText: const Text(
+                    //               "Email already registered",
+                    //               style: TextStyle(color: Colors.red),
+                    //             ),
+                    //           );
+                    //           return;
+                    //         }
+                    //         try {
+                    //           await authenticationcontroller
+                    //               .creatNewUserAccount(
+                    //                   authenticationcontroller
+                    //                       .profileImage!, // Image file
+                    //                   emailTextEditingController.text
+                    //                       .trim(), // Email
+                    //                   passwordlTextEditingController.text
+                    //                       .trim(), // Password
+                    //                   nameTextEditingController.text
+                    //                       .trim(), // Name
+
+                    //                   selectedInterests,
+                    //                   [],
+                    //                   sexController.text.trim(),
+                    //                   timeController.text.trim(),
+                    //                   birthdayController.text.trim(),
+                    //                   timeController.text.isEmpty
+                    //                       ? "false"
+                    //                       : "true",
+                    //                   age,
+                    //                   selectedoccu,
+                    //                   selectmbti);
+
+                    //           print(
+                    //               "sure: ${timeController.text.isEmpty ? "false" : "true"}");
+
+                    //           // On success, hide progress bar and navigate to HomeScreen
+                    //           if (mounted) {
+                    //             // Check if widget is still mounted
+                    //             setState(() {
+                    //               showProgressBar = false; // Hide progress bar
+                    //             });
+
+                    //             // Show success message and navigate
+                    //             Get.snackbar(
+                    //               "Success",
+                    //               "Account created successfully",
+                    //               snackPosition: SnackPosition.TOP,
+                    //               backgroundColor: Colors.green,
+                    //               colorText: Colors.white,
+                    //               borderRadius: 12,
+                    //               margin: const EdgeInsets.all(10),
+                    //               icon: const Icon(Icons.check_circle,
+                    //                   color: Colors.white),
+                    //               duration: const Duration(seconds: 3),
+                    //               isDismissible: true,
+                    //               forwardAnimationCurve: Curves.easeInOut,
+                    //             );
+                    //             // Get.to(HomeScreen());
+                    //             Get.offAll(() => HomeScreen());
+                    //           }
+                    //         } catch (e) {
+                    //           // Handle the error (e.g., display error message)
+                    //           if (mounted) {
+                    //             // Check if widget is still mounted
+                    //             setState(() {
+                    //               showProgressBar = false; // Hide progress bar
+                    //             });
+                    //             Get.snackbar(
+                    //               "Error", // Title of the Snackbar
+                    //               "Failed to create account: $e", // Message of the Snackbar
+                    //               snackPosition: SnackPosition
+                    //                   .BOTTOM, // Position of the Snackbar
+                    //               backgroundColor: Colors
+                    //                   .white, // Background color of the Snackbar
+                    //               titleText: Text(
+                    //                 "Error",
+                    //                 style: TextStyle(
+                    //                   color: Colors
+                    //                       .red, // Red color for the title text
+                    //                   fontWeight: FontWeight.bold,
+                    //                   fontSize: 16,
+                    //                 ),
+                    //               ),
+                    //               messageText: Text(
+                    //                 "Failed to create account: $e",
+                    //                 style: TextStyle(
+                    //                   color: Colors
+                    //                       .red, // Red color for the message text
+                    //                   fontSize: 14,
+                    //                 ),
+                    //               ),
+                    //             );
+                    //           }
+                    //         }
+                    //       }
+                    //     } else {
+                    //       Get.snackbar(
+                    //           "Error", "Please select a profile image");
+                    //     }
+                    //   },
+                    //   child: const Center(
+                    //     child: Text(
+                    //       "申請帳號",
+                    //       style: TextStyle(
+                    //           fontSize: 20,
+                    //           fontWeight: FontWeight.bold,
+                    //           color: Colors.black),
+                    //     ),
+                    //   ),
+                    // ),
                     child: InkWell(
                       onTap: () async {
                         if (authenticationcontroller.profileImage != null) {
@@ -1468,106 +1222,192 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
                             // Show snackbar with the list of missing fields
                             Get.snackbar(
-                              "Error", // Title of the Snackbar
-                              "Please fill in the following fields: $missingFields", // Message of the Snackbar
-                              snackPosition: SnackPosition
-                                  .BOTTOM, // Position of the Snackbar
-                              backgroundColor: Colors
-                                  .white, // Background color of the Snackbar
+                              "Error",
+                              "Please fill in the following fields: $missingFields",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.white,
                               titleText: Text(
                                 "Error",
                                 style: TextStyle(
-                                  color: Colors
-                                      .red, // Red color for the title text
+                                  color: Colors.red,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               messageText: Text(
                                 "Please fill in the following fields: $missingFields",
-                                style: TextStyle(
-                                  color: Colors
-                                      .red, // Red color for the message text
-                                ),
+                                style: TextStyle(color: Colors.red),
                               ),
                             );
-                          } else {
-                            // All fields are filled, proceed to create new user
+                            return;
+                          }
+
+                          // Email format validation
+                          final email = emailTextEditingController.text.trim();
+                          final emailRegex =
+                              RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                          if (!emailRegex.hasMatch(email)) {
+                            Get.snackbar(
+                              "Error",
+                              "The email address is badly formatted.",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.white,
+                              titleText: const Text(
+                                "Error",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              messageText: const Text(
+                                "Please enter a valid email address.",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                            return;
+                          }
+
+                          setState(() {
+                            showProgressBar = true; // Show progress bar
+                          });
+
+                          try {
+                            bool emailExists =
+                                await _checkIfEmailExistsInAuthAndFirestore(
+                                    email);
+
+                            if (emailExists) {
+                              setState(() {
+                                showProgressBar = false;
+                              });
+
+                              Get.snackbar(
+                                "Error",
+                                "The email already exists. Please use a different email.",
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.white,
+                                titleText: const Text(
+                                  "Error",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                messageText: const Text(
+                                  "Email already registered",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              );
+                              return;
+                            }
+
+                            // Attempt to create the account
+                            await authenticationcontroller.creatNewUserAccount(
+                              authenticationcontroller.profileImage!,
+                              email,
+                              passwordlTextEditingController.text.trim(),
+                              nameTextEditingController.text.trim(),
+                              selectedInterests,
+                              [],
+                              sexController.text.trim(),
+                              timeController.text.trim(),
+                              birthdayController.text.trim(),
+                              timeController.text.isEmpty ? "false" : "true",
+                              age,
+                              selectedoccu,
+                              selectmbti,
+                              selectlanguage,
+                              selectreligion,
+                              selecteducation,
+                              selectbloodtype,
+                              selectlooking,
+                              selectexercise,
+                              selectdiet,
+                            );
+
+                            if (mounted) {
+                              setState(() {
+                                showProgressBar = false; // Hide progress bar
+                              });
+
+                              // Show success message and navigate
+                              Get.snackbar(
+                                "Success",
+                                "Account created successfully",
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white,
+                                borderRadius: 12,
+                                margin: const EdgeInsets.all(10),
+                                icon: const Icon(Icons.check_circle,
+                                    color: Colors.white),
+                                duration: const Duration(seconds: 3),
+                                isDismissible: true,
+                                forwardAnimationCurve: Curves.easeInOut,
+                              );
+
+                              // Navigate to HomeScreen
+                              Get.offAll(() => HomeScreen());
+                            }
+                          } on FirebaseAuthException catch (e) {
+                            // Handle Firebase-specific exceptions
                             setState(() {
-                              showProgressBar = true; // Show progress bar
+                              showProgressBar = false;
                             });
 
-                            try {
-                              await authenticationcontroller
-                                  .creatNewUserAccount(
-                                      authenticationcontroller
-                                          .profileImage!, // Image file
-                                      emailTextEditingController.text
-                                          .trim(), // Email
-                                      passwordlTextEditingController.text
-                                          .trim(), // Password
-                                      nameTextEditingController.text
-                                          .trim(), // Name
-
-                                      selectedInterests,
-                                      [],
-                                      sexController.text.trim(),
-                                      timeController.text.trim(),
-                                      birthdayController.text.trim(),
-                                      timeController.text.isEmpty
-                                          ? "false"
-                                          : "true",
-                                      age);
-
-                              print(
-                                  "sure: ${timeController.text.isEmpty ? "false" : "true"}");
-
-                              // On success, hide progress bar and navigate to HomeScreen
-                              if (mounted) {
-                                // Check if widget is still mounted
-                                setState(() {
-                                  showProgressBar = false; // Hide progress bar
-                                });
-
-                                // Show success message and navigate
-                                Get.snackbar(
-                                    "Success", "Account created successfully");
-                                // Get.to(HomeScreen());
-                                Get.offAll(() => HomeScreen());
-                              }
-                            } catch (e) {
-                              // Handle the error (e.g., display error message)
-                              if (mounted) {
-                                // Check if widget is still mounted
-                                setState(() {
-                                  showProgressBar = false; // Hide progress bar
-                                });
-                                Get.snackbar(
-                                  "Error", // Title of the Snackbar
-                                  "Failed to create account: $e", // Message of the Snackbar
-                                  snackPosition: SnackPosition
-                                      .BOTTOM, // Position of the Snackbar
-                                  backgroundColor: Colors
-                                      .white, // Background color of the Snackbar
-                                  titleText: Text(
-                                    "Error",
-                                    style: TextStyle(
-                                      color: Colors
-                                          .red, // Red color for the title text
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  messageText: Text(
-                                    "Failed to create account: $e",
-                                    style: TextStyle(
-                                      color: Colors
-                                          .red, // Red color for the message text
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                );
-                              }
+                            String errorMessage;
+                            switch (e.code) {
+                              case 'email-already-in-use':
+                                errorMessage = "This email is already in use.";
+                                break;
+                              case 'invalid-email':
+                                errorMessage =
+                                    "The email address is badly formatted.";
+                                break;
+                              case 'weak-password':
+                                errorMessage = "The password is too weak.";
+                                break;
+                              default:
+                                errorMessage =
+                                    "An error occurred: ${e.message}";
                             }
+
+                            Get.snackbar(
+                              "Error",
+                              errorMessage,
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.white,
+                              titleText: Text(
+                                "Error",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              messageText: Text(
+                                errorMessage,
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                          } catch (e) {
+                            // Handle unexpected exceptions
+                            setState(() {
+                              showProgressBar = false;
+                            });
+
+                            Get.snackbar(
+                              "Error",
+                              "An unexpected error occurred: $e",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.white,
+                              titleText: Text(
+                                "Error",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              messageText: Text(
+                                "An unexpected error occurred: $e",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
                           }
                         } else {
                           Get.snackbar(
@@ -1596,21 +1436,21 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                       //     color: Colors.green,
                       //   ),
                       // ),
-                      InkWell(
-                        onTap: () {
-                          print(Get.routing.current);
+                      // InkWell(
+                      //   onTap: () {
+                      //     print(Get.routing.current);
 
-                          print("Tapped!");
-                          Get.back();
-                        },
-                        child: const Text(
-                          "已經有帳號",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      //     print("Tapped!");
+                      //     Get.back();
+                      //   },
+                      //   child: const Text(
+                      //     "已經有帳號",
+                      //     style: TextStyle(
+                      //         fontSize: 14,
+                      //         color: Color.fromARGB(255, 0, 0, 0),
+                      //         fontWeight: FontWeight.bold),
+                      //   ),
+                      // ),
                     ],
                   ),
                   SizedBox(height: 10),

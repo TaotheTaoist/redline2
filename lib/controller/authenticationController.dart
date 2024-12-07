@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:redline/authenticationScreen/login_screen.dart';
+import 'package:redline/constants/interests.dart';
 
 import 'package:redline/homeScreen/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -119,7 +120,18 @@ class Authenticationcontroller extends GetxController {
 
     if (imageFile != null) {
       Get.snackbar(
-          "Profile Image", "You have successfully picked your profile image.");
+        "Profile Image",
+        "You have successfully picked your profile image.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(10),
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+        duration: const Duration(seconds: 3),
+        isDismissible: true,
+        forwardAnimationCurve: Curves.easeInOut,
+      );
     }
     pickedFile = Rx<File?>(File(imageFile!.path));
   }
@@ -149,7 +161,60 @@ class Authenticationcontroller extends GetxController {
     return downloadUrlImage;
   }
 
-  creatNewUserAccount(
+  // creatNewUserAccount(
+  //   File imageProfile,
+  //   String email,
+  //   String password,
+  //   String name,
+  //   List<String> interests,
+  //   List<String> imageUrls,
+  //   String sex,
+  //   String bdTime,
+  //   String birthday,
+  //   String sure,
+  //   int age,
+  //   List<String> selectedoccu,
+  //   List<String> selectmbti,
+  // ) async {
+  //   try {
+  //     // is this code being used? Yes, it need for usercreation
+  //     UserCredential credential = await FirebaseAuth.instance
+  //         .createUserWithEmailAndPassword(email: email, password: password);
+
+  //     //changed String to String? but original was String, to fit a new version of uploadImageToStorage
+  //     String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
+  //     personModel.Person personInstance = personModel.Person(
+  //         uid: FirebaseAuth.instance.currentUser!.uid,
+  //         imageProfile: urlOfDownloadImage,
+  //         email: email,
+  //         password: password,
+  //         name: name,
+  //         interests: interests,
+  //         imageUrls: imageUrls,
+  //         sex: sex,
+  //         bdTime: bdTime,
+  //         birthday: birthday,
+  //         sure: sure,
+  //         age: age,
+  //         occupation: selectedoccu,
+  //         mbti: selectmbti);
+
+  //     await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .set(personInstance.toJson());
+  //   } catch (errorMsg) {
+  //     Get.snackbar("title", ":$errorMsg");
+  //   }
+  // }
+
+  //  "language": language,
+  //       "religion": religion,
+  //       "education": education,
+  //       "bloodtype": bloodtype,
+  //       "lookingfor": lookingfor,
+  //       "exercise": exercise,
+  Future<void> creatNewUserAccount(
     File imageProfile,
     String email,
     String password,
@@ -161,14 +226,25 @@ class Authenticationcontroller extends GetxController {
     String birthday,
     String sure,
     int age,
+    List<String> selectedoccu,
+    List<String> selectmbti,
+    List<String> language,
+    List<String> religion,
+    List<String> education,
+    List<String> bloodtype,
+    List<String> lookingfor,
+    List<String> exercise,
+    List<String> selectdiet,
   ) async {
     try {
-      // is this code being used? Yes, it need for usercreation
+      // Attempt to create a new user
       UserCredential credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      //changed String to String? but original was String, to fit a new version of uploadImageToStorage
+      // Upload the profile image
       String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
+
+      // Create a Person object
       personModel.Person personInstance = personModel.Person(
         uid: FirebaseAuth.instance.currentUser!.uid,
         imageProfile: urlOfDownloadImage,
@@ -182,14 +258,75 @@ class Authenticationcontroller extends GetxController {
         birthday: birthday,
         sure: sure,
         age: age,
+        occupation: selectedoccu,
+        mbti: selectmbti,
+        language: language,
+        religion: religion,
+        education: education,
+        bloodtype: bloodtype,
+        lookingfor: lookingfor,
+        exercise: exercise,
+        diet: selectdiet,
       );
 
+      // Save the user data to Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .set(personInstance.toJson());
-    } catch (errorMsg) {
-      Get.snackbar("title", ":$errorMsg");
+
+      // Success message (optional)
+      Get.snackbar(
+        "Success",
+        "User account created successfully!",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(10),
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+        duration: const Duration(seconds: 3),
+        isDismissible: true,
+        forwardAnimationCurve: Curves.easeInOut,
+      );
+    } on FirebaseAuthException catch (e) {
+      // Handle Firebase-specific errors
+      String errorMessage;
+      switch (e.code) {
+        case 'email-already-in-use':
+          errorMessage = "This email is already in use.";
+          break;
+        case 'invalid-email':
+          errorMessage = "The email address is badly formatted.";
+          break;
+        case 'weak-password':
+          errorMessage = "The password is too weak.";
+          break;
+        default:
+          errorMessage = "An error occurred: ${e.message}";
+      }
+      Get.snackbar(
+        "Error",
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.white,
+        titleText: const Text(
+          "Error",
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        ),
+        messageText: const Text(
+          "Email already registered",
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    } on FirebaseException catch (e) {
+      // Handle Firestore or Storage errors
+      Get.snackbar(
+        "Error",
+        "Firebase error: ${e.message}",
+      );
+    } catch (e) {
+      // Handle unexpected errors
+      Get.snackbar("Error", "An unexpected error occurred: $e");
     }
   }
 

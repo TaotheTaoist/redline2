@@ -190,7 +190,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         setState(() {
           selectedUserUid = userImageUrlsMap.keys.first;
           profileKeys = userImageUrlsMap.keys.toList();
-          isLoading = false;
+          // isLoading = false;
         });
         print(
             "selectedUserUid assigned to ${userImageUrlsMap.keys.first} Function finished at: ${DateTime.now()} build, swipping_screen");
@@ -243,7 +243,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     print(
         " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
 
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 3), () {
       setState(() {
         isLoading = false; // Set loading to false after 3 seconds
       });
