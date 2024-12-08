@@ -1,16 +1,4 @@
 import 'package:redline/calendar/util/LunarUtil.dart';
-import 'package:redline/calendar/Lunar.dart';
-import 'package:redline/calendar/util/LunarUtil.dart';
-import 'package:redline/calendar/Lunar.dart';
-import 'package:redline/calendar/eightchar/Yun.dart';
-import 'package:redline/calendar/eightchar/DaYun.dart';
-import 'package:redline/calendar/eightchar/LiuNian.dart';
-import 'package:redline/calendar/eightchar/XiaoYun.dart';
-import 'package:redline/calendar/eightchar/XiaoYun.dart';
-import 'package:redline/calendar/eightchar/LiuYue.dart';
-import 'package:redline/calendar/EightChar.dart';
-import 'package:redline/calendar/Solar.dart';
-import 'package:redline/calendar/JieQi.dart';
 
 /// 九星
 /// <p>玄空九星、奇门九星都来源于北斗九星，九数、七色、五行、后天八卦方位都是相通的。</p>

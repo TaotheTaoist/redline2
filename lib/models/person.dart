@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Person {
   String? uid;
-  String? imageProfile;
+
   String? email;
   String? password;
   String? name;
@@ -29,7 +29,6 @@ class Person {
 
   Person(
       {this.uid,
-      this.imageProfile,
       this.email,
       this.password,
       this.name,
@@ -54,7 +53,7 @@ class Person {
 
   @override
   String toString() {
-    return 'Person(uid: $uid, name: $name, email: $email, imageProfile: $imageProfile, interests: ${interests?.join(", ")}, imageUrls: ${imageUrls?.join(", ")}, sex: $sex)';
+    return 'Person(uid: $uid, name: $name, email: $email,  interests: ${interests?.join(", ")}, imageUrls: ${imageUrls?.join(", ")}, sex: $sex)';
   }
 
   // static Person fromDataSnapshot(DocumentSnapshot snapshot) {
@@ -92,7 +91,6 @@ class Person {
       name: dataSnapshot["name"] as String?,
       email: dataSnapshot["email"] as String?,
       password: dataSnapshot["password"] as String?,
-      imageProfile: dataSnapshot["imageProfile"] as String?,
       photoNo: dataSnapshot["photoNo"] as String?,
       publishedDateTime: dataSnapshot["publishedDateTime"] as int?,
       interests: dataSnapshot["interests"] != null
@@ -138,7 +136,6 @@ class Person {
 
   Map<String, dynamic> toJson() => {
         "uid": uid,
-        "imageProfile": imageProfile,
         "email": email,
         "password": password,
         "name": name,
@@ -169,7 +166,6 @@ class Person {
         name: json["name"],
         email: json["email"],
         password: json["password"],
-        imageProfile: json["imageProfile"],
         photoNo: json["photoNo"],
         publishedDateTime: json["publishedDateTime"],
         interests: List<String>.from(json["interests"] ?? []),

@@ -253,7 +253,7 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
                   'uid': userID,
                   'birthday': birthdayController.text.trim(),
                   // 'location': locationController.text.trim(),
-                  'imageProfile': widget.user.photoURL ?? '',
+                  'imageUrls': widget.user.photoURL ?? '',
                   'age': age,
                 }, SetOptions(merge: true));
                 await checkProfileCompletion();

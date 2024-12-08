@@ -137,8 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
         bool hasUid = userData['uid'] != null && userData['uid'].isNotEmpty;
         bool hasEmail =
             userData['email'] != null && userData['email'].isNotEmpty;
-        bool hasProfilePicture = userData['imageProfile'] != null &&
-            userData['imageProfile'].isNotEmpty;
+        bool hasProfilePicture =
+            userData['imageUrls'] != null && userData['imageUrls'].isNotEmpty;
 
         // Print statements to verify each condition
         print(

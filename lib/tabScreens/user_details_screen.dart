@@ -41,8 +41,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   String time = "";
   int year = 2000;
 
-  List<String> interestsfromfb = [];
   String aboutMe = "";
+  List<String> interestsfromfb = [];
+  List<String> edLevel = [];
+  List<String> occp = [];
+  List<String> mbtis = [];
+  List<String> blType = [];
+  List<String> lkFor = [];
+  List<String> undo = [];
+  List<String> food = [];
 
   late Lunar.Lunar lunarDate;
 
@@ -75,6 +82,14 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     print("cacheduser $cachedUser userdetail_Screen");
 
     birthday = cachedUser["birthday"];
+
+    edLevel = cachedUser["birthday"];
+    occp = cachedUser["occupation"];
+    mbtis = cachedUser["mbti"];
+    blType = cachedUser["bloodtype"];
+    lkFor = cachedUser["lookingfor"];
+    undo = cachedUser["exercise"];
+    food = cachedUser["diet"];
     print("name at ${cachedUser["name"]}");
     retrieveUserInfo().then((_) {
       retrieveUserImages();
@@ -151,7 +166,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   }
 
   retrieveUserImages() async {
-    print("Starting to fetch user images..."); // Add this line
+    print("Starting to fetch user images...");
 
     try {
       print("Fetching user images for user ID: ${widget.userID}");

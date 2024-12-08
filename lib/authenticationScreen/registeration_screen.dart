@@ -561,63 +561,63 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  authenticationcontroller.imageFile == null
-                      ? CircleAvatar(
-                          radius: 80,
-                          backgroundImage:
-                              AssetImage("lib/image/profileAvatar.png"),
-                          backgroundColor: Colors.black,
-                        )
-                      : Container(
-                          width: 180,
-                          height: 180,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey,
-                            image: DecorationImage(
-                                fit: BoxFit.fitHeight,
-                                image: FileImage(
-                                  File(
-                                    authenticationcontroller.imageFile!.path,
-                                  ),
-                                )),
-                          ),
-                        ),
+                  // authenticationcontroller.imageFile == null
+                  //     ? CircleAvatar(
+                  //         radius: 80,
+                  //         backgroundImage:
+                  //             AssetImage("lib/image/profileAvatar.png"),
+                  //         backgroundColor: Colors.black,
+                  //       )
+                  //     : Container(
+                  //         width: 180,
+                  //         height: 180,
+                  //         decoration: BoxDecoration(
+                  //           shape: BoxShape.circle,
+                  //           color: Colors.grey,
+                  //           image: DecorationImage(
+                  //               fit: BoxFit.fitHeight,
+                  //               image: FileImage(
+                  //                 File(
+                  //                   authenticationcontroller.imageFile!.path,
+                  //                 ),
+                  //               )),
+                  //         ),
+                  //       ),
 
                   _buildImagePicker(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          await authenticationcontroller
-                              .pickImageFileFromGallery();
-                          setState(() {
-                            authenticationcontroller.imageFile;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.image_outlined,
-                          color: Colors.grey,
-                          size: 30,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          await authenticationcontroller
-                              .captureImageromPhoneCamera();
-                          setState(() {
-                            authenticationcontroller.imageFile;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.camera_alt_outlined,
-                          color: Colors.grey,
-                          size: 30,
-                        ),
-                      )
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     IconButton(
+                  //       onPressed: () async {
+                  //         await authenticationcontroller
+                  //             .pickImageFileFromGallery();
+                  //         setState(() {
+                  //           authenticationcontroller.imageFile;
+                  //         });
+                  //       },
+                  //       icon: Icon(
+                  //         Icons.image_outlined,
+                  //         color: Colors.grey,
+                  //         size: 30,
+                  //       ),
+                  //     ),
+                  //     IconButton(
+                  //       onPressed: () async {
+                  //         await authenticationcontroller
+                  //             .captureImageromPhoneCamera();
+                  //         setState(() {
+                  //           authenticationcontroller.imageFile;
+                  //         });
+                  //       },
+                  //       icon: Icon(
+                  //         Icons.camera_alt_outlined,
+                  //         color: Colors.grey,
+                  //         size: 30,
+                  //       ),
+                  //     )
+                  //   ],
+                  // ),
                   Container(
                     width: MediaQuery.of(context).size.width - 36,
                     child: Column(
@@ -626,15 +626,12 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             nameTextEditingController, "Name",
                             icon: Icons.person),
                         const SizedBox(height: 10),
-
                         CustomTextFieldWidget.buildTextField(
                           emailTextEditingController,
                           "Email",
                           icon: Icons.email_outlined,
                         ),
-
                         const SizedBox(height: 10),
-
                         GestureDetector(
                           onTap: () async {
                             // Call the selectDate function
@@ -695,7 +692,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             ),
                           ),
                         ),
-
                         GestureDetector(
                           onTap: () async {
                             await BirthdayCal.selectTime(
@@ -744,87 +740,18 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             ),
                           ),
                         ),
-
-                        // GestureDetector(
-                        //   onTap: () async {
-                        //     // Call the selectDate function
-
-                        //     DateTime? selectedDate = await showDatePicker(
-                        //       context: context,
-                        //       initialDate: DateTime.now(),
-                        //       firstDate: DateTime(1900),
-                        //       lastDate: DateTime(2100),
-                        //     );
-
-                        //     if (selectedDate != null) {
-                        //       // Calculate the age
-                        //       age = BirthdayCal.calculateAge(selectedDate);
-
-                        //       print("age: $age");
-                        //       String formattedDate =
-                        //           DateFormat('yyyy-MM-dd').format(selectedDate);
-
-                        //       // Update the TextEditingController with both birthday and age
-                        //       birthdayController.text = '$formattedDate';
-                        //     }
-                        //   },
-                        //   child: AbsorbPointer(
-                        //     child: CustomTextFieldWidget(
-                        //       editingController: birthdayController,
-                        //       labelText: "Birthday",
-                        //       iconData: Icons.cake,
-                        //       borderRadius: 20.0,
-                        //     ),
-                        //   ),
-                        // ),
-
-                        // GestureDetector(
-                        //   onTap: () async {
-                        //     await BirthdayCal.selectTime(
-                        //         context, timeController);
-                        //     setState(() {
-                        //       labelText = timeController.text.isEmpty
-                        //           ? "Time (optional)"
-                        //           : timeController
-                        //               .text; // Update label text based on selection
-                        //     });
-                        //   },
-                        //   child: AbsorbPointer(
-                        //     child: CustomTextFieldWidget(
-                        //       editingController: timeController,
-                        //       labelText:
-                        //           labelText, // Use the updated label text
-                        //       iconData: Icons.access_time,
-                        //       borderRadius: 20.0,
-                        //     ),
-                        //   ),
-                        // ),
                         const SizedBox(height: 10),
                         CustomTextFieldWidget.buildTextField(
                           passwordlTextEditingController,
                           "密碼",
                           icon: Icons.lock_outline,
                         ),
-                        // CustomTextFieldWidget(
-                        //   editingController: passwordlTextEditingController,
-                        //   labelText: "Password",
-                        //   iconData: Icons.lock_outline,
-                        //   isObscure: true,
-                        //   borderRadius: 20.0,
-                        // ),
                         const SizedBox(height: 10),
                         CustomTextFieldWidget.buildTextField(
                           confirmPasswordController,
                           "密碼",
                           icon: Icons.lock_outline_sharp,
                         ),
-                        // CustomTextFieldWidget(
-                        //   editingController: confirmPasswordController,
-                        //   labelText: "Confirm your Password",
-                        //   iconData: Icons.lock_outline,
-                        //   isObscure: true,
-                        //   borderRadius: 20.0,
-                        // ),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -991,58 +918,95 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                     ),
                     child: InkWell(
                       onTap: () async {
-                        if (authenticationcontroller.profileImage != null) {
-                          String missingFields =
-                              ''; // Variable to collect missing field names
+                        // if (authenticationcontroller.profileImage == null) {
+                        String missingFields = '';
 
-                          // Check for missing fields
-                          if (nameTextEditingController.text.trim().isEmpty) {
-                            missingFields += 'Name, ';
-                          }
-                          if (emailTextEditingController.text.trim().isEmpty) {
-                            missingFields += 'Email, ';
-                          }
-                          if (passwordlTextEditingController.text
-                              .trim()
-                              .isEmpty) {
-                            missingFields += 'Password, ';
-                          }
+                        // Check for missing fields
+                        if (nameTextEditingController.text.trim().isEmpty) {
+                          missingFields += 'Name, ';
+                        }
+                        if (emailTextEditingController.text.trim().isEmpty) {
+                          missingFields += 'Email, ';
+                        }
+                        if (passwordlTextEditingController.text
+                            .trim()
+                            .isEmpty) {
+                          missingFields += 'Password, ';
+                        }
 
-                          if (missingFields.isNotEmpty) {
-                            // Remove trailing comma and space
-                            missingFields = missingFields.substring(
-                                0, missingFields.length - 2);
+                        if (missingFields.isNotEmpty) {
+                          // Remove trailing comma and space
+                          missingFields = missingFields.substring(
+                              0, missingFields.length - 2);
 
-                            // Show snackbar with the list of missing fields
-                            Get.snackbar(
+                          // Show snackbar with the list of missing fields
+                          Get.snackbar(
+                            "Error",
+                            "Please fill in the following fields: $missingFields",
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.white,
+                            titleText: Text(
                               "Error",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            messageText: Text(
                               "Please fill in the following fields: $missingFields",
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.white,
-                              titleText: Text(
-                                "Error",
-                                style: TextStyle(
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Email format validation
+                        final email = emailTextEditingController.text.trim();
+                        final emailRegex =
+                            RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                        if (!emailRegex.hasMatch(email)) {
+                          Get.snackbar(
+                            "Error",
+                            "The email address is badly formatted.",
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.white,
+                            titleText: const Text(
+                              "Error",
+                              style: TextStyle(
                                   color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              messageText: Text(
-                                "Please fill in the following fields: $missingFields",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                            return;
-                          }
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            messageText: const Text(
+                              "Please enter a valid email address.",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
+                          return;
+                        }
 
-                          // Email format validation
-                          final email = emailTextEditingController.text.trim();
-                          final emailRegex =
-                              RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                        List<String> imageUrls = await saveProfileImages(_images
+                            .where((img) => img != null)
+                            .cast<File>()
+                            .toList());
 
-                          if (!emailRegex.hasMatch(email)) {
+                        setState(() {
+                          showProgressBar = true; // Show progress bar
+                        });
+
+                        try {
+                          bool emailExists =
+                              await _checkIfEmailExistsInAuthAndFirestore(
+                                  email);
+
+                          if (emailExists) {
+                            setState(() {
+                              showProgressBar = false;
+                            });
+
                             Get.snackbar(
                               "Error",
-                              "The email address is badly formatted.",
+                              "The email already exists. Please use a different email.",
                               snackPosition: SnackPosition.BOTTOM,
                               backgroundColor: Colors.white,
                               titleText: const Text(
@@ -1052,166 +1016,125 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                     fontWeight: FontWeight.bold),
                               ),
                               messageText: const Text(
-                                "Please enter a valid email address.",
+                                "Email already registered",
                                 style: TextStyle(color: Colors.red),
                               ),
                             );
                             return;
                           }
 
-                          List<String> imageUrls = await saveProfileImages(
-                              _images
-                                  .where((img) => img != null)
-                                  .cast<File>()
-                                  .toList());
+                          // Attempt to create the account
+                          await authenticationcontroller.creatNewUserAccount(
+                            email,
+                            passwordlTextEditingController.text.trim(),
+                            nameTextEditingController.text.trim(),
+                            selectedInterests,
+                            imageUrls,
+                            sexController.text.trim(),
+                            timeController.text.trim(),
+                            birthdayController.text.trim(),
+                            timeController.text.isEmpty ? "false" : "true",
+                            age,
+                            selectedoccu,
+                            selectmbti,
+                            selectlanguage,
+                            selectreligion,
+                            selecteducation,
+                            selectbloodtype,
+                            selectlooking,
+                            selectexercise,
+                            selectdiet,
+                          );
 
+                          if (mounted) {
+                            setState(() {
+                              showProgressBar = false; // Hide progress bar
+                            });
+
+                            // Show success message and navigate
+                            Get.snackbar(
+                              "Success",
+                              "Account created successfully",
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                              borderRadius: 12,
+                              margin: const EdgeInsets.all(10),
+                              icon: const Icon(Icons.check_circle,
+                                  color: Colors.white),
+                              duration: const Duration(seconds: 3),
+                              isDismissible: true,
+                              forwardAnimationCurve: Curves.easeInOut,
+                            );
+
+                            // Navigate to HomeScreen
+                            Get.offAll(() => HomeScreen());
+                          }
+                        } on FirebaseAuthException catch (e) {
+                          // Handle Firebase-specific exceptions
                           setState(() {
-                            showProgressBar = true; // Show progress bar
+                            showProgressBar = false;
                           });
 
-                          try {
-                            bool emailExists =
-                                await _checkIfEmailExistsInAuthAndFirestore(
-                                    email);
-
-                            if (emailExists) {
-                              setState(() {
-                                showProgressBar = false;
-                              });
-
-                              Get.snackbar(
-                                "Error",
-                                "The email already exists. Please use a different email.",
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: Colors.white,
-                                titleText: const Text(
-                                  "Error",
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                messageText: const Text(
-                                  "Email already registered",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              );
-                              return;
-                            }
-
-                            // Attempt to create the account
-                            await authenticationcontroller.creatNewUserAccount(
-                              authenticationcontroller.profileImage!,
-                              email,
-                              passwordlTextEditingController.text.trim(),
-                              nameTextEditingController.text.trim(),
-                              selectedInterests,
-                              imageUrls,
-                              sexController.text.trim(),
-                              timeController.text.trim(),
-                              birthdayController.text.trim(),
-                              timeController.text.isEmpty ? "false" : "true",
-                              age,
-                              selectedoccu,
-                              selectmbti,
-                              selectlanguage,
-                              selectreligion,
-                              selecteducation,
-                              selectbloodtype,
-                              selectlooking,
-                              selectexercise,
-                              selectdiet,
-                            );
-
-                            if (mounted) {
-                              setState(() {
-                                showProgressBar = false; // Hide progress bar
-                              });
-
-                              // Show success message and navigate
-                              Get.snackbar(
-                                "Success",
-                                "Account created successfully",
-                                snackPosition: SnackPosition.TOP,
-                                backgroundColor: Colors.green,
-                                colorText: Colors.white,
-                                borderRadius: 12,
-                                margin: const EdgeInsets.all(10),
-                                icon: const Icon(Icons.check_circle,
-                                    color: Colors.white),
-                                duration: const Duration(seconds: 3),
-                                isDismissible: true,
-                                forwardAnimationCurve: Curves.easeInOut,
-                              );
-
-                              // Navigate to HomeScreen
-                              Get.offAll(() => HomeScreen());
-                            }
-                          } on FirebaseAuthException catch (e) {
-                            // Handle Firebase-specific exceptions
-                            setState(() {
-                              showProgressBar = false;
-                            });
-
-                            String errorMessage;
-                            switch (e.code) {
-                              case 'email-already-in-use':
-                                errorMessage = "This email is already in use.";
-                                break;
-                              case 'invalid-email':
-                                errorMessage =
-                                    "The email address is badly formatted.";
-                                break;
-                              case 'weak-password':
-                                errorMessage = "The password is too weak.";
-                                break;
-                              default:
-                                errorMessage =
-                                    "An error occurred: ${e.message}";
-                            }
-
-                            Get.snackbar(
-                              "Error",
-                              errorMessage,
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.white,
-                              titleText: Text(
-                                "Error",
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              messageText: Text(
-                                errorMessage,
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          } catch (e) {
-                            // Handle unexpected exceptions
-                            setState(() {
-                              showProgressBar = false;
-                            });
-
-                            Get.snackbar(
-                              "Error",
-                              "An unexpected error occurred: $e",
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.white,
-                              titleText: Text(
-                                "Error",
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              messageText: Text(
-                                "An unexpected error occurred: $e",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
+                          String errorMessage;
+                          switch (e.code) {
+                            case 'email-already-in-use':
+                              errorMessage = "This email is already in use.";
+                              break;
+                            case 'invalid-email':
+                              errorMessage =
+                                  "The email address is badly formatted.";
+                              break;
+                            case 'weak-password':
+                              errorMessage = "The password is too weak.";
+                              break;
+                            default:
+                              errorMessage = "An error occurred: ${e.message}";
                           }
-                        } else {
+
                           Get.snackbar(
-                              "Error", "Please select a profile image");
+                            "Error",
+                            errorMessage,
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.white,
+                            titleText: Text(
+                              "Error",
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            messageText: Text(
+                              errorMessage,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
+                        } catch (e) {
+                          // Handle unexpected exceptions
+                          setState(() {
+                            showProgressBar = false;
+                          });
+
+                          Get.snackbar(
+                            "Error",
+                            "An unexpected error occurred: $e",
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.white,
+                            titleText: Text(
+                              "Error",
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            messageText: Text(
+                              "An unexpected error occurred: $e",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
                         }
+                        // } else {
+                        //   Get.snackbar(
+                        //       "Error", "Please select a profile image");
+                        // }
                       },
                       child: const Center(
                         child: Text(

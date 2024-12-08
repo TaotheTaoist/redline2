@@ -209,7 +209,6 @@ class Authenticationcontroller extends GetxController {
   // }
 
   Future<void> creatNewUserAccount(
-    File imageProfile,
     String email,
     String password,
     String name,
@@ -236,12 +235,11 @@ class Authenticationcontroller extends GetxController {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       // Upload the profile image
-      String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
+      // String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
 
       // Create a Person object
       personModel.Person personInstance = personModel.Person(
         uid: FirebaseAuth.instance.currentUser!.uid,
-        imageProfile: urlOfDownloadImage,
         email: email,
         password: password,
         name: name,
