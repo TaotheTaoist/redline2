@@ -16,7 +16,7 @@ class Person {
   String? bdTime;
   String? birthday;
   String? sure;
-  int? age;
+  String? age;
   List<String>? occupation;
   List<String>? mbti;
   List<String>? language;
@@ -52,31 +52,87 @@ class Person {
       this.exercise,
       this.diet});
 
+  @override
+  String toString() {
+    return 'Person(uid: $uid, name: $name, email: $email, imageProfile: $imageProfile, interests: ${interests?.join(", ")}, imageUrls: ${imageUrls?.join(", ")}, sex: $sex)';
+  }
+
+  // static Person fromDataSnapshot(DocumentSnapshot snapshot) {
+  //   var dataSnapshot = snapshot.data() as Map<String, dynamic>;
+  //   return Person(
+  //     uid: dataSnapshot["uid"],
+  //     name: dataSnapshot["name"],
+  //     email: dataSnapshot["email"],
+  //     password: dataSnapshot["password"],
+  //     imageProfile: dataSnapshot["imageProfile"],
+  //     photoNo: dataSnapshot["photoNo"],
+  //     publishedDateTime: dataSnapshot["publishedDateTime"],
+  //     interests: List<String>.from(dataSnapshot["interests"] ?? []),
+  //     imageUrls: List<String>.from(dataSnapshot["imageUrls"] ?? []),
+  //     sex: dataSnapshot["sex"],
+  //     bdTime: dataSnapshot["bdTime"],
+  //     birthday: dataSnapshot["birthday"],
+  //     sure: dataSnapshot["sure"],
+  //     age: dataSnapshot["age"],
+  //     occupation: dataSnapshot["occupation"],
+  //     mbti: dataSnapshot["mbti"],
+  //     language: dataSnapshot["language"],
+  //     religion: dataSnapshot["religion"],
+  //     education: dataSnapshot["education"],
+  //     bloodtype: dataSnapshot["bloodtype"],
+  //     lookingfor: dataSnapshot["lookingfor"],
+  //     exercise: dataSnapshot["exercise"],
+  //   );
+  // }
   static Person fromDataSnapshot(DocumentSnapshot snapshot) {
     var dataSnapshot = snapshot.data() as Map<String, dynamic>;
+
     return Person(
-      uid: dataSnapshot["uid"],
-      name: dataSnapshot["name"],
-      email: dataSnapshot["email"],
-      password: dataSnapshot["password"],
-      imageProfile: dataSnapshot["imageProfile"],
-      photoNo: dataSnapshot["photoNo"],
-      publishedDateTime: dataSnapshot["publishedDateTime"],
-      interests: List<String>.from(dataSnapshot["interests"] ?? []),
-      imageUrls: List<String>.from(dataSnapshot["imageUrls"] ?? []),
-      sex: dataSnapshot["sex"],
-      bdTime: dataSnapshot["bdTime"],
-      birthday: dataSnapshot["birthday"],
-      sure: dataSnapshot["sure"],
-      age: dataSnapshot["age"],
-      occupation: dataSnapshot["occupation"],
-      mbti: dataSnapshot["mbti"],
-      language: dataSnapshot["language"],
-      religion: dataSnapshot["religion"],
-      education: dataSnapshot["education"],
-      bloodtype: dataSnapshot["bloodtype"],
-      lookingfor: dataSnapshot["lookingfor"],
-      exercise: dataSnapshot["exercise"],
+      uid: dataSnapshot["uid"] as String?,
+      name: dataSnapshot["name"] as String?,
+      email: dataSnapshot["email"] as String?,
+      password: dataSnapshot["password"] as String?,
+      imageProfile: dataSnapshot["imageProfile"] as String?,
+      photoNo: dataSnapshot["photoNo"] as String?,
+      publishedDateTime: dataSnapshot["publishedDateTime"] as int?,
+      interests: dataSnapshot["interests"] != null
+          ? List<String>.from(dataSnapshot["interests"] as List)
+          : [],
+      imageUrls: dataSnapshot["imageUrls"] != null
+          ? List<String>.from(dataSnapshot["imageUrls"] as List)
+          : [],
+      sex: dataSnapshot["sex"] as String?,
+      bdTime: dataSnapshot["bdTime"] as String?,
+      birthday: dataSnapshot["birthday"] as String?,
+      sure: dataSnapshot["sure"] as String?,
+      age: dataSnapshot["age"] as String?,
+      occupation: dataSnapshot["occupation"] != null
+          ? List<String>.from(dataSnapshot["occupation"] as List)
+          : [],
+      mbti: dataSnapshot["mbti"] != null
+          ? List<String>.from(dataSnapshot["mbti"] as List)
+          : [],
+      language: dataSnapshot["language"] != null
+          ? List<String>.from(dataSnapshot["language"] as List)
+          : [],
+      religion: dataSnapshot["religion"] != null
+          ? List<String>.from(dataSnapshot["religion"] as List)
+          : [],
+      education: dataSnapshot["education"] != null
+          ? List<String>.from(dataSnapshot["education"] as List)
+          : [],
+      bloodtype: dataSnapshot["bloodtype"] != null
+          ? List<String>.from(dataSnapshot["bloodtype"] as List)
+          : [],
+      lookingfor: dataSnapshot["lookingfor"] != null
+          ? List<String>.from(dataSnapshot["lookingfor"] as List)
+          : [],
+      exercise: dataSnapshot["exercise"] != null
+          ? List<String>.from(dataSnapshot["exercise"] as List)
+          : [],
+      diet: dataSnapshot["diet"] != null
+          ? List<String>.from(dataSnapshot["diet"] as List)
+          : [],
     );
   }
 

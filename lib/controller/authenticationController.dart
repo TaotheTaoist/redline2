@@ -208,12 +208,6 @@ class Authenticationcontroller extends GetxController {
   //   }
   // }
 
-  //  "language": language,
-  //       "religion": religion,
-  //       "education": education,
-  //       "bloodtype": bloodtype,
-  //       "lookingfor": lookingfor,
-  //       "exercise": exercise,
   Future<void> creatNewUserAccount(
     File imageProfile,
     String email,
@@ -225,7 +219,7 @@ class Authenticationcontroller extends GetxController {
     String bdTime,
     String birthday,
     String sure,
-    int age,
+    String age,
     List<String> selectedoccu,
     List<String> selectmbti,
     List<String> language,
@@ -302,19 +296,20 @@ class Authenticationcontroller extends GetxController {
           errorMessage = "The password is too weak.";
           break;
         default:
-          errorMessage = "An error occurred: ${e.message}";
+          errorMessage =
+              "An error occurred: ${e.message} authentication controller";
       }
       Get.snackbar(
-        "Error",
+        "Error authentication controller",
         errorMessage,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.white,
         titleText: const Text(
-          "Error",
+          "Error authentication controller",
           style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
         ),
         messageText: const Text(
-          "Email already registered",
+          "Email already registered authentication controller",
           style: TextStyle(color: Colors.red),
         ),
       );
@@ -322,11 +317,12 @@ class Authenticationcontroller extends GetxController {
       // Handle Firestore or Storage errors
       Get.snackbar(
         "Error",
-        "Firebase error: ${e.message}",
+        "Firebase error: ${e.message} authentication controller",
       );
     } catch (e) {
       // Handle unexpected errors
-      Get.snackbar("Error", "An unexpected error occurred: $e");
+      Get.snackbar("Error",
+          "An unexpected error occurred: $e authentication controller");
     }
   }
 

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:redline/constants/interests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -65,7 +67,9 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
   String labelText = "Time (optional)";
 
-  late int age;
+  final List<File?> _images = List<File?>.filled(6, null);
+
+  late String age;
 
   // Toggle selection on tap
   void toggleInterest(String interest) {
@@ -579,6 +583,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                 )),
                           ),
                         ),
+
+                  _buildImagePicker(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -641,7 +647,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
                             if (selectedDate != null) {
                               // Calculate the age
-                              age = BirthdayCal.calculateAge(selectedDate);
+                              age = BirthdayCal.calculateAge(selectedDate)
+                                  .toString();
                               print("age: $age");
 
                               String formattedDate =
@@ -1052,6 +1059,12 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             return;
                           }
 
+                          List<String> imageUrls = await saveProfileImages(
+                              _images
+                                  .where((img) => img != null)
+                                  .cast<File>()
+                                  .toList());
+
                           setState(() {
                             showProgressBar = true; // Show progress bar
                           });
@@ -1092,7 +1105,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                               passwordlTextEditingController.text.trim(),
                               nameTextEditingController.text.trim(),
                               selectedInterests,
-                              [],
+                              imageUrls,
                               sexController.text.trim(),
                               timeController.text.trim(),
                               birthdayController.text.trim(),
@@ -1358,6 +1371,124 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
         ),
       ),
     );
+  }
+
+  Future<List<String>> saveProfileImages(List<File> images) async {
+    if (images.length > 6) {
+      throw Exception("You can only upload up to 6 images.");
+    }
+
+    List<String> uploadedUrls = [];
+
+    for (int i = 0; i < images.length; i++) {
+      File image = images[i];
+
+      // Generate a unique path for each image in Firebase Storage
+      var ref = FirebaseStorage.instance
+          .ref()
+          .child("images/${DateTime.now().millisecondsSinceEpoch}_$i.jpg");
+
+      // Upload the image to Firebase Storage
+      await ref.putFile(image).whenComplete(() async {
+        // Get the download URL of the uploaded image
+        String downloadUrl = await ref.getDownloadURL();
+        uploadedUrls.add(downloadUrl); // Save the URL
+      });
+    }
+
+    return uploadedUrls; // Return the list of URLs
+  }
+
+  Widget _buildImagePicker() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 1,
+      ),
+      itemCount: _images.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () => _chooseImage(index),
+          child: Container(
+            margin: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.8), // Shadow color
+                  spreadRadius: 1, // Spread radius
+                  blurRadius: 6, // Blur radius
+                  offset: const Offset(6, 6), // Shadow position (x, y)
+                ),
+              ],
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(
+                  18), // Rounded corners for the image container
+            ),
+            child: Stack(
+              clipBehavior: Clip
+                  .none, // Allow cancel button to be outside the image bounds
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(34),
+                    topRight: Radius.circular(18),
+                    bottomLeft: Radius.circular(18),
+                    bottomRight: Radius.circular(18),
+                  ),
+                  child: _images[index] != null
+                      ? Image.file(
+                          _images[index]!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        )
+                      : Container(
+                          color:
+                              Colors.grey[300], // Placeholder for null images
+                          child: const Center(
+                            child: Icon(
+                              Icons.add_photo_alternate,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                ),
+                if (_images[index] !=
+                    null) // Show cancel button only if the image is selected
+                  Positioned(
+                    top: 5,
+                    right: 5,
+                    child: IconButton(
+                      icon:
+                          const Icon(Icons.cancel, color: Colors.red, size: 40),
+                      onPressed: () => _removeImage(index),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _images[index] = null; // Remove the image at the specified index
+    });
+  }
+
+  _chooseImage(int index) async {
+    XFile? pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _images[index] = File(pickedFile.path);
+      });
+    }
   }
   // buildbdField(BuildContext context, TextEditingController dateController,
   //     String label) {

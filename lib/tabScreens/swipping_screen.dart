@@ -46,13 +46,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
   PageController pageController = PageController();
   CarouselController carouselController = CarouselController();
-  // List<String> images = [];
-
-  List<String> images = [
-    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/images%2F1730960552826_5.jpg?alt=media&token=0a9a5ae6-c7b8-4321-9cd2-b28524ba56cf',
-    'https://firebasestorage.googleapis.com/v0/b/dating-app-18f5d.appspot.com/o/images%2F1730715450932_0.jpg?alt=media&token=4716d5b8-1388-4fd3-8d2d-cf652d6c5ffe',
-    ''
-  ];
+  List<String> images = [];
 
   List<Person> cachedProfiles = [];
 
@@ -130,22 +124,25 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     // Initialize an empty map to store UIDs and corresponding image URLs
 
     if (profileController.allUserProfileList.isEmpty) {
-      // print("No user profiles found in the list. generateUserImageUrlsMap");
-      return userImageUrlsMap; // Return early if the list is empty
+      print("No user profiles found in the list. generateUserImageUrlsMap");
+      return userImageUrlsMap;
     }
     final stopwatch = Stopwatch()..start();
     for (var user in profileController.allUserProfileList) {
       if (user.uid != null) {
-        // print(
-        // "Fetching user images for user ID: ${user.uid}  generateUserImageUrlsMap");
+        print(
+            "Fetching user images for user ID: ${user.uid}  generateUserImageUrlsMap");
         var snapshot = await FirebaseFirestore.instance
             .collection("users")
             .doc(user.uid)
             .get();
 
         if (snapshot.exists) {
-          // print(
-          //     "Snapshot exists for user ID: ${user.uid} generateUserImageUrlsMap");
+          print(
+              "Snapshot exists for user ID: ${user.uid} generateUserImageUrlsMap");
+
+          print(
+              "Snapshot data for user ID ${user.uid}: ${snapshot.data()} generateUserImageUrlsMap");
           Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
           // Log the entire data to see its structure
@@ -160,16 +157,18 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
             }
 
             // Log the retrieved imageUrls
-            print("Image URLs for user ID ${user.uid}: $imageUrls");
+            print(
+                "Image URLs for user ID ${user.uid}: $imageUrls swiping screen");
 
             // Update the map only if imageUrls is not empty
             userImageUrlsMap[user.uid!] = imageUrls;
           } else {
-            // print("No image URLs found for user ID: ${user.uid}");
+            print(
+                "No image URLs found for user ID: ${user.uid} swiping screen ");
           }
         } else {
-          // print(
-          // "No data found for user ID: ${user.uid} generateUserImageUrlsMap");
+          print(
+              "No data found for user ID: ${user.uid} generateUserImageUrlsMap swiping screen");
         }
         stopwatch.stop();
         //   print("Time taken to fetch and cache images: ${stopwatch.elapsed}");
@@ -184,6 +183,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     Profilecontroller profileController = Get.find<Profilecontroller>();
 
     if (profileController.allUserProfileList.isNotEmpty) {
+      await validateAndCleanUpUserProfiles(profileController);
       await generateUserImageUrlsMap(profileController);
 
       if (userImageUrlsMap.isNotEmpty) {
@@ -191,13 +191,15 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
           selectedUserUid = userImageUrlsMap.keys.first;
           profileKeys = userImageUrlsMap.keys.toList();
           // isLoading = false;
+          print("profilekeys $profileKeys swiping screen");
         });
         print(
             "selectedUserUid assigned to ${userImageUrlsMap.keys.first} Function finished at: ${DateTime.now()} build, swipping_screen");
 
         print(
             "selectedUserUid: $selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen");
-
+        print(
+            "profileController.userImageUrlsMap.value[selectedUserUid]  ${profileController.userImageUrlsMap.value[selectedUserUid]}");
         images =
             profileController.userImageUrlsMap.value[selectedUserUid] ?? [];
       } else {
@@ -234,14 +236,14 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     print("Current User ID: $currentUserID swipping_screen.dart");
     // readUserData();
 
-    print("currentIndex$currentIndex at init");
+    print("currentIndex: $currentIndex at init - swipingdart");
 
     final storage = GetStorage();
     print("storage.getValues()${storage.getValues()}");
 
     loadCachedProfiles();
-    print(
-        " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
+    // print(
+    // " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
 
     Future.delayed(Duration(seconds: 3), () {
       setState(() {
@@ -262,6 +264,27 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     });
   }
 
+  // void loadCachedProfiles() {
+  //   final storage = GetStorage();
+  //   List<dynamic> cachedProfilesData = storage.read('cachedProfiles') ?? [];
+
+  //   // If there are cached profiles, map them to Person objects
+  //   if (cachedProfilesData.isNotEmpty) {
+  //     setState(() {
+  //       cachedProfiles = cachedProfilesData
+  //           .map((profileData) => Person.fromJson(profileData))
+  //           .toList();
+  //       print(
+  //           "cachedProfiles: $cachedProfiles loadCachedProfiles() swiping page");
+  //       for (var profile in cachedProfiles) {
+  //         print("Profile: $profile loadCachedProfiles() swiping page ");
+  //       }
+  //     });
+  //     print('Loaded ${cachedProfiles.length} profiles from cache.');
+  //   } else {
+  //     print('No cached profiles found.');
+  //   }
+  // }
   void loadCachedProfiles() {
     final storage = GetStorage();
     List<dynamic> cachedProfilesData = storage.read('cachedProfiles') ?? [];
@@ -272,6 +295,11 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         cachedProfiles = cachedProfilesData
             .map((profileData) => Person.fromJson(profileData))
             .toList();
+        print(
+            "cachedProfiles: $cachedProfiles loadCachedProfiles() swiping page");
+        for (var profile in cachedProfiles) {
+          print("Profile: $profile loadCachedProfiles() swiping page ");
+        }
       });
       print('Loaded ${cachedProfiles.length} profiles from cache.');
     } else {
@@ -283,6 +311,42 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   void dispose() {
     pageController.dispose();
     super.dispose();
+  }
+
+// 這個function很重要 它查看firebase所有uid 跟alluserprofileList裡面的UID, 如果多餘的直接移除
+  Future<void> validateAndCleanUpUserProfiles(
+      Profilecontroller profileController) async {
+    // Initialize a list to keep track of UIDs that need to be removed
+    List<String> removedUids = [];
+
+    // Loop through each user in the profile list
+    for (var user in List.from(profileController.allUserProfileList)) {
+      // Creating a copy to avoid modifying the list while iterating
+      if (user.uid != null) {
+        // Check if the user exists in Firestore
+        var userDoc = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          // If the user does not exist in Firestore, remove them from the profile list
+          profileController.allUserProfileList.remove(user);
+          removedUids.add(user.uid!); // Add UID to the list of removed UIDs
+          print(
+              "Removed user UID: ${user.uid} as they do not exist in Firestore.");
+        }
+      }
+    }
+
+    // After the cleanup, print the list of removed UIDs
+    if (removedUids.isNotEmpty) {
+      print(
+          "The following UIDs were removed because they do not exist in Firestore:");
+      print(removedUids);
+    } else {
+      print("No invalid UIDs found in profileController.allUserProfileList.");
+    }
   }
 
   void _showPopup(BuildContext context) {
@@ -364,302 +428,282 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                       children: [
                         // if (images.isNotEmpty)
 
-                        if (cachedProfiles.isNotEmpty)
-                          Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: SmoothPageIndicator(
-                                  controller: PageController(
-                                    initialPage: carouselIndex,
-                                  ),
-                                  count: images.length,
-                                  effect: WormEffect(
-                                    dotHeight: 12,
-                                    dotWidth: 12,
-                                    activeDotColor: Colors.blue,
-                                    dotColor: Colors.grey,
-                                  ),
+                        // if (cachedProfiles.isNotEmpty)
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: SmoothPageIndicator(
+                                controller: PageController(
+                                  initialPage: carouselIndex,
+                                ),
+                                count: images.length,
+                                effect: WormEffect(
+                                  dotHeight: 12,
+                                  dotWidth: 12,
+                                  activeDotColor: Colors.blue,
+                                  dotColor: Colors.grey,
                                 ),
                               ),
-                              CarouselSlider(
-                                options: CarouselOptions(
-                                  height: screenHeight * 0.72,
-                                  autoPlay: false,
-                                  enlargeCenterPage: true,
-                                  enableInfiniteScroll: true,
-                                  autoPlayInterval: Duration(seconds: 2),
-                                  viewportFraction: 1.0,
-                                  onPageChanged: (index, reason) {
-                                    setState(() {
-                                      carouselIndex = index;
-                                    });
-                                  },
-                                ),
-                                items: images.map((imageUrl) {
-                                  return Builder(
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        // margin: EdgeInsets.all(1),
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                                  255, 255, 255, 255)
-                                              .withOpacity(0.0),
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                              child: CachedNetworkImage(
-                                                imageUrl: imageUrl,
-                                                fit: BoxFit.cover,
-                                                width: double.infinity,
-                                                height: screenHeight * 1,
-                                              ),
+                            ),
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                height: screenHeight * 0.72,
+                                autoPlay: false,
+                                enlargeCenterPage: true,
+                                enableInfiniteScroll: true,
+                                autoPlayInterval: Duration(seconds: 2),
+                                viewportFraction: 1.0,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    carouselIndex = index;
+                                  });
+                                },
+                              ),
+                              items: images.map((imageUrl) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      // margin: EdgeInsets.all(1),
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                                255, 255, 255, 255)
+                                            .withOpacity(0.0),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: CachedNetworkImage(
+                                              imageUrl: imageUrl,
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: screenHeight * 1,
                                             ),
-                                            // First set of buttons - above the three
-                                            Positioned(
-                                              top: screenHeight *
-                                                  0.5, // Positioning above the second row of buttons
-                                              left: 0,
-                                              right: 0,
-                                              bottom: 0,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  ElevatedButton(
-                                                    child: Text(
-                                                      _getDisplayText(
-                                                          cachedProfiles[
-                                                              currentIndex],
-                                                          carouselIndex),
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                      ),
+                                          ),
+                                          // First set of buttons - above the three
+                                          Positioned(
+                                            top: screenHeight *
+                                                0.5, // Positioning above the second row of buttons
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                ElevatedButton(
+                                                  child: Text(
+                                                    _getDisplayText(
+                                                        cachedProfiles[
+                                                            currentIndex],
+                                                        carouselIndex),
+                                                    style: TextStyle(
+                                                      color: Colors.white,
                                                     ),
-                                                    onPressed: () {
+                                                  ),
+                                                  onPressed: () {
+                                                    profileController
+                                                        .LikeSentReceieved(
+                                                      "eachProfileInfo.uid.toString()",
+                                                      senderName,
+                                                    );
+                                                    print('Like icon tapped!');
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape: StadiumBorder(),
+                                                    padding: EdgeInsets.all(10),
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                                255, 82, 82, 82)
+                                                            .withOpacity(0.8),
+                                                    shadowColor:
+                                                        const Color.fromARGB(
+                                                                255,
+                                                                212,
+                                                                211,
+                                                                211)
+                                                            .withOpacity(0.3),
+                                                    elevation: 5,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 8),
+                                                ElevatedButton(
+                                                  child: Text(
+                                                    "",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    profileController
+                                                        .LikeSentReceieved(
+                                                      "eachProfileInfo.uid.toString()",
+                                                      senderName,
+                                                    );
+                                                    print('Like icon tapped!');
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape: StadiumBorder(),
+                                                    padding: EdgeInsets.all(10),
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                                255, 82, 82, 82)
+                                                            .withOpacity(0.8),
+                                                    shadowColor: Colors.black
+                                                        .withOpacity(0.3),
+                                                    elevation: 5,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 8),
+                                                ElevatedButton(
+                                                  child: Text(
+                                                    'Seoul',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    print('Close icon tapped!');
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape: StadiumBorder(),
+                                                    padding: EdgeInsets.all(10),
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                                255, 82, 82, 82)
+                                                            .withOpacity(0.8),
+                                                    shadowColor: Colors.black
+                                                        .withOpacity(0.3),
+                                                    elevation: 5,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          // The three buttons (like, favorite, close)
+                                          Positioned(
+                                            bottom:
+                                                20, // Positioning below the first row of buttons
+                                            left: 0,
+                                            right: 0,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    profileController
+                                                        .favoriteSentReceieved(
+                                                            "eachProfileInfo.uid.toString()",
+                                                            senderName);
+                                                    print(
+                                                        'Favorite icon tapped!');
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape: CircleBorder(),
+                                                    padding: EdgeInsets.all(10),
+                                                    backgroundColor:
+                                                        const Color.fromARGB(
+                                                            255, 110, 110, 110),
+                                                    shadowColor: Colors.black
+                                                        .withOpacity(0.3),
+                                                    elevation: 5,
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.heat_pump_rounded,
+                                                    color: const Color.fromARGB(
+                                                        255, 255, 255, 255),
+                                                    size: 30,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 4),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    setState(() {
                                                       profileController
                                                           .LikeSentReceieved(
-                                                        "eachProfileInfo.uid.toString()",
-                                                        senderName,
-                                                      );
-                                                      print(
-                                                          'Like icon tapped!');
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape: StadiumBorder(),
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      backgroundColor:
-                                                          Color.fromARGB(255,
-                                                                  82, 82, 82)
-                                                              .withOpacity(0.8),
-                                                      shadowColor:
-                                                          const Color.fromARGB(
-                                                                  255,
-                                                                  212,
-                                                                  211,
-                                                                  211)
-                                                              .withOpacity(0.3),
-                                                      elevation: 5,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  ElevatedButton(
-                                                    child: Text(
-                                                      "",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      profileController
-                                                          .LikeSentReceieved(
-                                                        "eachProfileInfo.uid.toString()",
-                                                        senderName,
-                                                      );
-                                                      print(
-                                                          'Like icon tapped!');
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape: StadiumBorder(),
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      backgroundColor:
-                                                          Color.fromARGB(255,
-                                                                  82, 82, 82)
-                                                              .withOpacity(0.8),
-                                                      shadowColor: Colors.black
-                                                          .withOpacity(0.3),
-                                                      elevation: 5,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  ElevatedButton(
-                                                    child: Text(
-                                                      'Seoul',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      print(
-                                                          'Close icon tapped!');
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape: StadiumBorder(),
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      backgroundColor:
-                                                          Color.fromARGB(255,
-                                                                  82, 82, 82)
-                                                              .withOpacity(0.8),
-                                                      shadowColor: Colors.black
-                                                          .withOpacity(0.3),
-                                                      elevation: 5,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            // The three buttons (like, favorite, close)
-                                            Positioned(
-                                              bottom:
-                                                  20, // Positioning below the first row of buttons
-                                              left: 0,
-                                              right: 0,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      profileController
-                                                          .favoriteSentReceieved(
-                                                              "eachProfileInfo.uid.toString()",
+                                                              selectedUserUid,
                                                               senderName);
+                                                      currentIndex++;
                                                       print(
-                                                          'Favorite icon tapped!');
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape: CircleBorder(),
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      backgroundColor:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              110,
-                                                              110,
-                                                              110),
-                                                      shadowColor: Colors.black
-                                                          .withOpacity(0.3),
-                                                      elevation: 5,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.heat_pump_rounded,
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                      size: 30,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 4),
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        profileController
-                                                            .LikeSentReceieved(
-                                                                selectedUserUid,
-                                                                senderName);
-                                                        currentIndex++;
-                                                        print(
-                                                            'Like heart tapped!');
-                                                        selectedUserUid =
-                                                            profileKeys[1];
-                                                        print(
-                                                            'selectedUserUid:$selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen"');
-                                                        images = profileController
-                                                                    .userImageUrlsMap
-                                                                    .value[
-                                                                selectedUserUid] ??
-                                                            [];
-                                                      });
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape: CircleBorder(),
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      backgroundColor:
-                                                          const Color.fromARGB(
-                                                                  255,
-                                                                  110,
-                                                                  110,
-                                                                  110)
-                                                              .withOpacity(0.7),
-                                                      shadowColor: Colors.black
-                                                          .withOpacity(0.3),
-                                                      elevation: 5,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.favorite,
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              134,
-                                                              134),
-                                                      size: 30,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 4),
-                                                  ElevatedButton(
-                                                    onPressed: () {
+                                                          "currentIndex: $currentIndex at likedReceivebutton swipingdart");
                                                       print(
-                                                          'Close icon tapped!');
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape: CircleBorder(),
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      backgroundColor:
-                                                          Color.fromARGB(255,
-                                                                  110, 110, 110)
-                                                              .withOpacity(0.7),
-                                                      shadowColor: Colors.black
-                                                          .withOpacity(0.3),
-                                                      elevation: 5,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.close,
-                                                      color: Colors.red,
-                                                      size: 30,
-                                                    ),
+                                                          'Like heart tapped!');
+                                                      selectedUserUid =
+                                                          profileKeys[1];
+                                                      print(
+                                                          'selectedUserUid:$selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen"');
+                                                      images = profileController
+                                                                  .userImageUrlsMap
+                                                                  .value[
+                                                              selectedUserUid] ??
+                                                          [];
+                                                    });
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape: CircleBorder(),
+                                                    padding: EdgeInsets.all(10),
+                                                    backgroundColor:
+                                                        const Color.fromARGB(
+                                                                255,
+                                                                110,
+                                                                110,
+                                                                110)
+                                                            .withOpacity(0.7),
+                                                    shadowColor: Colors.black
+                                                        .withOpacity(0.3),
+                                                    elevation: 5,
                                                   ),
-                                                ],
-                                              ),
+                                                  child: Icon(
+                                                    Icons.favorite,
+                                                    color: const Color.fromARGB(
+                                                        255, 255, 134, 134),
+                                                    size: 30,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 4),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    print('Close icon tapped!');
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape: CircleBorder(),
+                                                    padding: EdgeInsets.all(10),
+                                                    backgroundColor:
+                                                        Color.fromARGB(255, 110,
+                                                                110, 110)
+                                                            .withOpacity(0.7),
+                                                    shadowColor: Colors.black
+                                                        .withOpacity(0.3),
+                                                    elevation: 5,
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.close,
+                                                    color: Colors.red,
+                                                    size: 30,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                }).toList(),
-                              ),
-                            ],
-                          ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
                         SizedBox(height: 10),
                       ],
                     ),

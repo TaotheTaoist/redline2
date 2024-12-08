@@ -28,6 +28,7 @@ class Profilecontroller extends GetxController {
   void onInit() {
     super.onInit();
     GetStorage.init();
+
     loadCachedData();
 
     fetchAndCacheCurrentUserData();
@@ -90,18 +91,20 @@ class Profilecontroller extends GetxController {
         // Cache the updated user data
         await storage.write('currentUserData', currentUser.toJson());
         print(
-            "new Updated for current user and saved to cache: $currentUserData");
+            "new Updated for current user and saved to cache: $currentUserData profile-controller");
 
         // Optionally return the current user if needed elsewhere
         return; // Can return currentUser if needed
       } else {
-        print("Current user document no longer exists.");
+        print("Current user document no longer exists.  profile-controller");
       }
     } catch (e) {
-      print("Error setting up listener for current user data: $e");
+      print(
+          "Error setting up listener for current user data: $e  profile-controller");
     }
   }
 
+// 這個function 是來看裡面的data有沒有改變而已 最主要的是cache() 可是不包過正在使用的用戶UID
   Stream<List<Person>> _fetchProfilesFromFirestore() {
     return _firestore
         .collection("users")
@@ -110,42 +113,53 @@ class Profilecontroller extends GetxController {
         .map((QuerySnapshot querySnapshot) {
       List<Person> profilesList = [];
 
-      // Print the number of documents fetched
-      print('Fetched ${querySnapshot.docs.length} profiles from Firestore.');
+      // Debug: Print number of documents fetched
+      print(
+          'Fetched ${querySnapshot.docs.length} profiles from Firestore. - _fetchProfilesFromFirestore() profile controller');
 
       for (var eachProfile in querySnapshot.docs) {
-        // Print each profile data as it's being added
-        print('Adding profile: ${eachProfile.data()}');
-        profilesList.add(Person.fromDataSnapshot(eachProfile));
+        try {
+          // Add each profile using the fromDataSnapshot method
+          profilesList.add(Person.fromDataSnapshot(eachProfile));
+        } catch (error) {
+          print(
+              'Error parsing profile: ${eachProfile.data()} - Error: $error - _fetchProfilesFromFirestore() profile controller');
+        }
       }
 
-      // After profiles are added to the list, assign them to the Rx list and cache
+      // Assign the list to the observable value and cache the data
+      usersProfileList.value = profilesList;
+
       if (profilesList.isNotEmpty) {
-        usersProfileList.value = profilesList;
         print(
-            'Profiles added to the list: ${usersProfileList.value.length} profiles.');
-
-        // Now cache the profiles and image URLs
-        cacheData();
+            'Profiles added: ${profilesList.length} profiles. - _fetchProfilesFromFirestore() profile controller');
+        cacheData(); // Optional: cache the profiles
       } else {
-        print('No profiles were fetched.');
+        print('No profiles fetched.');
       }
 
-      // Return the list of profiles
       return profilesList;
     }).handleError((error) {
-      print('Error fetching profiles: $error');
+      print(
+          'Error fetching profiles: $error - _fetchProfilesFromFirestore() profile controller');
     });
   }
 
+// 把firebase 資料存在storage裡面
   void cacheData() {
     if (usersProfileList.value.isNotEmpty) {
       print('Saving profiles to cache...');
+
       storage.write('cachedProfiles not including current user',
           usersProfileList.value.map((p) => p.toJson()).toList());
 
       print(
-          "Cache successfully saved. Profiles: ${usersProfileList.value.length} profiles saved.");
+          "Cache successfully saved. Profiles: ${usersProfileList.value.length} profiles saved. cacheData() profile controller");
+
+      int uidCount = usersProfileList.value.map((p) => p.uid).toSet().length;
+
+      print(
+          "Total unique UIDs cached: $uidCount cacheData() profile controller");
     } else {
       print('No profiles to save to cache.');
     }
@@ -154,12 +168,15 @@ class Profilecontroller extends GetxController {
       // Cache user image URLs
       storage.write('cachedImageUrls', userImageUrlsMap.value);
       print(
-          "Cache successfully saved. Image URLs: ${userImageUrlsMap.value.length} user images saved. cacheData()");
+          "Cache successfully saved. Image URLs: ${userImageUrlsMap.value.length} user images saved. cacheData() profile controller");
+      int imageUrlMapSize = userImageUrlsMap.value.length;
+      print(
+          "Total users with cached imageUrlMapSize: $imageUrlMapSize cacheData() profile controller");
     } else {
       print('No image URLs to save to cache.');
     }
     debugPrint(
-        "Caching profiles: ${usersProfileList.value.map((p) => p.toJson()).toList()} cacheData()");
+        "Caching profiles: ${usersProfileList.value.map((p) => p.toJson()).toList()} cacheData() profile controller");
   }
 
   void loadCachedData() {
@@ -170,9 +187,11 @@ class Profilecontroller extends GetxController {
       usersProfileList.value = cachedProfiles
           .map<Person>((profile) => Person.fromJson(profile))
           .toList();
-      print('Profiles loaded from cache.');
+      print(
+          'Profiles loaded from cache.  - loadCachedData() profile controller');
     } else {
-      print('No profiles found in cache.');
+      print(
+          'No profiles found in cache. - loadCachedData() profile controller');
     }
   }
 
@@ -206,9 +225,12 @@ class Profilecontroller extends GetxController {
         }
       }
       userImageUrlsMap.value = resultMap;
-      // print(
-      //     "userImageUrlsMap from profilecontroller original func ${userImageUrlsMap}");
-      // print("userImageUrlsMap.value: ${userImageUrlsMap.value}");
+      print(
+          "userImageUrlsMap from profilecontroller original func ${userImageUrlsMap}");
+      print("userImageUrlsMap.value: ${userImageUrlsMap.value}");
+
+      int imageUrlMapSize = userImageUrlsMap.value.length;
+      print("Total imageUrlMapSize: $imageUrlMapSize");
     } catch (e) {
       print("Error fetching profiles: $e");
     } finally {

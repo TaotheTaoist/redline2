@@ -590,34 +590,46 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: () async {
-                      await FirebaseAuth.instance
-                          .signOut(); // Sign out the user
+                      // await FirebaseAuth.instance.signOut();
+                      // Navigator.pushAndRemoveUntil(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => LoginScreen()),
+                      //   (route) =>
+                      //       false, // This condition removes all previous routes
+                      // );
 
-                      setState(() {
-                        currentUserID =
-                            ""; // Clear the global or current user ID variable
-                        widget.userID = "";
-                        name = "";
-                        uid = "";
-                        imageProfile = "";
-                        email = "";
-                        password = "";
-
-                        // String age = "";
+                      FirebaseAuth auth = FirebaseAuth.instance;
+                      auth.signOut().then((res) {
+                        // Navigate to the sign-in screen after successful sign-out
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
+                      }).catchError((error) {
+                        // Handle any error during sign-out (optional)
+                        print("Error signing out: $error");
                       });
+                      // setState(() {
+                      //   currentUserID =
+                      //       ""; // Clear the global or current user ID variable
+                      //   widget.userID = "";
+                      //   name = "";
+                      //   uid = "";
+                      //   imageProfile = "";
+                      //   email = "";
+                      //   password = "";
+
+                      //   // String age = "";
+                      // });
                       // await FirebaseFirestore.instance.clearPersistence();
-                      await FirebaseFirestore.instance.terminate();
-                      // After sign out, navigate to a different page (optional)
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LoginScreen()), // Example
-                      );
+                      // await FirebaseFirestore.instance.terminate();
 
                       // Navigator.pushReplacement(
                       //     context,
                       //     MaterialPageRoute(
-                      //         builder: (BuildContext context) => LoginScreen()));
+                      //         builder: (BuildContext context) =>
+                      //             LoginScreen()));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(

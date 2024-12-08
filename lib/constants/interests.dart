@@ -56,12 +56,11 @@ final List<String> religions = [
   "巴哈伊教",
   "泛靈論",
   "無神論",
-  "不可知論",
   "拉斯塔法里教",
   "異教",
   "山達基教",
   "靈性主義",
-  "統一教會",
+  "聖火喵喵教",
   "邪教",
 ];
 final List<String> languages = [
