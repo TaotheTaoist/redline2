@@ -2,6 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class BirthdayCal {
+  static String getZodiacSymbol(String chineseZodiac) {
+    // Map Chinese zodiac signs to their corresponding symbols
+    const Map<String, String> zodiacMap = {
+      '白羊': '♈', // Aries
+      '金牛': '♉', // Taurus
+      '雙子': '♊', // Gemini
+      '巨蟹': '♋', // Cancer
+      '獅子': '♌', // Leo
+      '處女': '♍', // Virgo
+      '天秤': '♎', // Libra
+      '天蠍': '♏', // Scorpio
+      '射手': '♐', // Sagittarius
+      '摩羯': '♑', // Capricorn
+      '水瓶': '♒', // Aquarius
+      '雙魚': '♓', // Pisces
+    };
+
+    // Return the corresponding symbol or a default value
+    return zodiacMap[chineseZodiac] ?? '';
+  }
+
   static Future<void> selectDate(
       BuildContext context, TextEditingController controller) async {
     DateTime? selectedDate = await showDatePicker(

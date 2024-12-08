@@ -44,6 +44,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   TextEditingController BDController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController sexController = TextEditingController();
+  TextEditingController aboutmeController = TextEditingController();
+
   int age = 0;
   String sex = "Male";
   final storage = GetStorage();
@@ -51,6 +53,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   void initState() {
     super.initState();
     retrieveUserData();
+    retrieveUserImages();
+    // print(urlsList);
   }
 
   @override
@@ -98,13 +102,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     onPressed: saveProfileImage,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(
-                          255, 253, 157, 232), // Background color
+                          255, 252, 179, 236), // Background color
                       foregroundColor:
                           const Color.fromARGB(255, 252, 47, 47), // Text color
-                      // padding: const EdgeInsets.symmetric(
-                      //   vertical: 12.0,
-                      //   horizontal: 24.0, // Adjust padding as needed
-                      // ),
                       textStyle: const TextStyle(
                         fontSize: 16, // Font size
                         fontWeight: FontWeight.bold, // Font weight
@@ -113,9 +113,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         borderRadius:
                             BorderRadius.circular(20), // Rounded corners
                       ),
+                      shadowColor: const Color.fromARGB(137, 63, 63,
+                          63), // Shadow color (applied to button shadow)
+                      elevation: 6, // Elevation defines the size of the shadow
                     ),
                     child: const Text("Save Image"),
                   ),
+                  const SizedBox(height: 20),
+                  _aboutmeTextField(aboutmeController, "關於我"),
                   const SizedBox(height: 20),
                   _buildTextField(nameTextEditingController, "Name"),
                   _buildTextField(emailTextEditingController, "Email"),
@@ -621,18 +626,182 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
-  // Widget _buildTextField(TextEditingController controller, String label) {
+  // Widget _aboutmeTextField(TextEditingController controller, String label) {
   //   return Padding(
   //     padding: const EdgeInsets.symmetric(vertical: 8.0),
-  //     child: TextField(
-  //       controller: controller,
-  //       decoration: InputDecoration(
-  //         labelText: label,
-  //         border: OutlineInputBorder(),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: Colors.grey.withOpacity(0.8), // Shadow color
+  //             spreadRadius: 1, // Spread radius
+  //             blurRadius: 6, // Blur radius
+  //             offset: const Offset(6, 6), // Shadow position (x, y)
+  //           ),
+  //         ],
+  //         borderRadius: const BorderRadius.only(
+  //           topLeft: Radius.circular(18),
+  //           topRight: Radius.circular(18),
+  //           bottomLeft: Radius.circular(18),
+  //           bottomRight: Radius.circular(18),
+  //         ),
+  //       ),
+  //       child: TextField(
+  //         controller: controller,
+  //         style: const TextStyle(
+  //           color: Color.fromARGB(255, 80, 80, 80), // Text color
+  //           fontSize: 16, // Font size for input text
+  //           fontWeight: FontWeight.w500, // Font weight
+  //         ),
+  //         decoration: InputDecoration(
+  //           contentPadding: const EdgeInsets.symmetric(
+  //             horizontal: 20,
+  //             vertical: 70, // Increase the vertical padding for higher height
+  //           ),
+  //           labelText: label,
+  //           labelStyle: TextStyle(
+  //             color: Color.fromARGB(255, 30, 45, 255), // Label text color
+  //             fontSize: 14, // Font size for label
+  //           ),
+  //           hintText: "Enter $label", // Placeholder text
+  //           hintStyle: TextStyle(
+  //             color: Colors.grey[600], // Placeholder text color
+  //             fontSize: 14, // Font size for placeholder
+  //           ),
+  //           fillColor:
+  //               Colors.grey[300], // Background color inside the TextField
+  //           filled: true, // Enables the fillColor property
+  //           border: OutlineInputBorder(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(18),
+  //               topRight: Radius.circular(18),
+  //               bottomLeft: Radius.circular(18),
+  //               bottomRight: Radius.circular(18),
+  //             ),
+  //             borderSide: const BorderSide(
+  //               color: Colors.grey, // Outline border color
+  //               width: 2, // Outline border width
+  //             ),
+  //           ),
+  //           enabledBorder: OutlineInputBorder(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(18),
+  //               topRight: Radius.circular(18),
+  //               bottomLeft: Radius.circular(18),
+  //               bottomRight: Radius.circular(18),
+  //             ),
+  //             borderSide: const BorderSide(
+  //               color: Colors.grey, // Outline border color
+  //               width: 2, // Outline border width
+  //             ),
+  //           ),
+  //           focusedBorder: OutlineInputBorder(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(34),
+  //               topRight: Radius.circular(34),
+  //               bottomLeft: Radius.circular(34),
+  //               bottomRight: Radius.circular(34),
+  //             ),
+  //             borderSide: const BorderSide(
+  //               color: Color.fromARGB(
+  //                   255, 238, 80, 159), // Border color when focused
+  //               width: 2, // Border width when focused
+  //             ),
+  //           ),
+  //         ),
   //       ),
   //     ),
   //   );
   // }
+  Widget _aboutmeTextField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.8), // Shadow color
+              spreadRadius: 1, // Spread radius
+              blurRadius: 6, // Blur radius
+              offset: const Offset(6, 6), // Shadow position (x, y)
+            ),
+          ],
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(18),
+            bottomLeft: Radius.circular(18),
+            bottomRight: Radius.circular(18),
+          ),
+        ),
+        child: TextField(
+          controller: controller,
+          maxLines: null, // Allows unlimited lines
+          keyboardType: TextInputType.multiline, // Enables multi-line input
+          style: const TextStyle(
+            color: Color.fromARGB(255, 80, 80, 80), // Text color
+            fontSize: 16, // Font size for input text
+            fontWeight: FontWeight.w500, // Font weight
+          ),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 20, // Adjust vertical padding as needed
+            ),
+            labelText: label,
+            labelStyle: const TextStyle(
+              color: Color.fromARGB(255, 30, 45, 255), // Label text color
+              fontSize: 14, // Font size for label
+            ),
+            hintText: "Enter $label", // Placeholder text
+            hintStyle: TextStyle(
+              color: Colors.grey[600], // Placeholder text color
+              fontSize: 14, // Font size for placeholder
+            ),
+            fillColor:
+                Colors.grey[300], // Background color inside the TextField
+            filled: true, // Enables the fillColor property
+            border: OutlineInputBorder(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(18),
+                topRight: Radius.circular(18),
+                bottomLeft: Radius.circular(18),
+                bottomRight: Radius.circular(18),
+              ),
+              borderSide: const BorderSide(
+                color: Colors.grey, // Outline border color
+                width: 2, // Outline border width
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(18),
+                topRight: Radius.circular(18),
+                bottomLeft: Radius.circular(18),
+                bottomRight: Radius.circular(18),
+              ),
+              borderSide: const BorderSide(
+                color: Colors.grey, // Outline border color
+                width: 2, // Outline border width
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(34),
+                topRight: Radius.circular(34),
+                bottomLeft: Radius.circular(34),
+                bottomRight: Radius.circular(34),
+              ),
+              borderSide: const BorderSide(
+                color: Color.fromARGB(
+                    255, 238, 80, 159), // Border color when focused
+                width: 2, // Border width when focused
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   // Widget _buildbdField(BuildContext context,
   //     TextEditingController dateController, String label) {
@@ -834,6 +1003,43 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     Navigator.pop(context, true);
   }
 
+  retrieveUserImages() async {
+    print("Starting to fetch user images..."); // Add this line
+
+    try {
+      print("Fetching user images for user ID: ${widget.userID}");
+      var snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.userID)
+          .get();
+
+      if (snapshot.exists) {
+        print("Snapshot exists for user ID: ${widget.userID}");
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        List<String> imageUrls = List<String>.from(data["imageUrls"] ?? []);
+
+        setState(() {
+          // Directly assign the fetched image URLs without adding placeholders
+          urlsList =
+              List.from(imageUrls); // Keep it as is, without placeholders
+          print("Updated urlsList: $urlsList");
+        });
+      } else {
+        print("No document found for user ID: ${widget.userID}");
+        // Use placeholders if no images available
+        setState(() {
+          print("Using placeholder URLs: $urlsList");
+        });
+      }
+    } catch (e) {
+      print("Error fetching images: $e");
+      // Use placeholders in case of error
+      setState(() {
+        print("Using placeholder URLs due to error: $urlsList");
+      });
+    }
+  }
+
   retrieveUserData() async {
     await FirebaseFirestore.instance
         .collection("users")
@@ -844,6 +1050,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         setState(() {
           emailTextEditingController.text = snapshot.data()?["email"] ?? "";
           nameTextEditingController.text = snapshot.data()?["name"] ?? "";
+          aboutmeController.text = snapshot.data()?["aboutme"] ?? "";
         });
       }
     });
@@ -969,7 +1176,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
       // Prepare the data to be updated
       Map<String, dynamic> updateData = {};
-
+      if (aboutmeController.text.isNotEmpty) {
+        updateData["aboutme"] = aboutmeController.text;
+      }
       if (emailTextEditingController.text.isNotEmpty) {
         updateData["email"] = emailTextEditingController.text;
       }
@@ -1090,77 +1299,4 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       );
     });
   }
-
-  // Future<void> saveProfileData() async {
-  //   setState(() {
-  //     uploading = true;
-  //     val = 0;
-  //   });
-
-  //   // Show loading dialog
-
-  //   // Retrieve and delete previous images
-  //   final userDoc =
-  //       FirebaseFirestore.instance.collection("users").doc(currentUserID);
-  //   // final docSnapshot = await userDoc.get();
-
-  //   // if (docSnapshot.exists) {
-  //   //   List<String> previousUrls =
-  //   //       List<String>.from(docSnapshot.data()?["imageUrls"] ?? []);
-
-  //   //   for (String url in previousUrls) {
-  //   //     try {
-  //   //       // Get the reference from the URL
-  //   //       await FirebaseStorage.instance.refFromURL(url).delete();
-  //   //     } catch (e) {
-  //   //       print("Error deleting previous image: $e");
-  //   //     }
-  //   //   }
-  //   // }
-
-  //   // // Upload new images and collect URLs
-  //   // urlsList = []; // Start with an empty list
-
-  //   // for (int i = 0; i < _images.length; i++) {
-  //   //   if (_images[i] != null) {
-  //   //     setState(() {
-  //   //       val = (i + 1) / _images.length;
-  //   //     });
-
-  //   //     var ref = FirebaseStorage.instance
-  //   //         .ref()
-  //   //         .child("images/${DateTime.now().millisecondsSinceEpoch}_$i.jpg");
-
-  //   //     await ref.putFile(_images[i]!).whenComplete(() async {
-  //   //       String downloadUrl = await ref.getDownloadURL();
-  //   //       urlsList.add(downloadUrl); // Add each new image URL directly
-  //   //     });
-  //   //   }
-  //   // }
-
-  //   // Close loading dialog
-  //   Navigator.of(context).pop(); // This will dismiss the loading dialog
-
-  //   setState(() {
-  //     uploading = false;
-  //   });
-
-  //   // Save profile data to Firestore, including new image URLs
-  //   userDoc.update({
-  //     "email": emailTextEditingController.text,
-  //     "name": nameTextEditingController.text,
-  //     "password": passwordTextEditingController.text,
-  //     "bdTime": timeController,
-  //     // "imageUrls": urlsList, // Store only the new image URLs in Firestore
-  //   }).then((_) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("Profile updated successfully!")),
-  //     );
-  //   }).catchError((error) {
-  //     print("Error updating profile: $error");
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("Failed to update profile.")),
-  //     );
-  //   });
-  // }
 }

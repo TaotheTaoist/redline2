@@ -6,9 +6,9 @@ List<String> interests = [
   "看影集",
 ];
 
-List<String> innerInterests = ["發呆", "冥想", "打坐", "練內丹"];
+List<String> innerInterests = ["發呆", "冥想", "打坐", "練內丹", "白日夢"];
 
-List<String> lifestyleInterests = ["旅行", "咖啡廳", "酒吧", "卡拉OK", "拍照"];
+List<String> lifestyleInterests = ["旅行", "咖啡廳", "酒吧", "卡拉OK", "拍照", "去公園"];
 
 List<String> toysInterests = [
   "Action Figures",
@@ -51,7 +51,7 @@ final List<String> religions = [
   "道教",
   "神道教",
   "儒教",
-  "拜火教（祆教）",
+  "拜火教",
   "耆那教",
   "巴哈伊教",
   "泛靈論",
@@ -62,10 +62,11 @@ final List<String> religions = [
   "山達基教",
   "靈性主義",
   "統一教會",
+  "邪教",
 ];
 final List<String> languages = [
   "英文",
-  "中文（普通話）",
+  "中文",
   "西班牙文",
   "印地文",
   "阿拉伯文",
@@ -144,11 +145,15 @@ final List<String> diet = [
   "不吃澱粉",
   "不吃油炸",
   "不吃人",
+  "都吃",
 ];
 List<String> exercise = [
+  "不運動",
   "一個禮拜一次",
   "一個禮拜兩次次",
   "一個禮拜三次",
+  "一個禮拜四次",
+  "一個禮拜五次",
   "反正很多次",
 ];
 

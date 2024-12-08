@@ -1,9 +1,7 @@
-import 'dart:ffi';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:get_storage/get_storage.dart';
+
 import 'package:redline/accountSettingScreen/account_settings_screen.dart';
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/authenticationScreen/login_screen.dart';
@@ -12,10 +10,8 @@ import 'package:redline/controller/profile-controller.dart';
 import 'package:redline/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_slider/carousel.dart';
+
 import 'package:get/get.dart';
-import 'package:redline/homeScreen/home_screen.dart';
-import 'package:redline/models/person.dart';
 
 // ignore: must_be_immutable
 class UserDetailsScreen extends StatefulWidget {
@@ -45,9 +41,14 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   String time = "";
   int year = 2000;
 
+  List<String> interestsfromfb = [];
+  String aboutMe = "";
+
   late Lunar.Lunar lunarDate;
 
   String xingxuo = "";
+
+  String sign = "";
 
   int publishedDateTime = 0;
 
@@ -80,7 +81,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
       // this part must be inside "then block"
       // =============================================================
-      late DateTime combinedDateTime;
+      DateTime combinedDateTime;
 
       TimeOfDay? parsedTime = stringToTimeOfDay(time);
 
@@ -100,6 +101,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       );
       lunarDate = Lunar.Lunar.fromDate(combinedDateTime);
       xingxuo = lunarDate.getSolar().getXingZuo();
+      sign = BirthdayCal.getZodiacSymbol(xingxuo);
 
       print("baxi${lunarDate.getBaZi()}");
       // =============================================================
@@ -129,10 +131,16 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           uid = data["uid"];
           age = data["age"].toString();
           time = data["bdTime"].toString();
+          aboutMe = data["aboutme"].toString();
+
+          interestsfromfb = List<String>.from(data["interests"] ?? []);
+
           // birthday = data["birthday"].toString();
           print("Document snapshot: ${snapshot.data()}");
 
           print("Assigned birthday: $birthday");
+
+          print("interests${interestsfromfb}");
         });
       } else {
         print("No such document!");
@@ -157,7 +165,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
         List<String> imageUrls = List<String>.from(data["imageUrls"] ?? []);
 
-        print("Fetched image URLs: $imageUrls");
+        // print("Fetched image URLs: $imageUrls");
 
         // setState(() {
         //   // Add placeholders if less than 6 images
@@ -348,11 +356,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 235, 235, 235),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: Text("編輯"),
-        titleTextStyle: TextStyle(color: Colors.black),
+        titleTextStyle: TextStyle(color: Colors.pink[900]),
         centerTitle: true,
         automaticallyImplyLeading: false,
         actions: [
@@ -380,10 +388,40 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                         // Retrieve the name from Firestore
                         String fetchedName =
                             currentUserSnapshot.get('name') ?? '';
+                        String bd = currentUserSnapshot.get("birthday") ?? "";
 
-                        // Use setState to update the name and trigger UI update
+                        String bdtime = currentUserSnapshot.get("bdTime") ?? "";
+                        String abMe = currentUserSnapshot.get("aboutme") ?? "";
+
+                        print('abMe: $abMe');
                         setState(() {
-                          name = fetchedName; // Assign the name from Firestore
+                          DateTime changedcombinedDateTime;
+
+                          TimeOfDay? changedparsedTime =
+                              stringToTimeOfDay(bdtime);
+
+                          print('Parsed Time: $changedparsedTime');
+
+                          final birthdayDate = DateTime.parse(bd);
+                          final year = birthdayDate.year;
+                          final month = birthdayDate.month;
+                          final day = birthdayDate.day;
+
+                          changedcombinedDateTime = DateTime(
+                            year,
+                            month,
+                            day,
+                            changedparsedTime?.hour ?? 2,
+                            changedparsedTime?.minute ?? 2,
+                          );
+                          lunarDate =
+                              Lunar.Lunar.fromDate(changedcombinedDateTime);
+                          xingxuo = lunarDate.getSolar().getXingZuo();
+                          sign = BirthdayCal.getZodiacSymbol(xingxuo);
+
+                          name = fetchedName;
+
+                          aboutMe = abMe;
                         });
                       } else {
                         print("Current user document does not exist.");
@@ -392,20 +430,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       print("Error retrieving user data: $e");
                     }
                   });
-                  // .then((value) async {
-                  //   setState(() async {
-                  //     await profileController.listenToCurrentUserDataChanges();
-                  //     name = cachedUser["name"];
-                  //     print("cacheduser $cachedUser inside of set state");
-                  //     print("wtf is going on");
-                  //     print("what is my name$name");
-                  //   });
-                  // });
                 },
                 icon: const Icon(
                   Icons.settings,
                   size: 40,
-                  color: Color.fromARGB(255, 0, 0, 0),
+                  color: Color.fromARGB(255, 90, 90, 90),
                 ),
               ),
             ],
@@ -434,6 +463,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       autoPlay: false,
                       enlargeCenterPage: true,
                       aspectRatio: 16 / 9,
+                      enableInfiniteScroll: urlsList.length > 1,
                       onPageChanged: (index, reason) {
                         // Optionally handle page change if needed
                       },
@@ -478,34 +508,32 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                     ],
                   ),
-                  Icon(
-                    Icons.pets, // Example icon
-                    color: const Color.fromARGB(255, 80, 80, 80),
-                  ),
                 ],
               ),
               SizedBox(height: 4),
               Text(
-                '♓ $xingxuo',
+                '$sign $xingxuo',
                 style: TextStyle(
                   fontSize: 16,
                   color: const Color.fromARGB(255, 0, 0, 0),
                 ),
               ),
-              Divider(thickness: 1.0),
+              Divider(
+                thickness: 1.0,
+                color: Color.fromARGB(255, 90, 90, 90),
+              ),
 
-              // About Me Section
               Text(
                 '關於我',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.pink,
+                  color: Colors.pink[900],
                 ),
               ),
               SizedBox(height: 8),
               Text(
-                'Do is always better than say!\nWant to travel and explore!',
+                '$aboutMe',
                 style: TextStyle(
                   fontSize: 16,
                   color: const Color.fromARGB(255, 0, 0, 0),
@@ -513,54 +541,43 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
               ),
               Divider(thickness: 1.0),
 
-              // Interests Section
               Text(
                 '興趣',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.pink,
+                  color: Colors.pink[900],
                 ),
               ),
               SizedBox(height: 8),
               Wrap(
                 spacing: 8.0,
                 runSpacing: 4.0,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {},
+                children: interestsfromfb.map((interest) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      print('Pressed: $interest');
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink,
-                      foregroundColor: Colors.white,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text('Tennis'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 160, 160, 160),
+                      backgroundColor: const Color.fromARGB(255, 88, 88, 88),
                       foregroundColor: const Color.fromARGB(255, 255, 255, 255),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    child: Text('Basketball'),
-                  ),
-                  Chip(
-                    label: Text('Basketball'),
-                    backgroundColor: Colors.grey[200],
-                  ),
-                ],
+                    child: Text(
+                      interest,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
+                }).toList(),
               ),
-              // Section: Appearance
-              _buildSectionTitle("Section 1"),
+              Divider(
+                thickness: 1,
+              ),
+              _buildSectionTitle("Firebase Section"),
               _buildTable([
                 _buildTableRow("name", name),
                 _buildTableRow("uid", widget.userID!),
@@ -654,15 +671,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           alignment: Alignment.topLeft,
           child: Text(
             title,
-            style: const TextStyle(
-              color: Colors.white, // White text
+            style: TextStyle(
+              color: Colors.pink[900], // White text
               fontSize: 22, // Font size 22 for section titles
-              fontWeight: FontWeight.bold, // Bold font weight
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
         const Divider(
-          color: Colors.white, // White divider
+          color: Color.fromARGB(255, 90, 90, 90),
           thickness: 2, // Divider thickness of 2 for section titles
         ),
       ],
