@@ -31,93 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
   // Google Sign-In instance
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // Future<User?> loginWithGoogle() async {
-  //   try {
-  //     // Trigger the Google Sign-In flow
-  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-  //     if (googleUser == null) {
-  //       return null; // If the user cancels the login
-  //     }
-
-  //     // Obtain the Google auth details
-  //     final GoogleSignInAuthentication googleAuth =
-  //         await googleUser.authentication;
-
-  //     // Create a new credential
-  //     final OAuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-
-  //     // Sign in to Firebase with the Google credentials
-  //     UserCredential userCredential =
-  //         await _auth.signInWithCredential(credential);
-  //     User? user = userCredential.user;
-
-  //     if (user != null) {
-  //       // Check if profile is complete
-  //       bool isProfileComplete = await checkUserProfile(user);
-
-  //       if (!isProfileComplete) {
-  //         // Redirect to profile completion screen if profile is incomplete
-  //         // Get.to(ProfileCompletionScreen(user: user));
-  //         Get.to(() => ProfileCompletionScreen(user: user));
-  //       }
-  //       return user;
-  //     }
-  //     return null;
-  //   } catch (e) {
-  //     Get.snackbar("Error", "Google login failed. Please try again.");
-  //     print("Google sign-in error: $e");
-  //     return null;
-  //   }
-  // }
-
-  // v2
-  Future<User?> loginWithGoogle() async {
-    try {
-      // Trigger the Google Sign-In flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        return null; // If the user cancels the login
-      }
-
-      // Obtain the Google auth details
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      // Create a new credential
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in to Firebase with the Google credentials
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-      User? user = userCredential.user;
-
-      if (user != null) {
-        // Check if profile is complete
-        bool isProfileComplete = await checkUserProfile(user);
-
-        if (!isProfileComplete) {
-          // Replace current screen with profile completion screen if profile is incomplete
-          Get.off(() => ProfileCompletionScreen(user: user));
-        } else {
-          // Replace current screen with the main/home screen if profile is complete
-          Get.off(() => HomeScreen());
-        }
-        return user;
-      }
-      return null;
-    } catch (e) {
-      Get.snackbar("Error", "Google login failed. Please try again.");
-      print("Google sign-in error: $e");
-      return null;
-    }
-  }
-
   Future<bool> checkUserProfile(User user) async {
     try {
       // Reference the user's Firestore document
@@ -165,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Dispose controllers to avoid memory leaks
     emailTextEditingController.dispose();
     passwordTextEditingController.dispose();
+
     super.dispose();
   }
 
@@ -212,182 +126,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 180),
-                  // const Text(
-                  //   "Login",
-                  //   style: TextStyle(
-                  //     fontSize: 22,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 20),
+
                   CustomTextFieldWidget.buildTextField(
                       emailTextEditingController, "Email",
                       icon: Icons.email_outlined,
                       width: MediaQuery.of(context).size.width - 36),
-                  // Container(
-                  //   width: MediaQuery.of(context).size.width - 36,
-                  //   child: CustomTextFieldWidget(
-                  //     editingController: emailTextEditingController,
-                  //     labelText: "Email",
-                  //     iconData: Icons.email_outlined,
-                  //     isObscure: false,
-                  //     borderRadius: 20.0,
-                  //   ),
-                  // ),
+
                   const SizedBox(height: 20),
                   CustomTextFieldWidget.buildTextField(
                       passwordTextEditingController, "密碼",
                       icon: Icons.lock_outline,
                       width: MediaQuery.of(context).size.width - 36),
 
-                  // Container(
-                  //   width: MediaQuery.of(context).size.width - 36,
-                  //   child: CustomTextFieldWidget(
-                  //     editingController:
-                  //         passwordTextEditingController, // Your password field controller
-                  //     labelText: "Password", // Field label
-                  //     iconData: Icons.lock_outline, // Lock icon for password
-                  //     isObscure: true, // Hides the input for password
-                  //     borderRadius: 20.0, // Set to 20 for more rounded borders
-                  //   ),
-                  // ),
-
                   const SizedBox(height: 20),
-                  // Login Button
-                  // Container(
-                  //   width: MediaQuery.of(context).size.width - 36,
-                  //   height: 55,
-                  //   decoration: BoxDecoration(
-                  //     color: Color.fromARGB(255, 255, 187, 178),
-                  //     borderRadius: const BorderRadius.all(
-                  //       Radius.circular(30),
-                  //     ),
-                  //   ),
-                  //   child: InkWell(
-                  //     onTap: () async {
-                  //       String email = emailTextEditingController.text.trim();
-                  //       String password =
-                  //           passwordTextEditingController.text.trim();
 
-                  //       if (email.isNotEmpty && password.isNotEmpty) {
-                  //         setState(() {
-                  //           showProgressBar = true; // Show progress bar
-                  //         });
-
-                  //         try {
-                  //           // Call the login function
-                  //           await controllerAuth.loginUser(email, password);
-
-                  //           setState(() {
-                  //             showProgressBar =
-                  //                 false; // Hide progress bar after success
-                  //           });
-                  //         } catch (e) {
-                  //           setState(() {
-                  //             showProgressBar =
-                  //                 false; // Hide progress bar after error
-                  //           });
-                  //           Get.snackbar(
-                  //               "Error", "Login failed. Please try again.");
-                  //         }
-                  //       } else {
-                  //         Get.snackbar(
-                  //             "Error", "Please enter both email and password");
-                  //       }
-                  //     },
-                  //     child: const Center(
-                  //       child: Text(
-                  //         "Login",
-                  //         style: TextStyle(
-                  //           fontSize: 20,
-                  //           fontWeight: FontWeight.bold,
-                  //           color: Colors.black,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 10),
-                  // // Google Sign-In Button
-                  // Container(
-                  //   width: MediaQuery.of(context).size.width - 36,
-                  //   height: 55,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.blue, // Google button background color
-                  //     borderRadius: BorderRadius.circular(12),
-                  //   ),
-                  //   child: InkWell(
-                  //     onTap: () async {
-                  //       setState(() {
-                  //         showProgressBar = true; // Show progress bar
-                  //       });
-
-                  //       // Call the Google login function
-                  //       User? user = await loginWithGoogle();
-
-                  //       if (user != null) {
-                  //         Get.snackbar(
-                  //           "Success",
-                  //           "Logged in successfully with Google!",
-                  //           snackPosition: SnackPosition
-                  //               .TOP, // Position of the snackbar (TOP or BOTTOM)
-                  //           backgroundColor: Colors.green, // Background color
-                  //           colorText: Colors.white, // Text color
-                  //           borderRadius: 12, // Rounded corners
-                  //           margin: const EdgeInsets.all(
-                  //               10), // Margin around the snackbar
-                  //           icon: const Icon(Icons.check_circle,
-                  //               color: Colors.white), // Add an icon
-                  //           duration: const Duration(
-                  //               seconds:
-                  //                   3), // Duration the snackbar is displayed
-                  //           isDismissible: true, // Allow manual dismissal
-                  //           forwardAnimationCurve:
-                  //               Curves.easeInOut, // Animation curve
-                  //         );
-                  //       } else {
-                  //         Get.snackbar(
-                  //           "Success",
-                  //           "Failed",
-                  //           snackPosition: SnackPosition
-                  //               .TOP, // Position of the snackbar (TOP or BOTTOM)
-                  //           backgroundColor: const Color.fromARGB(
-                  //               255, 250, 142, 0), // Background color
-                  //           colorText: Colors.white, // Text color
-                  //           borderRadius: 12, // Rounded corners
-                  //           margin: const EdgeInsets.all(
-                  //               10), // Margin around the snackbar
-                  //           icon: const Icon(Icons.check_circle,
-                  //               color: Colors.white), // Add an icon
-                  //           duration: const Duration(
-                  //               seconds:
-                  //                   3), // Duration the snackbar is displayed
-                  //           isDismissible: true, // Allow manual dismissal
-                  //           forwardAnimationCurve:
-                  //               Curves.easeInOut, // Animation curve
-                  //         );
-                  //       }
-                  //       if (mounted) {
-                  //         setState(() {
-                  //           showProgressBar = false; // Hide progress bar af
-                  //         });
-                  //       }
-                  //       // setState(() {
-                  //       //   showProgressBar = false; // Hide progress bar after login
-                  //       // });
-                  //     },
-                  //     child: const Center(
-                  //       child: Text(
-                  //         "Login with Google",
-                  //         style: TextStyle(
-                  //           fontSize: 20,
-                  //           fontWeight: FontWeight.bold,
-                  //           color: Colors.white,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment
                         .start, // Align all children to the left
@@ -445,7 +197,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     "Error",
                                     "Login failed. Please try again.",
                                     snackPosition: SnackPosition.TOP,
-                                    backgroundColor: Colors.green,
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 243, 159, 2),
                                     colorText: Colors.white,
                                     borderRadius: 12,
                                     margin: const EdgeInsets.all(10),
@@ -461,12 +214,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   "Error",
                                   "Please enter both email and password",
                                   snackPosition: SnackPosition.TOP,
-                                  backgroundColor: Colors.green,
-                                  colorText: Colors.white,
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 255, 187, 0),
+                                  colorText: const Color.fromARGB(255, 0, 0, 0),
                                   borderRadius: 12,
                                   margin: const EdgeInsets.all(10),
                                   icon: const Icon(Icons.check_circle,
-                                      color: Colors.white),
+                                      color: Color.fromARGB(255, 0, 0, 0)),
                                   duration: const Duration(seconds: 3),
                                   isDismissible: true,
                                   forwardAnimationCurve: Curves.easeInOut,
@@ -586,13 +340,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Text(
-                      //   "Don't have an account?",
-                      //   style: TextStyle(
-                      //     fontSize: 16,
-                      //     color: Colors.green,
-                      //   ),
-                      // ),
                       InkWell(
                         onTap: () {
                           Get.to(RegisterationScreen());
@@ -617,4 +364,155 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ]));
   }
+
+  Future<User?> loginWithGoogle() async {
+    try {
+      // Trigger the Google Sign-In flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return null; // User canceled the login
+      }
+
+      // Obtain the Google auth details
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credentials
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Check if the user already exists in Firestore
+        final userDocRef =
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
+        final docSnapshot = await userDocRef.get();
+
+        if (docSnapshot.exists) {
+          // If user exists, check if the profile fields are filled
+          Map<String, dynamic> userData = docSnapshot.data()!;
+
+          String? password = userData['password'];
+          String? email = userData['email'];
+          String? name = userData['name'];
+          String? birthday = userData['birthday'];
+          List<dynamic> imageUrls = userData['imageUrls'] ?? [];
+
+          // Check if any required field is missing or empty
+          if (password == "" ||
+              email == "" ||
+              name == "" ||
+              birthday == "" ||
+              imageUrls.isEmpty) {
+            // If any of the fields are missing, redirect to profile completion screen
+            Get.off(() => ProfileCompletionScreen(user: user));
+          } else {
+            // If all required fields are filled, redirect to home screen
+            Get.off(() => HomeScreen());
+          }
+        } else {
+          // User does not exist in Firestore, so redirect to profile completion screen
+          Get.off(() => ProfileCompletionScreen(user: user));
+        }
+
+        return user;
+      }
+      return null;
+    } catch (e) {
+      Get.snackbar("Error", "Google login failed. Please try again.");
+      print("Google sign-in error: $e");
+      return null;
+    }
+  }
+
+  // Future<User?> loginWithGoogle() async {
+  //   try {
+  //     // Trigger the Google Sign-In flow
+  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+  //     if (googleUser == null) {
+  //       return null; // User canceled the login
+  //     }
+
+  //     // Obtain the Google auth details
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser.authentication;
+
+  //     // Create a new credential
+  //     final OAuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+
+  //     // Sign in to Firebase with the Google credentials
+  //     UserCredential userCredential =
+  //         await _auth.signInWithCredential(credential);
+  //     User? user = userCredential.user;
+
+  //     if (user != null) {
+  //       // Check if the user already exists in Firestore
+  //       final userDocRef =
+  //           FirebaseFirestore.instance.collection('users').doc(user.uid);
+  //       final docSnapshot = await userDocRef.get();
+
+  //       if (!docSnapshot.exists) {
+  //         // If user does not exist, create default fields in Firestore
+  //         Map<String, dynamic> defaultUserData = {
+  //           "age": "-1",
+  //           "bdTime": "",
+  //           "birthday": "",
+  //           "bloodtype": [],
+  //           "diet": [],
+  //           "education": [],
+  //           "email": user.email ?? "",
+
+  //           "imageUrls": [
+  //             user.photoURL ?? "https://example.com/default-profile-image.jpg"
+  //           ],
+  //           "interests": [],
+  //           "language": [],
+  //           "lookingfor": [],
+  //           "mbti": [],
+  //           "name": user.displayName ?? user.email ?? "Unknown User",
+  //           "occupation": [],
+  //           "password": "", // Placeholder
+  //           "photoNo": null,
+  //           "publishedDateTime": null,
+  //           "religion": [],
+  //           "sex": "",
+  //           "sure": "false",
+  //           "uid": user.uid,
+  //         };
+
+  //         await userDocRef.set(defaultUserData);
+
+  //         // Redirect to profile completion screen
+  //         Get.off(() => ProfileCompletionScreen(user: user));
+  //       } else {
+  //         // If user exists, check if the profile is complete
+  //         bool isProfileComplete = await checkUserProfile(user);
+
+  //         if (!isProfileComplete) {
+  //           // Redirect to profile completion screen if profile is incomplete
+  //           Get.off(() => ProfileCompletionScreen(user: user));
+  //         } else {
+  //           // Redirect to main/home screen if profile is complete
+  //           Get.off(() => HomeScreen());
+  //         }
+  //       }
+
+  //       return user;
+  //     }
+  //     return null;
+  //   } catch (e) {
+  //     Get.snackbar("Error", "Google login failed. Please try again.");
+  //     print("Google sign-in error: $e");
+  //     return null;
+  //   }
+  // }
 }

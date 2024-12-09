@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/controller/authenticationController.dart';
@@ -32,7 +34,7 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
   var authenticationcontroller =
       Authenticationcontroller.authenticationcontroller;
 
-  late int age;
+  int? age;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +70,7 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
           print("No such document!");
         }
       } catch (e) {
-        print("Error checking profile completion: $e");
+        print("Error checking profile completion: $e profile Completion");
       }
     }
 
@@ -89,71 +91,84 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Complete Your Profile')),
+      appBar: AppBar(
+        title: const Text('必填'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+            print("log off userid $userID");
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         // Start of SingleChildScrollView
         padding: const EdgeInsets.all(20.0),
         child: Column(
           // Start of Column
           children: [
-            Text("Logged in as: $userEmail"),
+            Text(
+              "Logged in as: $userEmail",
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+            ),
             Text(
               "User ID: $userID",
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
-            authenticationcontroller.imageFile == null
-                ? CircleAvatar(
-                    radius: 80,
-                    backgroundImage: AssetImage("lib/image/profileAvatar.png"),
-                    backgroundColor: Colors.black,
-                  )
-                : Container(
-                    width: 180,
-                    height: 180,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey,
-                      image: DecorationImage(
-                          fit: BoxFit.fitHeight,
-                          image: FileImage(
-                            File(
-                              authenticationcontroller.imageFile!.path,
-                            ),
-                          )),
-                    ),
-                  ), // End of Container
-            Row(
-              // Start of Row
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () async {
-                    await authenticationcontroller.pickImageFileFromGallery();
-                    setState(() {
-                      authenticationcontroller.imageFile;
-                    });
-                  },
-                  icon: Icon(
-                    Icons.image_outlined,
-                    color: Colors.grey,
-                    size: 30,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    await authenticationcontroller.captureImageromPhoneCamera();
-                    setState(() {
-                      authenticationcontroller.imageFile;
-                    });
-                  },
-                  icon: Icon(
-                    Icons.camera_alt_outlined,
-                    color: Colors.grey,
-                    size: 30,
-                  ),
-                )
-              ], // End of children in Row
-            ), // End of Row
+            // authenticationcontroller.imageFile == null
+            //     ? CircleAvatar(
+            //         radius: 80,
+            //         backgroundImage: AssetImage("lib/image/profileAvatar.png"),
+            //         backgroundColor: Colors.black,
+            //       )
+            //     : Container(
+            //         width: 180,
+            //         height: 180,
+            //         decoration: BoxDecoration(
+            //           shape: BoxShape.circle,
+            //           color: Colors.grey,
+            //           image: DecorationImage(
+            //               fit: BoxFit.fitHeight,
+            //               image: FileImage(
+            //                 File(
+            //                   authenticationcontroller.imageFile!.path,
+            //                 ),
+            //               )),
+            //         ),
+            //       ), // End of Container
+            // Row(
+            //   // Start of Row
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     IconButton(
+            //       onPressed: () async {
+            //         await authenticationcontroller.pickImageFileFromGallery();
+            //         setState(() {
+            //           authenticationcontroller.imageFile;
+            //         });
+            //       },
+            //       icon: Icon(
+            //         Icons.image_outlined,
+            //         color: Colors.grey,
+            //         size: 30,
+            //       ),
+            //     ),
+            //     IconButton(
+            //       onPressed: () async {
+            //         await authenticationcontroller.captureImageromPhoneCamera();
+            //         setState(() {
+            //           authenticationcontroller.imageFile;
+            //         });
+            //       },
+            //       icon: Icon(
+            //         Icons.camera_alt_outlined,
+            //         color: Colors.grey,
+            //         size: 30,
+            //       ),
+            //     )
+            //   ], // End of children in Row
+            // ), // End of Row
             const SizedBox(height: 20),
             CustomTextFieldWidget(
               editingController: nameController,
@@ -195,18 +210,8 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
 
-            // GestureDetector(
-            //   onTap: () => BirthdayCal.selectDate(context, birthdayController),
-            //   child: AbsorbPointer(
-            //     child: CustomTextFieldWidget(
-            //       editingController: birthdayController,
-            //       labelText: "Birthday",
-            //       iconData: Icons.cake,
-            //       borderRadius: 20.0,
-            //     ),
-            //   ),
-            // ),
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () async {
@@ -244,20 +249,28 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(userID)
-                    .set({
-                  'name': nameController.text.trim(),
-                  'email': widget.user.email,
-                  'uid': userID,
-                  'birthday': birthdayController.text.trim(),
-                  // 'location': locationController.text.trim(),
-                  'imageUrls': widget.user.photoURL ?? '',
-                  'age': age,
-                }, SetOptions(merge: true));
-                await checkProfileCompletion();
-                // }
+                try {
+                  // Firestore update
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(userID)
+                      .set({
+                    'name': nameController.text.trim(),
+                    'email': widget.user.email,
+                    'uid': userID,
+                    'birthday': birthdayController.text.trim(),
+                    // 'location': locationController.text.trim(), // Uncomment if needed
+                    'imageUrls': [widget.user.photoURL] ?? '',
+                    'age': age.toString(),
+                  }, SetOptions(merge: true));
+
+                  // Check profile completion
+                  await checkProfileCompletion();
+                } catch (e) {
+                  Get.snackbar(
+                      "Error", "An error occurred while updating profile.");
+                  print("Error: $e");
+                }
               },
               child: const Text("Complete Profile"),
             ),

@@ -27,7 +27,7 @@ class UserDetailsScreen extends StatefulWidget {
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
   // }
-  final Profilecontroller profileController = Get.find<Profilecontroller>();
+  // final Profilecontroller profileController = Get.find<Profilecontroller>();
 
   String uid = "";
   String imageProfile = "";
@@ -75,7 +75,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   void initState() {
     super.initState();
-
+    currentUserID = "qIoGKLLVAIgs8xi2d2zkDtO7YMC2";
     print('User UID widget.userID: ${widget.userID}');
     print('currentUserId:${FirebaseAuth.instance.currentUser!.uid}');
 
@@ -83,7 +83,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
     birthday = cachedUser["birthday"];
 
-    edLevel = cachedUser["birthday"];
+    edLevel = cachedUser["education"];
     occp = cachedUser["occupation"];
     mbtis = cachedUser["mbti"];
     blType = cachedUser["bloodtype"];
@@ -214,6 +214,140 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
+  // Future<void> _deleteAccount() async {
+  //   User? user = FirebaseAuth.instance.currentUser;
+
+  //   if (user == null) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("No user is currently logged in.")),
+  //     );
+  //     return;
+  //   }
+
+  //   // Step 1: Show confirmation dialog to delete account
+  //   bool confirmed = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text("Delete Account"),
+  //         content: Text(
+  //             "Are you sure you want to delete your account? This action cannot be undone."),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text("Cancel"),
+  //             onPressed: () => Navigator.of(context).pop(false),
+  //           ),
+  //           TextButton(
+  //             child: Text("Delete"),
+  //             onPressed: () => Navigator.of(context).pop(true),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+
+  //   if (confirmed != true) return;
+
+  //   // Step 2: Show a loading indicator while processing
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return Center(child: CircularProgressIndicator());
+  //     },
+  //   );
+
+  //   try {
+  //     // Step 3: Check if the user signed in with Google (no password needed for Google users)
+  //     if (user.providerData.any((provider) =>
+  //         provider.providerId == GoogleAuthProvider.PROVIDER_ID)) {
+  //       // Skip password re-authentication if Google login
+  //       await user.delete(); // Delete user
+  //     } else {
+  //       // For users with email/password, ask for password
+  //       String? password = await showDialog<String>(
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           String inputPassword = '';
+  //           return AlertDialog(
+  //             title: Text("Re-authenticate"),
+  //             content: TextField(
+  //               onChanged: (value) {
+  //                 inputPassword = value;
+  //               },
+  //               obscureText: true,
+  //               decoration: InputDecoration(labelText: "Enter your password"),
+  //             ),
+  //             actions: <Widget>[
+  //               TextButton(
+  //                 child: Text("Cancel"),
+  //                 onPressed: () => Navigator.of(context).pop(),
+  //               ),
+  //               TextButton(
+  //                 child: Text("Confirm"),
+  //                 onPressed: () => Navigator.of(context).pop(inputPassword),
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       );
+
+  //       // If the password is provided, re-authenticate with it
+  //       if (password != null && password.isNotEmpty) {
+  //         AuthCredential credential = EmailAuthProvider.credential(
+  //           email: user.email!,
+  //           password: password,
+  //         );
+  //         await user.reauthenticateWithCredential(credential);
+  //       } else {
+  //         // If no password is provided, skip the re-authentication
+  //         await user.delete();
+  //       }
+  //     }
+
+  //     // Proceed to delete associated data (e.g., Firestore, Storage)
+  //     final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  //     final FirebaseStorage storage = FirebaseStorage.instance;
+
+  //     DocumentSnapshot userDoc =
+  //         await firestore.collection("users").doc(user.uid).get();
+  //     final userData = userDoc.data() as Map<String, dynamic>?;
+
+  //     if (userData != null) {
+  //       if (userData.containsKey('imageProfile')) {
+  //         String profileImageUrl = userData['imageProfile'];
+  //         await _deleteImage(profileImageUrl, storage);
+  //       }
+  //       if (userData.containsKey('imageUrls')) {
+  //         List<dynamic> imageUrls = userData['imageUrls'];
+  //         for (String imageUrl in imageUrls) {
+  //           await _deleteImage(imageUrl, storage);
+  //         }
+  //       }
+  //       await firestore.collection("users").doc(user.uid).delete();
+  //     }
+
+  //     // Step 4: Log out and redirect to the login screen
+  //     await FirebaseAuth.instance.signOut();
+  //     Navigator.of(context, rootNavigator: true)
+  //         .pop(); // Close the loading indicator
+
+  //     // Navigate to LoginScreen and remove all previous routes
+  //     Get.offAll(LoginScreen());
+
+  //     // Optionally show a success message
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Account deleted successfully.")),
+  //     );
+  //   } catch (e) {
+  //     Navigator.of(context, rootNavigator: true)
+  //         .pop(); // Close the loading indicator
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Error deleting account: $e")),
+  //     );
+  //     print("Error deleting account: $e");
+  //   }
+  // }
   Future<void> _deleteAccount() async {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -248,39 +382,79 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
     if (confirmed != true) return;
 
-    // Step 2: Show password dialog for re-authentication
-    String? password = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        String inputPassword = '';
-        return AlertDialog(
-          title: Text("Re-authenticate"),
-          content: TextField(
-            onChanged: (value) {
-              inputPassword = value;
-            },
-            obscureText: true,
-            decoration: InputDecoration(labelText: "Enter your password"),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text("Cancel"),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: Text("Confirm"),
-              onPressed: () => Navigator.of(context).pop(inputPassword),
-            ),
-          ],
-        );
-      },
-    );
+    String? password = '';
 
-    if (password == null || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Password is required to delete account.")),
+    // Step 2: Determine if the user is logged in with Google or email/password
+    if (user.providerData[0].providerId == 'google.com') {
+      // If the user is logged in with Google, prompt them to re-enter their email to confirm account deletion
+      String? email = await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          String inputEmail = '';
+          return AlertDialog(
+            title: Text("Confirm Email"),
+            content: TextField(
+              onChanged: (value) {
+                inputEmail = value;
+              },
+              decoration:
+                  InputDecoration(labelText: "Enter your email to confirm"),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Cancel"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: Text("Confirm"),
+                onPressed: () => Navigator.of(context).pop(inputEmail),
+              ),
+            ],
+          );
+        },
       );
-      return;
+
+      if (email == null || email.isEmpty || email != user.email) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Email does not match.")),
+        );
+        return;
+      }
+    } else {
+      // If the user is logged in via email/password, prompt for password
+      password = await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          String inputPassword = '';
+          return AlertDialog(
+            title: Text("Re-authenticate"),
+            content: TextField(
+              onChanged: (value) {
+                inputPassword = value;
+              },
+              obscureText: true,
+              decoration: InputDecoration(labelText: "Enter your password"),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Cancel"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: Text("Confirm"),
+                onPressed: () => Navigator.of(context).pop(inputPassword),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (password == null || password.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Password is required to delete account.")),
+        );
+        return;
+      }
     }
 
     // Step 3: Show a loading indicator while processing
@@ -293,12 +467,18 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     );
 
     try {
-      // Step 4: Re-authenticate user with the entered password
-      AuthCredential credential = EmailAuthProvider.credential(
-        email: user.email!,
-        password: password,
-      );
-      await user.reauthenticateWithCredential(credential);
+      // Step 4: Re-authenticate the user based on the authentication method
+      if (user.providerData[0].providerId == 'google.com') {
+        // Google login does not need password reauthentication
+        // Proceed directly with account deletion
+      } else {
+        // Re-authenticate user with the entered password (for email/password login)
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: password!,
+        );
+        await user.reauthenticateWithCredential(credential);
+      }
 
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
       final FirebaseStorage storage = FirebaseStorage.instance;
@@ -354,6 +534,148 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       print("Error deleting image: $e");
     }
   }
+
+// almost perfect version
+  // Future<void> _deleteAccount() async {
+  //   User? user = FirebaseAuth.instance.currentUser;
+
+  //   if (user == null) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("No user is currently logged in.")),
+  //     );
+  //     return;
+  //   }
+
+  //   // Step 1: Show confirmation dialog to delete account
+  //   bool confirmed = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text("Delete Account"),
+  //         content: Text(
+  //             "Are you sure you want to delete your account? This action cannot be undone."),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text("Cancel"),
+  //             onPressed: () => Navigator.of(context).pop(false),
+  //           ),
+  //           TextButton(
+  //             child: Text("Delete"),
+  //             onPressed: () => Navigator.of(context).pop(true),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+
+  //   if (confirmed != true) return;
+
+  //   // Step 2: Show password dialog for re-authentication
+  //   String? password = await showDialog<String>(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       String inputPassword = '';
+  //       return AlertDialog(
+  //         title: Text("Re-authenticate"),
+  //         content: TextField(
+  //           onChanged: (value) {
+  //             inputPassword = value;
+  //           },
+  //           obscureText: true,
+  //           decoration: InputDecoration(labelText: "Enter your password"),
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text("Cancel"),
+  //             onPressed: () => Navigator.of(context).pop(),
+  //           ),
+  //           TextButton(
+  //             child: Text("Confirm"),
+  //             onPressed: () => Navigator.of(context).pop(inputPassword),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+
+  //   if (password == null || password.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Password is required to delete account.")),
+  //     );
+  //     return;
+  //   }
+
+  //   // Step 3: Show a loading indicator while processing
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return Center(child: CircularProgressIndicator());
+  //     },
+  //   );
+
+  //   try {
+  //     // Step 4: Re-authenticate user with the entered password
+  //     AuthCredential credential = EmailAuthProvider.credential(
+  //       email: user.email!,
+  //       password: password,
+  //     );
+  //     await user.reauthenticateWithCredential(credential);
+
+  //     final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  //     final FirebaseStorage storage = FirebaseStorage.instance;
+
+  //     DocumentSnapshot userDoc =
+  //         await firestore.collection("users").doc(user.uid).get();
+  //     final userData = userDoc.data() as Map<String, dynamic>?;
+
+  //     if (userData != null) {
+  //       if (userData.containsKey('imageProfile')) {
+  //         String profileImageUrl = userData['imageProfile'];
+  //         await _deleteImage(profileImageUrl, storage);
+  //       }
+  //       if (userData.containsKey('imageUrls')) {
+  //         List<dynamic> imageUrls = userData['imageUrls'];
+  //         for (String imageUrl in imageUrls) {
+  //           await _deleteImage(imageUrl, storage);
+  //         }
+  //       }
+  //       await firestore.collection("users").doc(user.uid).delete();
+  //     }
+
+  //     // Step 5: Delete user account and log out
+  //     await user.delete();
+  //     await FirebaseAuth.instance.signOut();
+
+  //     Navigator.of(context, rootNavigator: true)
+  //         .pop(); // Close the loading indicator
+
+  //     // Navigate to LoginScreen and remove all previous routes
+  //     Get.offAll(LoginScreen());
+
+  //     // Optionally show a success message
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Account deleted successfully.")),
+  //     );
+  //   } catch (e) {
+  //     Navigator.of(context, rootNavigator: true)
+  //         .pop(); // Close the loading indicator
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Error deleting account: $e")),
+  //     );
+  //     print("Error deleting account: $e");
+  //   }
+  // }
+
+  // Future<void> _deleteImage(String imageUrl, FirebaseStorage storage) async {
+  //   try {
+  //     final ref = storage.refFromURL(imageUrl);
+  //     await ref.delete();
+  //     print("Deleted image: $imageUrl");
+  //   } catch (e) {
+  //     print("Error deleting image: $e");
+  //   }
+  // }
 
   @override
   void didChangeDependencies() {
@@ -565,6 +887,32 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 ),
               ),
               SizedBox(height: 8),
+              Text(
+                '$interestsfromfb',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              SizedBox(height: 8),
+              Divider(thickness: 1.0),
+              Text(
+                '教育',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink[900],
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                '$edLevel',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              SizedBox(height: 8),
               Wrap(
                 spacing: 8.0,
                 runSpacing: 4.0,
@@ -615,7 +963,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
                       FirebaseAuth auth = FirebaseAuth.instance;
                       auth.signOut().then((res) {
-                        // Navigate to the sign-in screen after successful sign-out
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -626,19 +973,21 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                         print("Error signing out: $error");
                       });
                       // setState(() {
-                      //   currentUserID =
-                      //       ""; // Clear the global or current user ID variable
-                      //   widget.userID = "";
-                      //   name = "";
-                      //   uid = "";
-                      //   imageProfile = "";
-                      //   email = "";
-                      //   password = "";
+                      currentUserID =
+                          ""; // Clear the global or current user ID variable
+                      widget.userID = "";
+                      name = "";
+                      uid = "";
+                      imageProfile = "";
+                      email = "";
+                      password = "";
 
-                      //   // String age = "";
+                      // String age = "";
                       // });
-                      // await FirebaseFirestore.instance.clearPersistence();
-                      // await FirebaseFirestore.instance.terminate();
+
+                      // something the app wont complete log out, u need to terminate it
+                      await FirebaseFirestore.instance.clearPersistence();
+                      await FirebaseFirestore.instance.terminate();
 
                       // Navigator.pushReplacement(
                       //     context,

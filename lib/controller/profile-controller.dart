@@ -68,7 +68,8 @@ class Profilecontroller extends GetxController {
         print("Current user document does not exist.");
       }
     } catch (e) {
-      print("Error fetching current user data: $e");
+      print(
+          "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
     }
   }
 

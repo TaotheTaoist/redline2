@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         });
       } else {
-        print("User data does not exist.");
+        print("User data does not exist. home_screen");
       }
     });
   }
