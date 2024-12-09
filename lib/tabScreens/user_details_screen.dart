@@ -502,260 +502,257 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           ),
         ],
       ),
-      body: Obx(
-        () => SingleChildScrollView(
-          controller: ScrollController(),
-          child: Padding(
-            padding: const EdgeInsets.all(30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Image Carousel
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        autoPlay: false,
-                        enlargeCenterPage: true,
-                        aspectRatio: 16 / 9,
-                        enableInfiniteScroll: urlsList.length > 1,
-                        onPageChanged: (index, reason) {
-                          // Optionally handle page change if needed
-                        },
-                      ),
-                      items: urlsList.map((url) {
-                        // Filter out any empty URLs
-                        return url.isNotEmpty
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: Image.network(
-                                  url,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                ),
-                              )
-                            : Container(); // Placeholder for empty image
-                      }).toList(),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          name,
-                          style: TextStyle(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '• ${age}',
-                          style: TextStyle(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4),
-                Text(
-                  '$sign $xingxuo',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-                Divider(
-                  thickness: 1.0,
-                  color: Color.fromARGB(255, 90, 90, 90),
-                ),
-
-                Text(
-                  '關於我',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.pink[900],
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '$aboutMe',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-                Divider(thickness: 1.0),
-
-                Text(
-                  '興趣',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.pink[900],
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '$interestsfromfb',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-                SizedBox(height: 8),
-                Divider(thickness: 1.0),
-                Text(
-                  '教育',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.pink[900],
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '$edLevel',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-                SizedBox(height: 8),
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 4.0,
-                  children: interestsfromfb.map((interest) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        print('Pressed: $interest');
+      body: SingleChildScrollView(
+        controller: ScrollController(),
+        child: Padding(
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image Carousel
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.4,
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      autoPlay: false,
+                      enlargeCenterPage: true,
+                      aspectRatio: 16 / 9,
+                      enableInfiniteScroll: urlsList.length > 1,
+                      onPageChanged: (index, reason) {
+                        // Optionally handle page change if needed
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 88, 88, 88),
-                        foregroundColor:
-                            const Color.fromARGB(255, 255, 255, 255),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: Text(
-                        interest,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    );
-                  }).toList(),
+                    ),
+                    items: urlsList.map((url) {
+                      // Filter out any empty URLs
+                      return url.isNotEmpty
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.network(
+                                url,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            )
+                          : Container(); // Placeholder for empty image
+                    }).toList(),
+                  ),
                 ),
-                Divider(
-                  thickness: 1,
-                ),
-                _buildSectionTitle("Firebase Section"),
-                _buildTable([
-                  _buildTableRow("name", name),
-                  _buildTableRow("uid", widget.userID!),
-                  _buildTableRow("email", email),
-                ]),
-
-                Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center, // Align buttons to center
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        // await FirebaseAuth.instance.signOut();
-                        // Navigator.pushAndRemoveUntil(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => LoginScreen()),
-                        //   (route) =>
-                        //       false, // This condition removes all previous routes
-                        // );
-
-                        FirebaseAuth auth = FirebaseAuth.instance;
-                        auth.signOut().then((res) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginScreen()),
-                          );
-                        }).catchError((error) {
-                          // Handle any error during sign-out (optional)
-                          print("Error signing out: $error");
-                        });
-                        // setState(() {
-                        currentUserID =
-                            ""; // Clear the global or current user ID variable
-                        widget.userID = "";
-                        name = "";
-                        uid = "";
-                        imageProfile = "";
-                        email = "";
-                        password = "";
-
-                        // String age = "";
-                        // });
-
-                        // something the app wont complete log out, u need to terminate it
-                        await FirebaseFirestore.instance.clearPersistence();
-                        await FirebaseFirestore.instance.terminate();
-
-                        // Navigator.pushReplacement(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (BuildContext context) =>
-                        //             LoginScreen()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(
-                            255, 255, 190, 212), // Background color
-                        foregroundColor: const Color.fromARGB(
-                            255, 221, 55, 40), // Text (and icon) color
-                      ),
-                      child: Text(
-                        'Log Out',
+              ),
+              SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        name,
                         style: TextStyle(
-                          fontWeight: FontWeight
-                              .bold, // Optional: Customize text further
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    SizedBox(width: 20), // Spacer between buttons
-                    ElevatedButton(
-                      onPressed: () {
-                        // _confirmDeleteAccount(context); // Call confirmation dialog
-                        _deleteAccount();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(
-                            255, 255, 190, 212), // Background color
-                        foregroundColor: const Color.fromARGB(
-                            255, 221, 55, 40), // Text (and icon) color
-                      ),
-                      child: Text(
-                        'Delete Account',
+                      SizedBox(width: 8),
+                      Text(
+                        '• ${age}',
                         style: TextStyle(
-                          fontWeight: FontWeight
-                              .bold, // Optional: Customize text further
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 20,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 4),
+              Text(
+                '$sign $xingxuo',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 0, 0, 0),
                 ),
-              ],
-            ),
+              ),
+              Divider(
+                thickness: 1.0,
+                color: Color.fromARGB(255, 90, 90, 90),
+              ),
+
+              Text(
+                '關於我',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink[900],
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                '$aboutMe',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              Divider(thickness: 1.0),
+
+              Text(
+                '興趣',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink[900],
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                '$interestsfromfb',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              SizedBox(height: 8),
+              Divider(thickness: 1.0),
+              Text(
+                '教育',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink[900],
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                '$edLevel',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              SizedBox(height: 8),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children: interestsfromfb.map((interest) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      print('Pressed: $interest');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 88, 88, 88),
+                      foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text(
+                      interest,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
+                }).toList(),
+              ),
+              Divider(
+                thickness: 1,
+              ),
+              _buildSectionTitle("Firebase Section"),
+              _buildTable([
+                _buildTableRow("name", name),
+                _buildTableRow("uid", widget.userID!),
+                _buildTableRow("email", email),
+              ]),
+
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.center, // Align buttons to center
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      // await FirebaseAuth.instance.signOut();
+                      // Navigator.pushAndRemoveUntil(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => LoginScreen()),
+                      //   (route) =>
+                      //       false, // This condition removes all previous routes
+                      // );
+
+                      FirebaseAuth auth = FirebaseAuth.instance;
+                      auth.signOut().then((res) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
+                      }).catchError((error) {
+                        // Handle any error during sign-out (optional)
+                        print("Error signing out: $error");
+                      });
+                      // setState(() {
+                      currentUserID =
+                          ""; // Clear the global or current user ID variable
+                      widget.userID = "";
+                      name = "";
+                      uid = "";
+                      imageProfile = "";
+                      email = "";
+                      password = "";
+
+                      // String age = "";
+                      // });
+
+                      // something the app wont complete log out, u need to terminate it
+                      await FirebaseFirestore.instance.clearPersistence();
+                      await FirebaseFirestore.instance.terminate();
+
+                      // Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (BuildContext context) =>
+                      //             LoginScreen()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(
+                          255, 255, 190, 212), // Background color
+                      foregroundColor: const Color.fromARGB(
+                          255, 221, 55, 40), // Text (and icon) color
+                    ),
+                    child: Text(
+                      'Log Out',
+                      style: TextStyle(
+                        fontWeight:
+                            FontWeight.bold, // Optional: Customize text further
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20), // Spacer between buttons
+                  ElevatedButton(
+                    onPressed: () {
+                      // _confirmDeleteAccount(context); // Call confirmation dialog
+                      _deleteAccount();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(
+                          255, 255, 190, 212), // Background color
+                      foregroundColor: const Color.fromARGB(
+                          255, 221, 55, 40), // Text (and icon) color
+                    ),
+                    child: Text(
+                      'Delete Account',
+                      style: TextStyle(
+                        fontWeight:
+                            FontWeight.bold, // Optional: Customize text further
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

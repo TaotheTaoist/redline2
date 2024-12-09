@@ -24,6 +24,54 @@ class Profilecontroller extends GetxController {
 
   final storage = GetStorage();
 
+  RxString name = ''.obs;
+  RxString email = ''.obs;
+  RxList<String> imageUrls = <String>[].obs;
+  RxString birthday = ''.obs;
+  RxString sex = ''.obs;
+  RxList<String> interests = <String>[].obs;
+  RxString age = ''.obs;
+  RxList<String> occupation = <String>[].obs;
+  RxList<String> mbti = <String>[].obs;
+
+  // Current User ID
+  String uid = "";
+
+  // Initialize the controller with the user ID
+  void setUserId(String userId) {
+    uid = userId;
+    fetchUserProfile();
+  }
+
+  // Fetch user data from Firestore
+  void fetchUserProfile() {
+    print("Listening for updates for UID: $uid");
+
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .snapshots()
+        .listen((dataSnapshot) {
+      if (dataSnapshot.exists) {
+        print("User data updated: ${dataSnapshot.data()}"); // Debug log
+        // Populate reactive variables
+        name.value = dataSnapshot["name"] ?? '';
+        email.value = dataSnapshot["email"] ?? '';
+        imageUrls.value = List<String>.from(dataSnapshot["imageUrls"] ?? []);
+        birthday.value = dataSnapshot["birthday"] ?? '';
+        sex.value = dataSnapshot["sex"] ?? '';
+        interests.value = List<String>.from(dataSnapshot["interests"] ?? []);
+        age.value = dataSnapshot["age"] ?? '';
+        occupation.value = List<String>.from(dataSnapshot["occupation"] ?? []);
+        mbti.value = List<String>.from(dataSnapshot["mbti"] ?? []);
+      } else {
+        print("User document does not exist."); // Debug log
+      }
+    }).onError((error) {
+      print("Error fetching user data: $error"); // Debug log
+    });
+  }
+
   @override
   void onInit() {
     super.onInit();

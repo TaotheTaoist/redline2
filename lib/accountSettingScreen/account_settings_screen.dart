@@ -1050,7 +1050,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
       if (sexController.text.isNotEmpty) {
         updateData["sex"] = sexController.text;
-        updateData["age"] = age;
+        updateData["age"] = age.toString();
       }
 
       // Proceed only if there's any data to update
