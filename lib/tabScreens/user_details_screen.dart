@@ -26,8 +26,7 @@ class UserDetailsScreen extends StatefulWidget {
 }
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
-  // }
-  // final Profilecontroller profileController = Get.find<Profilecontroller>();
+  final Profilecontroller profileController = Get.find<Profilecontroller>();
 
   String uid = "";
   String imageProfile = "";
@@ -75,7 +74,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    currentUserID = "qIoGKLLVAIgs8xi2d2zkDtO7YMC2";
+
     print('User UID widget.userID: ${widget.userID}');
     print('currentUserId:${FirebaseAuth.instance.currentUser!.uid}');
 
@@ -90,6 +89,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     lkFor = cachedUser["lookingfor"];
     undo = cachedUser["exercise"];
     food = cachedUser["diet"];
+
     print("name at ${cachedUser["name"]}");
     retrieveUserInfo().then((_) {
       retrieveUserImages();
@@ -214,140 +214,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
-  // Future<void> _deleteAccount() async {
-  //   User? user = FirebaseAuth.instance.currentUser;
-
-  //   if (user == null) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("No user is currently logged in.")),
-  //     );
-  //     return;
-  //   }
-
-  //   // Step 1: Show confirmation dialog to delete account
-  //   bool confirmed = await showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text("Delete Account"),
-  //         content: Text(
-  //             "Are you sure you want to delete your account? This action cannot be undone."),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: Text("Cancel"),
-  //             onPressed: () => Navigator.of(context).pop(false),
-  //           ),
-  //           TextButton(
-  //             child: Text("Delete"),
-  //             onPressed: () => Navigator.of(context).pop(true),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-
-  //   if (confirmed != true) return;
-
-  //   // Step 2: Show a loading indicator while processing
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context) {
-  //       return Center(child: CircularProgressIndicator());
-  //     },
-  //   );
-
-  //   try {
-  //     // Step 3: Check if the user signed in with Google (no password needed for Google users)
-  //     if (user.providerData.any((provider) =>
-  //         provider.providerId == GoogleAuthProvider.PROVIDER_ID)) {
-  //       // Skip password re-authentication if Google login
-  //       await user.delete(); // Delete user
-  //     } else {
-  //       // For users with email/password, ask for password
-  //       String? password = await showDialog<String>(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           String inputPassword = '';
-  //           return AlertDialog(
-  //             title: Text("Re-authenticate"),
-  //             content: TextField(
-  //               onChanged: (value) {
-  //                 inputPassword = value;
-  //               },
-  //               obscureText: true,
-  //               decoration: InputDecoration(labelText: "Enter your password"),
-  //             ),
-  //             actions: <Widget>[
-  //               TextButton(
-  //                 child: Text("Cancel"),
-  //                 onPressed: () => Navigator.of(context).pop(),
-  //               ),
-  //               TextButton(
-  //                 child: Text("Confirm"),
-  //                 onPressed: () => Navigator.of(context).pop(inputPassword),
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       );
-
-  //       // If the password is provided, re-authenticate with it
-  //       if (password != null && password.isNotEmpty) {
-  //         AuthCredential credential = EmailAuthProvider.credential(
-  //           email: user.email!,
-  //           password: password,
-  //         );
-  //         await user.reauthenticateWithCredential(credential);
-  //       } else {
-  //         // If no password is provided, skip the re-authentication
-  //         await user.delete();
-  //       }
-  //     }
-
-  //     // Proceed to delete associated data (e.g., Firestore, Storage)
-  //     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  //     final FirebaseStorage storage = FirebaseStorage.instance;
-
-  //     DocumentSnapshot userDoc =
-  //         await firestore.collection("users").doc(user.uid).get();
-  //     final userData = userDoc.data() as Map<String, dynamic>?;
-
-  //     if (userData != null) {
-  //       if (userData.containsKey('imageProfile')) {
-  //         String profileImageUrl = userData['imageProfile'];
-  //         await _deleteImage(profileImageUrl, storage);
-  //       }
-  //       if (userData.containsKey('imageUrls')) {
-  //         List<dynamic> imageUrls = userData['imageUrls'];
-  //         for (String imageUrl in imageUrls) {
-  //           await _deleteImage(imageUrl, storage);
-  //         }
-  //       }
-  //       await firestore.collection("users").doc(user.uid).delete();
-  //     }
-
-  //     // Step 4: Log out and redirect to the login screen
-  //     await FirebaseAuth.instance.signOut();
-  //     Navigator.of(context, rootNavigator: true)
-  //         .pop(); // Close the loading indicator
-
-  //     // Navigate to LoginScreen and remove all previous routes
-  //     Get.offAll(LoginScreen());
-
-  //     // Optionally show a success message
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Account deleted successfully.")),
-  //     );
-  //   } catch (e) {
-  //     Navigator.of(context, rootNavigator: true)
-  //         .pop(); // Close the loading indicator
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Error deleting account: $e")),
-  //     );
-  //     print("Error deleting account: $e");
-  //   }
-  // }
   Future<void> _deleteAccount() async {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -535,160 +401,18 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
-// almost perfect version
-  // Future<void> _deleteAccount() async {
-  //   User? user = FirebaseAuth.instance.currentUser;
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
 
-  //   if (user == null) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("No user is currently logged in.")),
-  //     );
-  //     return;
-  //   }
-
-  //   // Step 1: Show confirmation dialog to delete account
-  //   bool confirmed = await showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text("Delete Account"),
-  //         content: Text(
-  //             "Are you sure you want to delete your account? This action cannot be undone."),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: Text("Cancel"),
-  //             onPressed: () => Navigator.of(context).pop(false),
-  //           ),
-  //           TextButton(
-  //             child: Text("Delete"),
-  //             onPressed: () => Navigator.of(context).pop(true),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-
-  //   if (confirmed != true) return;
-
-  //   // Step 2: Show password dialog for re-authentication
-  //   String? password = await showDialog<String>(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       String inputPassword = '';
-  //       return AlertDialog(
-  //         title: Text("Re-authenticate"),
-  //         content: TextField(
-  //           onChanged: (value) {
-  //             inputPassword = value;
-  //           },
-  //           obscureText: true,
-  //           decoration: InputDecoration(labelText: "Enter your password"),
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: Text("Cancel"),
-  //             onPressed: () => Navigator.of(context).pop(),
-  //           ),
-  //           TextButton(
-  //             child: Text("Confirm"),
-  //             onPressed: () => Navigator.of(context).pop(inputPassword),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-
-  //   if (password == null || password.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Password is required to delete account.")),
-  //     );
-  //     return;
-  //   }
-
-  //   // Step 3: Show a loading indicator while processing
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context) {
-  //       return Center(child: CircularProgressIndicator());
-  //     },
-  //   );
-
-  //   try {
-  //     // Step 4: Re-authenticate user with the entered password
-  //     AuthCredential credential = EmailAuthProvider.credential(
-  //       email: user.email!,
-  //       password: password,
-  //     );
-  //     await user.reauthenticateWithCredential(credential);
-
-  //     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  //     final FirebaseStorage storage = FirebaseStorage.instance;
-
-  //     DocumentSnapshot userDoc =
-  //         await firestore.collection("users").doc(user.uid).get();
-  //     final userData = userDoc.data() as Map<String, dynamic>?;
-
-  //     if (userData != null) {
-  //       if (userData.containsKey('imageProfile')) {
-  //         String profileImageUrl = userData['imageProfile'];
-  //         await _deleteImage(profileImageUrl, storage);
-  //       }
-  //       if (userData.containsKey('imageUrls')) {
-  //         List<dynamic> imageUrls = userData['imageUrls'];
-  //         for (String imageUrl in imageUrls) {
-  //           await _deleteImage(imageUrl, storage);
-  //         }
-  //       }
-  //       await firestore.collection("users").doc(user.uid).delete();
-  //     }
-
-  //     // Step 5: Delete user account and log out
-  //     await user.delete();
-  //     await FirebaseAuth.instance.signOut();
-
-  //     Navigator.of(context, rootNavigator: true)
-  //         .pop(); // Close the loading indicator
-
-  //     // Navigate to LoginScreen and remove all previous routes
-  //     Get.offAll(LoginScreen());
-
-  //     // Optionally show a success message
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Account deleted successfully.")),
-  //     );
-  //   } catch (e) {
-  //     Navigator.of(context, rootNavigator: true)
-  //         .pop(); // Close the loading indicator
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Error deleting account: $e")),
-  //     );
-  //     print("Error deleting account: $e");
+  //   final userId = FirebaseAuth.instance.currentUser?.uid;
+  //   if (userId != null) {
+  //     print("userID at this :$userId");
+  //     setState(() {
+  //       retrieveUserInfo();
+  //     });
   //   }
   // }
-
-  // Future<void> _deleteImage(String imageUrl, FirebaseStorage storage) async {
-  //   try {
-  //     final ref = storage.refFromURL(imageUrl);
-  //     await ref.delete();
-  //     print("Deleted image: $imageUrl");
-  //   } catch (e) {
-  //     print("Error deleting image: $e");
-  //   }
-  // }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId != null) {
-      print("userID at this :$userId");
-      setState(() {
-        retrieveUserInfo();
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -778,260 +502,260 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           ),
         ],
       ),
-      body:
-          //  isLoading
-          //     ? Center(child: CircularProgressIndicator()):
-          SingleChildScrollView(
-        controller: ScrollController(),
-        child: Padding(
-          padding: const EdgeInsets.all(30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image Carousel
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.4,
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      autoPlay: false,
-                      enlargeCenterPage: true,
-                      aspectRatio: 16 / 9,
-                      enableInfiniteScroll: urlsList.length > 1,
-                      onPageChanged: (index, reason) {
-                        // Optionally handle page change if needed
+      body: Obx(
+        () => SingleChildScrollView(
+          controller: ScrollController(),
+          child: Padding(
+            padding: const EdgeInsets.all(30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image Carousel
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  width: MediaQuery.of(context).size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        autoPlay: false,
+                        enlargeCenterPage: true,
+                        aspectRatio: 16 / 9,
+                        enableInfiniteScroll: urlsList.length > 1,
+                        onPageChanged: (index, reason) {
+                          // Optionally handle page change if needed
+                        },
+                      ),
+                      items: urlsList.map((url) {
+                        // Filter out any empty URLs
+                        return url.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image.network(
+                                  url,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
+                              )
+                            : Container(); // Placeholder for empty image
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          name,
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '• ${age}',
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 4),
+                Text(
+                  '$sign $xingxuo',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                Divider(
+                  thickness: 1.0,
+                  color: Color.fromARGB(255, 90, 90, 90),
+                ),
+
+                Text(
+                  '關於我',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.pink[900],
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '$aboutMe',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                Divider(thickness: 1.0),
+
+                Text(
+                  '興趣',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.pink[900],
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '$interestsfromfb',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                SizedBox(height: 8),
+                Divider(thickness: 1.0),
+                Text(
+                  '教育',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.pink[900],
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '$edLevel',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 4.0,
+                  children: interestsfromfb.map((interest) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        print('Pressed: $interest');
                       },
-                    ),
-                    items: urlsList.map((url) {
-                      // Filter out any empty URLs
-                      return url.isNotEmpty
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: Image.network(
-                                url,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
-                            )
-                          : Container(); // Placeholder for empty image
-                    }).toList(),
-                  ),
-                ),
-              ),
-              SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        name,
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 88, 88, 88),
+                        foregroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        '• ${age}',
+                      child: Text(
+                        interest,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                Divider(
+                  thickness: 1,
+                ),
+                _buildSectionTitle("Firebase Section"),
+                _buildTable([
+                  _buildTableRow("name", name),
+                  _buildTableRow("uid", widget.userID!),
+                  _buildTableRow("email", email),
+                ]),
+
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center, // Align buttons to center
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        // await FirebaseAuth.instance.signOut();
+                        // Navigator.pushAndRemoveUntil(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => LoginScreen()),
+                        //   (route) =>
+                        //       false, // This condition removes all previous routes
+                        // );
+
+                        FirebaseAuth auth = FirebaseAuth.instance;
+                        auth.signOut().then((res) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()),
+                          );
+                        }).catchError((error) {
+                          // Handle any error during sign-out (optional)
+                          print("Error signing out: $error");
+                        });
+                        // setState(() {
+                        currentUserID =
+                            ""; // Clear the global or current user ID variable
+                        widget.userID = "";
+                        name = "";
+                        uid = "";
+                        imageProfile = "";
+                        email = "";
+                        password = "";
+
+                        // String age = "";
+                        // });
+
+                        // something the app wont complete log out, u need to terminate it
+                        await FirebaseFirestore.instance.clearPersistence();
+                        await FirebaseFirestore.instance.terminate();
+
+                        // Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (BuildContext context) =>
+                        //             LoginScreen()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(
+                            255, 255, 190, 212), // Background color
+                        foregroundColor: const Color.fromARGB(
+                            255, 221, 55, 40), // Text (and icon) color
+                      ),
+                      child: Text(
+                        'Log Out',
                         style: TextStyle(
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 20,
+                          fontWeight: FontWeight
+                              .bold, // Optional: Customize text further
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 4),
-              Text(
-                '$sign $xingxuo',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: const Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-              Divider(
-                thickness: 1.0,
-                color: Color.fromARGB(255, 90, 90, 90),
-              ),
-
-              Text(
-                '關於我',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.pink[900],
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                '$aboutMe',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: const Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-              Divider(thickness: 1.0),
-
-              Text(
-                '興趣',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.pink[900],
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                '$interestsfromfb',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: const Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-              SizedBox(height: 8),
-              Divider(thickness: 1.0),
-              Text(
-                '教育',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.pink[900],
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                '$edLevel',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: const Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-              SizedBox(height: 8),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 4.0,
-                children: interestsfromfb.map((interest) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      print('Pressed: $interest');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 88, 88, 88),
-                      foregroundColor: const Color.fromARGB(255, 255, 255, 255),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    ),
+                    SizedBox(width: 20), // Spacer between buttons
+                    ElevatedButton(
+                      onPressed: () {
+                        // _confirmDeleteAccount(context); // Call confirmation dialog
+                        _deleteAccount();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(
+                            255, 255, 190, 212), // Background color
+                        foregroundColor: const Color.fromARGB(
+                            255, 221, 55, 40), // Text (and icon) color
+                      ),
+                      child: Text(
+                        'Delete Account',
+                        style: TextStyle(
+                          fontWeight: FontWeight
+                              .bold, // Optional: Customize text further
+                        ),
                       ),
                     ),
-                    child: Text(
-                      interest,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  );
-                }).toList(),
-              ),
-              Divider(
-                thickness: 1,
-              ),
-              _buildSectionTitle("Firebase Section"),
-              _buildTable([
-                _buildTableRow("name", name),
-                _buildTableRow("uid", widget.userID!),
-                _buildTableRow("email", email),
-              ]),
-
-              Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.center, // Align buttons to center
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      // await FirebaseAuth.instance.signOut();
-                      // Navigator.pushAndRemoveUntil(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => LoginScreen()),
-                      //   (route) =>
-                      //       false, // This condition removes all previous routes
-                      // );
-
-                      FirebaseAuth auth = FirebaseAuth.instance;
-                      auth.signOut().then((res) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()),
-                        );
-                      }).catchError((error) {
-                        // Handle any error during sign-out (optional)
-                        print("Error signing out: $error");
-                      });
-                      // setState(() {
-                      currentUserID =
-                          ""; // Clear the global or current user ID variable
-                      widget.userID = "";
-                      name = "";
-                      uid = "";
-                      imageProfile = "";
-                      email = "";
-                      password = "";
-
-                      // String age = "";
-                      // });
-
-                      // something the app wont complete log out, u need to terminate it
-                      await FirebaseFirestore.instance.clearPersistence();
-                      await FirebaseFirestore.instance.terminate();
-
-                      // Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (BuildContext context) =>
-                      //             LoginScreen()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                          255, 255, 190, 212), // Background color
-                      foregroundColor: const Color.fromARGB(
-                          255, 221, 55, 40), // Text (and icon) color
-                    ),
-                    child: Text(
-                      'Log Out',
-                      style: TextStyle(
-                        fontWeight:
-                            FontWeight.bold, // Optional: Customize text further
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 20), // Spacer between buttons
-                  ElevatedButton(
-                    onPressed: () {
-                      // _confirmDeleteAccount(context); // Call confirmation dialog
-                      _deleteAccount();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                          255, 255, 190, 212), // Background color
-                      foregroundColor: const Color.fromARGB(
-                          255, 221, 55, 40), // Text (and icon) color
-                    ),
-                    child: Text(
-                      'Delete Account',
-                      style: TextStyle(
-                        fontWeight:
-                            FontWeight.bold, // Optional: Customize text further
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
