@@ -28,6 +28,7 @@ class Authenticationcontroller extends GetxController {
   File? get profileImage => pickedFile.value;
   XFile? imageFile;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  // ignore: unused_field
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   String? verificationId; // Store verification ID

@@ -101,12 +101,19 @@ class Profilecontroller extends GetxController {
     super.onInit();
     GetStorage.init();
 
-    loadCachedData();
+    // loadCachedData();
 
     fetchAndCacheCurrentUserData();
 
     // Bind Firestore stream to keep the list updated
     usersProfileList.bindStream(_fetchOhterUsersProfilesFromFirestore());
+
+    ever(usersProfileList, (_) async {
+      if (usersProfileList.value.isNotEmpty) {
+        // Run cachedAllOtherUserImage only after usersProfileList is updated
+        await cachedallOtherUserImage();
+      }
+    });
 
     // Observe profile list and fetch image URLs when profiles are loaded
     ever(usersProfileList, (_) {
@@ -116,8 +123,8 @@ class Profilecontroller extends GetxController {
     });
 
     listenToCurrentUserDataChanges();
-    cachedallOtherUserImage();
-    // updateOtherProfileImageList();
+    // cachedallOtherUserImage();
+    //
   }
 
   void fetchAndCacheCurrentUserData() async {
@@ -148,6 +155,7 @@ class Profilecontroller extends GetxController {
   }
 
   Future<void> cachedallOtherUserImage() async {
+    final stopwatch = Stopwatch()..start();
     if (allUserProfileList.isEmpty) {
       print("No user profiles found in the list. cachedallOtherUserImage()");
       return;
@@ -191,6 +199,8 @@ class Profilecontroller extends GetxController {
         }
       }
     }
+    print(
+        "Time taken to fetch and cache images: ${stopwatch.elapsed}  cachedallOtherUserImage()");
   }
 
   // void updateOtherProfileImageList() {
@@ -256,6 +266,7 @@ class Profilecontroller extends GetxController {
 
 // 這個function 是來看裡面的data有沒有改變而已 最主要的是cache() 可是不包過正在使用的用戶UID
   Stream<List<Person>> _fetchOhterUsersProfilesFromFirestore() {
+    final stopwatch = Stopwatch()..start();
     return _firestore
         .collection("users")
         .where("uid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
@@ -293,7 +304,8 @@ class Profilecontroller extends GetxController {
       } else {
         print('No profiles fetched.');
       }
-
+      print(
+          "Time taken to fetch and cache images: ${stopwatch.elapsed}  fetchOhterUsersProfilesFromFirestore()");
       return profilesList;
     }).handleError((error) {
       print(

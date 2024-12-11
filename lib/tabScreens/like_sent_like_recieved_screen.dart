@@ -270,7 +270,7 @@ class _LikeSentLikeRecievedScreen extends State<LikeSentLikeRecievedScreen> {
                             borderRadius: BorderRadius.circular(
                                 20), // Apply radius to image
                             child: Image.network(
-                              mutualLikesList[Index]["imageProfile"],
+                              mutualLikesList[Index]["imageUrls"][0],
                               fit: BoxFit.cover,
                             ),
                           ),

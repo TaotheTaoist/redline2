@@ -11,35 +11,36 @@ List<String> innerInterests = ["發呆", "冥想", "打坐", "練內丹", "白�
 List<String> lifestyleInterests = ["旅行", "咖啡廳", "酒吧", "卡拉OK", "拍照", "去公園"];
 
 List<String> toysInterests = [
-  "Action Figures",
-  "Model Kits",
-  "Card Games",
-  "Puzzle Boxes",
-  "Gundam",
-  "DIY Electronics Kits",
-  "Adult Coloring Books",
-  "Drones and UAVs",
-  "RC Cars and Trucks",
-  "High-Quality Jigsaw Puzzles",
-  "Sculpting Tools and Clay",
-  "3D Printing",
-  "Board Game",
-  "Art Supplies (Watercolors, Markers, Canvases)",
-  "Guitar and Music Gear (Pedals, Accessories)",
-  "Fitness Equipment (Kettlebells, Resistance Bands)",
-  "Outdoor Survival Kits",
-  "Cooking Gadgets (Sous Vide, Specialty Knives)",
-  "Puzzle Games (Rubik's Cube, Brain Teasers)",
-  "Virtual Reality Headsets",
-  "Cardboard Model Kits",
-  "Escape Room Board Games",
-  "Model Trains and Railroads",
-  "Collectible Coins or Stamps",
-  "Electronic Learning Toys for Adults (like Raspberry Pi kits)",
-  "Fantasy Role-Playing Game Sets (Dungeons & Dragons)",
-  "Knitting or Crafting Kits",
-  "Hiking and Outdoor Adventure Gear",
-  "Luxury Dice Sets for Gaming",
+  '開朗', // Cheerful
+  '內向', // Introverted
+  '樂觀', // Optimistic
+  '悲觀', // Pessimistic
+  '熱情', // Enthusiastic
+  '冷靜', // Calm
+  '善良', // Kind
+  '理性', // Rational
+  '衝動', // Impulsive
+  '自信', // Confident
+  '謙虛', // Humble
+  '果斷', // Decisive
+  '固執', // Stubborn
+  '幽默', // Humorous
+  '安靜', // Quiet
+  '真誠', // Sincere
+  '友善', // Friendly
+  '耐心', // Patient
+  '開放', // Open-minded
+  '沉穩', // Stable
+  '專注', // Focused
+  '大膽', // Bold
+  '慷慨', // Generous
+  '勤奮', // Diligent
+  '聰明', // Smart
+  '有趣', // Interesting
+  '勇敢', // Brave
+  '謹慎', // Cautious
+  '調皮', // Mischievous
+  '無聊', // Bored
 ];
 final List<String> religions = [
   "基督教",

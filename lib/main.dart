@@ -42,6 +42,7 @@ import 'package:redline/controller/authenticationController.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:redline/controller/profile-controller.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -55,6 +56,7 @@ void main() async {
 
   // Put your AuthenticationController into the GetX controller hierarchy
   Get.put(Authenticationcontroller());
+  Get.lazyPut<Profilecontroller>(() => Profilecontroller());
 
   await GetStorage.init();
 

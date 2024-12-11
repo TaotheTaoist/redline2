@@ -12,8 +12,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:redline/authenticationScreen/birthdaycal.dart';
 import 'package:redline/constants/interests.dart';
 
-import 'package:redline/global.dart';
-
 class AccountSettingsScreen extends StatefulWidget {
   String? userID;
   AccountSettingsScreen({
