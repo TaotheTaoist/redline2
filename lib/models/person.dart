@@ -160,29 +160,76 @@ class Person {
       };
 
   // Convert a map to a Person object
+  // factory Person.fromJson(Map<String, dynamic> json) {
+  //   return Person(
+  //       uid: json["uid"],
+  //       name: json["name"],
+  //       email: json["email"],
+  //       password: json["password"],
+  //       photoNo: json["photoNo"],
+  //       publishedDateTime: json["publishedDateTime"],
+  //       interests: List<String>.from(json["interests"] ?? []),
+  //       imageUrls: List<String>.from(json["imageUrls"] ?? []),
+  //       sex: json["sex"],
+  //       bdTime: json["bdTime"],
+  //       birthday: json["birthday"],
+  //       sure: json["sure"],
+  //       age: json["age"],
+  //       occupation: json["occupation"],
+  //       mbti: json["mbti"],
+  //       language: json["language"],
+  //       religion: json["religion"],
+  //       education: json["education"],
+  //       bloodtype: json["bloodtype"],
+  //       lookingfor: json["lookingfor"],
+  //       exercise: json["exercise"],
+  //       diet: json["diet"]);
+  // }
+
   factory Person.fromJson(Map<String, dynamic> json) {
     return Person(
-        uid: json["uid"],
-        name: json["name"],
-        email: json["email"],
-        password: json["password"],
-        photoNo: json["photoNo"],
-        publishedDateTime: json["publishedDateTime"],
-        interests: List<String>.from(json["interests"] ?? []),
-        imageUrls: List<String>.from(json["imageUrls"] ?? []),
-        sex: json["sex"],
-        bdTime: json["bdTime"],
-        birthday: json["birthday"],
-        sure: json["sure"],
-        age: json["age"],
-        occupation: json["occupation"],
-        mbti: json["mbti"],
-        language: json["language"],
-        religion: json["religion"],
-        education: json["education"],
-        bloodtype: json["bloodtype"],
-        lookingfor: json["lookingfor"],
-        exercise: json["exercise"],
-        diet: json["diet"]);
+      uid: json["uid"] as String?,
+      name: json["name"] as String?,
+      email: json["email"] as String?,
+      password: json["password"] as String?,
+      photoNo: json["photoNo"] as String?,
+      publishedDateTime: json["publishedDateTime"] as int?,
+      // Check for the presence of interests and cast it as List<String> if valid
+      interests: json["interests"] != null
+          ? List<String>.from(json["interests"] as List)
+          : [],
+      // Check for the presence of imageUrls and cast it as List<String> if valid
+      imageUrls: json["imageUrls"] != null
+          ? List<String>.from(json["imageUrls"] as List)
+          : [],
+      sex: json["sex"] as String?,
+      bdTime: json["bdTime"] as String?,
+      birthday: json["birthday"] as String?,
+      sure: json["sure"] as String?,
+      age: json["age"] as String?,
+      occupation: json["occupation"] != null
+          ? List<String>.from(json["occupation"] as List)
+          : [],
+      mbti: json["mbti"] != null ? List<String>.from(json["mbti"] as List) : [],
+      language: json["language"] != null
+          ? List<String>.from(json["language"] as List)
+          : [],
+      religion: json["religion"] != null
+          ? List<String>.from(json["religion"] as List)
+          : [],
+      education: json["education"] != null
+          ? List<String>.from(json["education"] as List)
+          : [],
+      bloodtype: json["bloodtype"] != null
+          ? List<String>.from(json["bloodtype"] as List)
+          : [],
+      lookingfor: json["lookingfor"] != null
+          ? List<String>.from(json["lookingfor"] as List)
+          : [],
+      exercise: json["exercise"] != null
+          ? List<String>.from(json["exercise"] as List)
+          : [],
+      diet: json["diet"] != null ? List<String>.from(json["diet"] as List) : [],
+    );
   }
 }

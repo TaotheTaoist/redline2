@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:redline/controller/authenticationController.dart';
 import 'package:redline/controller/profile-controller.dart';
+import 'package:redline/tabScreens/PersonCarousel.dart';
 import 'package:redline/tabScreens/baxiDetailScreen.dart';
 import 'package:redline/tabScreens/favorite_sent_receieved_screen.dart';
 import 'package:redline/tabScreens/like_sent_like_recieved_screen.dart';
@@ -33,9 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfilePage(),
     // FavoriteSentReceivedScreen(),
     LikeSentLikeRecievedScreen(),
-    UserDetailsScreen(
-      userID: FirebaseAuth.instance.currentUser!.uid,
-    ),
+    PersonCarousel(),
+    // UserDetailsScreen(
+    //   userID: FirebaseAuth.instance.currentUser!.uid,
+    // ),
   ];
   void _listenToBaxiDetailsData() {
     final userId = FirebaseAuth.instance.currentUser?.uid;
