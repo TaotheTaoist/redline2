@@ -8,6 +8,7 @@ import 'package:redline/calendar/Lunar.dart' as lunar;
 import 'package:redline/calendar/gods.dart';
 import 'package:redline/calendar/util/LunarUtil.dart';
 import '../calendar/Lunar.dart' as Lunar;
+import 'package:geolocator/geolocator.dart';
 
 class BaxiDetailsScreen extends StatefulWidget {
   final String birthday;
@@ -101,6 +102,8 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
   late int bodystrength;
 
   String? xingXuo;
+
+  String locationMessage = "location";
 
   @override
   void initState() {
@@ -198,6 +201,57 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     regularCalculating();
     xingXuo = lunarDate.getSolar().getXingZuo();
     print("xingXuo:$xingXuo");
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          locationMessage =
+              "Location services are disabled. Please enable them.";
+        });
+        return;
+      }
+
+      // Request permission if necessary
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() {
+            locationMessage = "Location permissions are denied.";
+          });
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          locationMessage =
+              "Location permissions are permanently denied. Please enable them in settings.";
+        });
+        return;
+      }
+
+      // Get the current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      setState(() {
+        locationMessage =
+            "Latitude: ${position.latitude}, Longitude: ${position.longitude}";
+      });
+
+      print("Current Location: $locationMessage");
+    } catch (e) {
+      setState(() {
+        locationMessage = "Failed to get location: $e";
+      });
+      print("Error: $e");
+    }
   }
 
   // 確認時間
@@ -1055,6 +1109,12 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
           Text(
               "喜用五行: ${preferElements} 和${preferElements2} ,${preferElements3 ?? ''}"),
           Text("發生什麼: ${happened![0]}"),
+          Text(locationMessage, textAlign: TextAlign.center),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _getCurrentLocation,
+            child: const Text('Get Current Location'),
+          ),
         ],
       ),
     );

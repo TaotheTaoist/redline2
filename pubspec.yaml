@@ -33,6 +33,8 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   get_storage: ^2.1.1
   gradient_borders: ^1.0.1
+  location: ^5.0.0
+  geolocator: ^13.0.2
   
 
 dev_dependencies:

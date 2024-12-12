@@ -10,6 +10,8 @@ List<String> innerInterests = ["發呆", "冥想", "打坐", "練內丹", "白�
 
 List<String> lifestyleInterests = ["旅行", "咖啡廳", "酒吧", "卡拉OK", "拍照", "去公園"];
 
+List<String> snore = ["snore", "no snore", "depends", "not sure", "來確認"];
+
 List<String> toysInterests = [
   '開朗', // Cheerful
   '內向', // Introverted
