@@ -119,10 +119,11 @@ class Profilecontroller extends GetxController {
     ever(usersProfileList, (_) {
       if (usersProfileList.value.isNotEmpty) {
         fetchUserImageUrlsMap();
+        listenToCurrentUserDataChanges();
       }
     });
 
-    listenToCurrentUserDataChanges();
+    // listenToCurrentUserDataChanges();
     // cachedallOtherUserImage();
     //
   }
@@ -130,7 +131,14 @@ class Profilecontroller extends GetxController {
   void fetchAndCacheCurrentUserData() async {
     // Fetch current user data from Firestore
     try {
-      String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        print("No user is currently logged in.");
+        return; // Exit the function if no user is logged in
+      }
+
+      String currentUserUid = currentUser.uid;
       DocumentSnapshot currentUserSnapshot =
           await _firestore.collection("users").doc(currentUserUid).get();
 
@@ -153,6 +161,34 @@ class Profilecontroller extends GetxController {
           "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
     }
   }
+
+  // void fetchAndCacheCurrentUserData() async {
+  //   // Fetch current user data from Firestore
+
+  //   try {
+  //     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+  //     DocumentSnapshot currentUserSnapshot =
+  //         await _firestore.collection("users").doc(currentUserUid).get();
+
+  //     if (currentUserSnapshot.exists) {
+  //       Map<String, dynamic> currentUserData =
+  //           currentUserSnapshot.data() as Map<String, dynamic>;
+
+  //       // Assuming Person.fromJson() can handle the structure of the current user data
+  //       Person currentUser = Person.fromDataSnapshot(currentUserSnapshot);
+
+  //       // Cache current user data
+  //       storage.write('currentUserData', currentUser.toJson());
+  //       print("Current user data saved to cache. :${currentUserData}");
+  //       print(storage.read("currentUserData"));
+  //     } else {
+  //       print("Current user document does not exist.");
+  //     }
+  //   } catch (e) {
+  //     print(
+  //         "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
+  //   }
+  // }
 
   Future<void> cachedallOtherUserImage() async {
     final stopwatch = Stopwatch()..start();
@@ -203,36 +239,6 @@ class Profilecontroller extends GetxController {
         "Time taken to fetch and cache images: ${stopwatch.elapsed}  cachedallOtherUserImage()");
   }
 
-  // void updateOtherProfileImageList() {
-  //   try {
-  //     // Clear the previous data
-  //     OtherProfileimageListaBtTogetLoop.value = [];
-
-  //     // Iterate through the allUserProfileList and add each person's imageUrls to the list
-  //     for (var profile in allUserProfileList) {
-  //       if (profile.imageUrls != null) {
-  //         // Add all image URLs from this profile to the flat list
-  //         OtherProfileimageListaBtTogetLoop.value.addAll(profile.imageUrls!);
-  //       }
-  //     }
-
-  //     print(
-  //         "successfully extracted OtherProfileimageListaBtTogetLoop $OtherProfileimageListaBtTogetLoop updateOtherProfileImageList()");
-  //     print(
-  //         "successfully extracted OtherProfileimageListaBtTogetLoop.value ${OtherProfileimageListaBtTogetLoop.value} updateOtherProfileImageList()");
-  //     print(
-  //         "OtherProfileimageListaBtTogetLoop.value.length ${OtherProfileimageListaBtTogetLoop.value.length}");
-  //   } catch (e, stackTrace) {
-  //     // Log the error and stack trace for debugging
-  //     print('Error in updateOtherProfileImageList: $e');
-  //     print('StackTrace: $stackTrace');
-
-  //     // Optionally handle the error gracefully (e.g., clear the list)
-  //     OtherProfileimageListaBtTogetLoop.value = [];
-  //   }
-  // }
-
-  // void listenToCurrentUserDataChanges() {
   Future<void> listenToCurrentUserDataChanges() async {
     try {
       String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
@@ -265,11 +271,67 @@ class Profilecontroller extends GetxController {
   }
 
 // 這個function 是來看裡面的data有沒有改變而已 最主要的是cache() 可是不包過正在使用的用戶UID
+  // Stream<List<Person>> _fetchOhterUsersProfilesFromFirestore() {
+  //   final stopwatch = Stopwatch()..start();
+  //   return _firestore
+  //       .collection("users")
+  //       .where("uid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+  //       .snapshots()
+  //       .map((QuerySnapshot querySnapshot) {
+  //     List<Person> profilesList = [];
+
+  //     // Debug: Print number of documents fetched
+  //     print(
+  //         'Fetched ${querySnapshot.docs.length} profiles from Firestore. - fetchOhterUsersProfilesFromFirestore() profile controller');
+
+  //     for (var eachProfile in querySnapshot.docs) {
+  //       try {
+  //         // Add each profile using the fromDataSnapshot method
+  //         profilesList.add(Person.fromDataSnapshot(eachProfile));
+  //         print(
+  //             "profilesList: $profilesList fetchOhterUsersProfilesFromFirestore() profile controller");
+  //       } catch (error) {
+  //         print(
+  //             'Error parsing profile: ${eachProfile.data()} - Error: $error - fetchOhterUsersProfilesFromFirestore() profile controller');
+  //       }
+  //     }
+
+  //     // Assign the list to the observable value and cache the data
+  //     usersProfileList.value = profilesList;
+  //     print(
+  //         "usersProfileList: $usersProfileList fetchOhterUsersProfilesFromFirestore() profile controller");
+  //     print(
+  //         "usersProfileList.value: ${usersProfileList.value} fetchOhterUsersProfilesFromFirestore() profile controller");
+  //     if (profilesList.isNotEmpty) {
+  //       print(
+  //           'Profiles added: ${profilesList.length} profiles. - fetchOhterUsersProfilesFromFirestore() profile controller');
+
+  //       cacheDataForSwippingScreen(); // Optional: cache the profiles
+  //     } else {
+  //       print('No profiles fetched.');
+  //     }
+  //     print(
+  //         "Time taken to fetch and cache images: ${stopwatch.elapsed}  fetchOhterUsersProfilesFromFirestore()");
+  //     return profilesList;
+  //   }).handleError((error) {
+  //     print(
+  //         'Error fetching profiles: $error - _fetchProfilesFromFirestore() profile controller');
+  //   });
+  // }
   Stream<List<Person>> _fetchOhterUsersProfilesFromFirestore() {
     final stopwatch = Stopwatch()..start();
+
+    // Safely check if the current user is logged in
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      print("No user is currently logged in.");
+      return Stream.value([]); // Return an empty stream if no user is logged in
+    }
+
     return _firestore
         .collection("users")
-        .where("uid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where("uid",
+            isNotEqualTo: currentUser.uid) // Use the current user's UID
         .snapshots()
         .map((QuerySnapshot querySnapshot) {
       List<Person> profilesList = [];
@@ -299,7 +361,6 @@ class Profilecontroller extends GetxController {
       if (profilesList.isNotEmpty) {
         print(
             'Profiles added: ${profilesList.length} profiles. - fetchOhterUsersProfilesFromFirestore() profile controller');
-
         cacheDataForSwippingScreen(); // Optional: cache the profiles
       } else {
         print('No profiles fetched.');
@@ -332,17 +393,6 @@ class Profilecontroller extends GetxController {
       print('No profiles to save to cache.');
     }
 
-    // if (otherUserImageUrlsMap.value.isNotEmpty) {
-    //   // Cache user image URLs
-    //   storage.write('cachedImageUrls', otherUserImageUrlsMap.value);
-    //   print(
-    //       "Cache successfully saved. Image URLs: ${otherUserImageUrlsMap.value.length} user images saved. cacheData() profile controller");
-    //   int imageUrlMapSize = otherUserImageUrlsMap.value.length;
-    //   print(
-    //       "Total users with cached imageUrlMapSize: $imageUrlMapSize cacheData() profile controller");
-    // } else {
-    // //   print('No image URLs to save to cache. cacheData() profile controller');
-    // }
     debugPrint(
         "Caching profiles: ${usersProfileList.value.map((p) => p.toJson()).toList()} cacheData() profile controller");
   }

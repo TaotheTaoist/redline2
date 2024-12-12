@@ -175,23 +175,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                   passwordTextEditingController.text.trim();
 
                               if (email.isNotEmpty && password.isNotEmpty) {
-                                setState(() {
-                                  showProgressBar = true; // Show progress bar
-                                });
-
+                                if (mounted) {
+                                  setState(() {
+                                    showProgressBar = true; // Show progress bar
+                                  });
+                                }
                                 try {
                                   // Call the login function
                                   await controllerAuth.loginUser(
                                       email, password);
 
                                   setState(() {
-                                    showProgressBar =
-                                        false; // Hide progress bar after success
+                                    showProgressBar = false;
+                                    print(
+                                        "setState called at loggin screen 190 ");
                                   });
                                 } catch (e) {
                                   setState(() {
-                                    showProgressBar =
-                                        false; // Hide progress bar after error
+                                    showProgressBar = false;
+                                    print(
+                                        "error setState called at loggin screen 196 ");
+                                    print("Login error: $e line 196");
                                   });
                                   Get.snackbar(
                                     "Error",
@@ -266,32 +270,69 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: InkWell(
                             onTap: () async {
-                              setState(() {
-                                showProgressBar = true; // Show progress bar
-                              });
+                              try {
+                                // setState(() {
+                                //   showProgressBar = true;
+                                //   print("setState called at loggin screen 272");
+                                // });
+                                if (mounted) {
+                                  setState(() {
+                                    showProgressBar = true;
+                                    print(
+                                        "setState called at loggin screen 272");
+                                  });
+                                }
 
-                              // Call the Google login function
-                              User? user = await loginWithGoogle();
+                                // Print to indicate the start of the login process
+                                print("Starting Google login...");
 
-                              if (user != null) {
-                                Get.snackbar(
-                                  "Success",
-                                  "Logged in successfully with Google!",
-                                  snackPosition: SnackPosition.TOP,
-                                  backgroundColor: Colors.green,
-                                  colorText: Colors.white,
-                                  borderRadius: 12,
-                                  margin: const EdgeInsets.all(10),
-                                  icon: const Icon(Icons.check_circle,
-                                      color: Colors.white),
-                                  duration: const Duration(seconds: 3),
-                                  isDismissible: true,
-                                  forwardAnimationCurve: Curves.easeInOut,
-                                );
-                              } else {
+                                // Call the Google login function
+                                User? user = await loginWithGoogle();
+
+                                // Check if user login was successful and show the corresponding message
+                                if (user != null) {
+                                  print(
+                                      "Google login successful: ${user.email}");
+
+                                  Get.snackbar(
+                                    "Success",
+                                    "Logged in successfully with Google!",
+                                    snackPosition: SnackPosition.TOP,
+                                    backgroundColor: Colors.green,
+                                    colorText: Colors.white,
+                                    borderRadius: 12,
+                                    margin: const EdgeInsets.all(10),
+                                    icon: const Icon(Icons.check_circle,
+                                        color: Colors.white),
+                                    duration: const Duration(seconds: 3),
+                                    isDismissible: true,
+                                    forwardAnimationCurve: Curves.easeInOut,
+                                  );
+                                } else {
+                                  print("Google login failed: User is null");
+
+                                  Get.snackbar(
+                                    "Error",
+                                    "Google login failed",
+                                    snackPosition: SnackPosition.TOP,
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    borderRadius: 12,
+                                    margin: const EdgeInsets.all(10),
+                                    icon: const Icon(Icons.error,
+                                        color: Colors.white),
+                                    duration: const Duration(seconds: 3),
+                                    isDismissible: true,
+                                    forwardAnimationCurve: Curves.easeInOut,
+                                  );
+                                }
+                              } catch (e) {
+                                // Catch and log any error during the login process
+                                print("Google login failed with error: $e");
+
                                 Get.snackbar(
                                   "Error",
-                                  "Google login failed",
+                                  "An error occurred during Google login.",
                                   snackPosition: SnackPosition.TOP,
                                   backgroundColor: Colors.red,
                                   colorText: Colors.white,
@@ -303,12 +344,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                   isDismissible: true,
                                   forwardAnimationCurve: Curves.easeInOut,
                                 );
-                              }
+                              } finally {
+                                // Hide the progress bar, regardless of success or failure
+                                if (mounted) {
+                                  setState(() {
+                                    showProgressBar =
+                                        false; // Hide progress bar
 
-                              if (mounted) {
-                                setState(() {
-                                  showProgressBar = false; // Hide progress bar
-                                });
+                                    print("setState called at loggin screen");
+                                  });
+                                }
+
+                                // Print to indicate that the process has finished
+                                print("Google login process finished.");
                               }
                             },
                             child: const Center(

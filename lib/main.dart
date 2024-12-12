@@ -56,7 +56,9 @@ void main() async {
 
   // Put your AuthenticationController into the GetX controller hierarchy
   Get.put(Authenticationcontroller());
-  Get.lazyPut<Profilecontroller>(() => Profilecontroller());
+  // Get.lazyPut<Profilecontroller>(() => Profilecontroller());
+
+  Get.put(Profilecontroller());
 
   await GetStorage.init();
 

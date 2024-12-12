@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:redline/constants/interests.dart';
@@ -35,8 +36,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
   TextEditingController timeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  final TextEditingController sexController =
-      TextEditingController(text: "Female");
+  TextEditingController sexController = TextEditingController(text: "Female");
+  TextEditingController locationController = TextEditingController();
 
   bool showProgressBar = false;
   bool isMale = false; // Default value, false means "Female", true means "Male"
@@ -561,63 +562,9 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  // authenticationcontroller.imageFile == null
-                  //     ? CircleAvatar(
-                  //         radius: 80,
-                  //         backgroundImage:
-                  //             AssetImage("lib/image/profileAvatar.png"),
-                  //         backgroundColor: Colors.black,
-                  //       )
-                  //     : Container(
-                  //         width: 180,
-                  //         height: 180,
-                  //         decoration: BoxDecoration(
-                  //           shape: BoxShape.circle,
-                  //           color: Colors.grey,
-                  //           image: DecorationImage(
-                  //               fit: BoxFit.fitHeight,
-                  //               image: FileImage(
-                  //                 File(
-                  //                   authenticationcontroller.imageFile!.path,
-                  //                 ),
-                  //               )),
-                  //         ),
-                  //       ),
 
                   _buildImagePicker(),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     IconButton(
-                  //       onPressed: () async {
-                  //         await authenticationcontroller
-                  //             .pickImageFileFromGallery();
-                  //         setState(() {
-                  //           authenticationcontroller.imageFile;
-                  //         });
-                  //       },
-                  //       icon: Icon(
-                  //         Icons.image_outlined,
-                  //         color: Colors.grey,
-                  //         size: 30,
-                  //       ),
-                  //     ),
-                  //     IconButton(
-                  //       onPressed: () async {
-                  //         await authenticationcontroller
-                  //             .captureImageromPhoneCamera();
-                  //         setState(() {
-                  //           authenticationcontroller.imageFile;
-                  //         });
-                  //       },
-                  //       icon: Icon(
-                  //         Icons.camera_alt_outlined,
-                  //         color: Colors.grey,
-                  //         size: 30,
-                  //       ),
-                  //     )
-                  //   ],
-                  // ),
+
                   Container(
                     width: MediaQuery.of(context).size.width - 36,
                     child: Column(
@@ -634,7 +581,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         const SizedBox(height: 10),
                         GestureDetector(
                           onTap: () async {
-                            // Call the selectDate function
                             DateTime? selectedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
@@ -643,103 +589,250 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             );
 
                             if (selectedDate != null) {
-                              // Calculate the age
-                              age = BirthdayCal.calculateAge(selectedDate)
-                                  .toString();
-                              print("age: $age");
-
                               String formattedDate =
                                   DateFormat('yyyy-MM-dd').format(selectedDate);
+                              setState(() {
+                                age = BirthdayCal.calculateAge(selectedDate)
+                                    .toString();
+                                print("age: $age");
 
-                              // Update the TextEditingController with the selected date
-                              birthdayController.text = formattedDate;
+                                // Update the TextEditingController with the selected date
+                                birthdayController.text = formattedDate;
+                              });
                             }
                           },
                           child: AbsorbPointer(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                color: Colors.white, // Removed the border
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.cake,
-                                    color: Colors.grey,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      birthdayController.text.isEmpty
-                                          ? "生日"
-                                          : birthdayController.text,
-                                      style: TextStyle(
-                                        color: birthdayController.text.isEmpty
-                                            ? Colors.grey
-                                            : Colors.black,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.calendar_today,
-                                    color: Colors.blue,
-                                  ),
-                                ],
-                              ),
+                            child: CustomTextFieldWidget.buildTextField(
+                              birthdayController,
+                              "Birthday",
+                              icon: Icons.cake,
                             ),
                           ),
                         ),
+                        const SizedBox(height: 10),
+
+                        // Location Field
                         GestureDetector(
                           onTap: () async {
-                            await BirthdayCal.selectTime(
-                                context, timeController);
+                            Position position =
+                                await Geolocator.getCurrentPosition(
+                              desiredAccuracy: LocationAccuracy.high,
+                            );
+
+                            double latitude = position.latitude;
+                            double longitude = position.longitude;
+                            String location = "Lat: $latitude, Lng: $longitude";
+
+                            // Update the TextEditingController with the selected location
+                            locationController.text =
+                                "Lat: $latitude, Lng: $longitude";
+
+                            // Print values for debugging
+                            print(
+                                "Selected location - Latitude: $latitude, Longitude: $longitude");
+
                             setState(() {
-                              labelText = timeController.text.isEmpty
-                                  ? "出生時間 (不知不用填)"
-                                  : timeController
-                                      .text; // Update label text based on selection
+                              locationController.text = location;
                             });
                           },
                           child: AbsorbPointer(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                color: Colors.white, // Removed the border
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    color: Colors.grey,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      timeController.text.isEmpty
-                                          ? "出生時間 (不知不用填)"
-                                          : timeController.text,
-                                      style: TextStyle(
-                                        color: timeController.text.isEmpty
-                                            ? Colors.grey
-                                            : Colors.black,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.access_alarm,
-                                    color: Colors.blue,
-                                  ),
-                                ],
-                              ),
+                            child: CustomTextFieldWidget.buildTextField(
+                              locationController,
+                              "Location",
+                              icon: Icons.location_on,
                             ),
                           ),
                         ),
+                        const SizedBox(height: 10),
+
+                        // Time Field
+                        GestureDetector(
+                          onTap: () async {
+                            TimeOfDay? selectedTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+
+                            if (selectedTime != null) {
+                              String formattedTime =
+                                  selectedTime.format(context);
+                              setState(() {
+                                timeController.text = formattedTime;
+                              });
+                            }
+                          },
+                          child: AbsorbPointer(
+                            child: CustomTextFieldWidget.buildTextField(
+                              timeController,
+                              "Time",
+                              icon: Icons.access_time,
+                            ),
+                          ),
+                        ),
+                        // GestureDetector(
+                        //   onTap: () async {
+                        //     // Call the selectDate function
+                        //     DateTime? selectedDate = await showDatePicker(
+                        //       context: context,
+                        //       initialDate: DateTime.now(),
+                        //       firstDate: DateTime(1900),
+                        //       lastDate: DateTime(2100),
+                        //     );
+
+                        //     if (selectedDate != null) {
+                        //       // Calculate the age
+                        //       age = BirthdayCal.calculateAge(selectedDate)
+                        //           .toString();
+                        //       print("age: $age");
+
+                        //       String formattedDate =
+                        //           DateFormat('yyyy-MM-dd').format(selectedDate);
+
+                        //       // Update the TextEditingController with the selected date
+                        //       birthdayController.text = formattedDate;
+                        //     }
+                        //   },
+                        //   child: AbsorbPointer(
+                        //     child: Container(
+                        //       padding: EdgeInsets.symmetric(
+                        //           horizontal: 16, vertical: 12),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(20.0),
+                        //         color: Colors.white, // Removed the border
+                        //       ),
+                        //       child: Row(
+                        //         children: [
+                        //           Icon(
+                        //             Icons.cake,
+                        //             color: Colors.grey,
+                        //           ),
+                        //           SizedBox(width: 10),
+                        //           Expanded(
+                        //             child: Text(
+                        //               birthdayController.text.isEmpty
+                        //                   ? "生日"
+                        //                   : birthdayController.text,
+                        //               style: TextStyle(
+                        //                 color: birthdayController.text.isEmpty
+                        //                     ? Colors.grey
+                        //                     : Colors.black,
+                        //                 fontSize: 16,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //           Icon(
+                        //             Icons.calendar_today,
+                        //             color: Colors.blue,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        // GestureDetector(
+                        //   onTap: () async {
+                        //     // Use a location picker or get the user's current location
+                        //     Position position =
+                        //         await Geolocator.getCurrentPosition(
+                        //       desiredAccuracy: LocationAccuracy.high,
+                        //     );
+
+                        //     double latitude = position.latitude;
+                        //     double longitude = position.longitude;
+
+                        //     // Update the TextEditingController with the selected location
+                        //     locationController.text =
+                        //         "Lat: $latitude, Lng: $longitude";
+
+                        //     // Print values for debugging
+                        //     print(
+                        //         "Selected location - Latitude: $latitude, Longitude: $longitude");
+                        //   },
+                        //   child: AbsorbPointer(
+                        //     child: Container(
+                        //       padding: EdgeInsets.symmetric(
+                        //           horizontal: 16, vertical: 12),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(20.0),
+                        //         color: Colors.white,
+                        //       ),
+                        //       child: Row(
+                        //         children: [
+                        //           Icon(
+                        //             Icons.location_on,
+                        //             color: Colors.grey,
+                        //           ),
+                        //           SizedBox(width: 10),
+                        //           Expanded(
+                        //             child: Text(
+                        //               locationController.text.isEmpty
+                        //                   ? "Select Location"
+                        //                   : locationController.text,
+                        //               style: TextStyle(
+                        //                 color: locationController.text.isEmpty
+                        //                     ? Colors.grey
+                        //                     : Colors.black,
+                        //                 fontSize: 16,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //           Icon(
+                        //             Icons.map,
+                        //             color: Colors.blue,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        // GestureDetector(
+                        //   onTap: () async {
+                        //     await BirthdayCal.selectTime(
+                        //         context, timeController);
+                        //     setState(() {
+                        //       labelText = timeController.text.isEmpty
+                        //           ? "出生時間 (不知不用填)"
+                        //           : timeController
+                        //               .text; // Update label text based on selection
+                        //     });
+                        //   },
+                        //   child: AbsorbPointer(
+                        //     child: Container(
+                        //       padding: EdgeInsets.symmetric(
+                        //           horizontal: 16, vertical: 12),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(20.0),
+                        //         color: Colors.white, // Removed the border
+                        //       ),
+                        //       child: Row(
+                        //         children: [
+                        //           Icon(
+                        //             Icons.access_time,
+                        //             color: Colors.grey,
+                        //           ),
+                        //           SizedBox(width: 10),
+                        //           Expanded(
+                        //             child: Text(
+                        //               timeController.text.isEmpty
+                        //                   ? "出生時間 (不知不用填)"
+                        //                   : timeController.text,
+                        //               style: TextStyle(
+                        //                 color: timeController.text.isEmpty
+                        //                     ? Colors.grey
+                        //                     : Colors.black,
+                        //                 fontSize: 16,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //           Icon(
+                        //             Icons.access_alarm,
+                        //             color: Colors.blue,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(height: 10),
                         CustomTextFieldWidget.buildTextField(
                           passwordlTextEditingController,
@@ -1025,26 +1118,34 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
                           // Attempt to create the account
                           await authenticationcontroller.creatNewUserAccount(
-                            email,
-                            passwordlTextEditingController.text.trim(),
-                            nameTextEditingController.text.trim(),
-                            selectedInterests,
-                            imageUrls,
-                            sexController.text.trim(),
-                            timeController.text.trim(),
-                            birthdayController.text.trim(),
-                            timeController.text.isEmpty ? "false" : "true",
-                            age,
-                            selectedoccu,
-                            selectmbti,
-                            selectlanguage,
-                            selectreligion,
-                            selecteducation,
-                            selectbloodtype,
-                            selectlooking,
-                            selectexercise,
-                            selectdiet,
-                          );
+                              email,
+                              passwordlTextEditingController.text.trim(),
+                              nameTextEditingController.text.trim(),
+                              selectedInterests,
+                              imageUrls,
+                              sexController.text.trim(),
+                              timeController.text.trim(),
+                              birthdayController.text.trim(),
+                              timeController.text.isEmpty ? "false" : "true",
+                              age,
+                              selectedoccu,
+                              selectmbti,
+                              selectlanguage,
+                              selectreligion,
+                              selecteducation,
+                              selectbloodtype,
+                              selectlooking,
+                              selectexercise,
+                              selectdiet,
+                              double.parse(locationController.text
+                                  .split(',')[0]
+                                  .split(':')[1]
+                                  .trim()), // Latitude
+                              double.parse(locationController.text
+                                  .split(',')[1]
+                                  .split(':')[1]
+                                  .trim()) // Longitude
+                              );
 
                           if (mounted) {
                             setState(() {
@@ -1413,99 +1514,4 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
       });
     }
   }
-  // buildbdField(BuildContext context, TextEditingController dateController,
-  //     String label) {
-  //   final FocusNode focusNode = FocusNode();
-
-  //   return GestureDetector(
-  //     onTap: () async {
-  //       // Trigger focus for visual feedback
-  //       focusNode.requestFocus();
-
-  //       DateTime? pickedDate = await showDatePicker(
-  //         context: context,
-  //         initialDate: DateTime.now(),
-  //         firstDate: DateTime(1900), // Earliest selectable date
-  //         lastDate: DateTime(2100), // Latest selectable date
-  //       );
-
-  //       // Remove focus after date selection
-  //       focusNode.unfocus();
-
-  //       if (pickedDate != null) {
-  //         final String formattedDate =
-  //             "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-  //         dateController.text = formattedDate;
-
-  //         age = BirthdayCal.calculateAge(pickedDate);
-  //       }
-  //     },
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(vertical: 8.0),
-  //       child: AbsorbPointer(
-  //         child: TextField(
-  //           controller: dateController,
-  //           focusNode: focusNode,
-  //           style: const TextStyle(
-  //             color: Color.fromARGB(255, 80, 80, 80), // Text color
-  //             fontSize: 16, // Font size for input text
-  //             fontWeight: FontWeight.w500, // Font weight
-  //           ),
-  //           decoration: InputDecoration(
-  //             labelText: label,
-  //             labelStyle: TextStyle(
-  //               color: Colors.grey[800], // Label text color
-  //               fontSize: 14, // Font size for label
-  //             ),
-  //             hintText: "Enter $label", // Placeholder text
-  //             hintStyle: TextStyle(
-  //               color: Colors.grey[600], // Placeholder text color
-  //               fontSize: 14, // Font size for placeholder
-  //             ),
-  //             fillColor:
-  //                 Colors.grey[300], // Background color inside the TextField
-  //             filled: true, // Enables the fillColor property
-  //             border: OutlineInputBorder(
-  //               borderRadius: const BorderRadius.only(
-  //                 topLeft: Radius.circular(34),
-  //                 topRight: Radius.circular(18),
-  //                 bottomLeft: Radius.circular(18),
-  //                 bottomRight: Radius.circular(18),
-  //               ), // Apply custom border radius
-  //               borderSide: const BorderSide(
-  //                 color: Colors.grey, // Outline border color
-  //                 width: 2, // Outline border width
-  //               ),
-  //             ),
-  //             enabledBorder: OutlineInputBorder(
-  //               borderRadius: const BorderRadius.only(
-  //                 topLeft: Radius.circular(34),
-  //                 topRight: Radius.circular(18),
-  //                 bottomLeft: Radius.circular(18),
-  //                 bottomRight: Radius.circular(18),
-  //               ), // Border radius for enabled state
-  //               borderSide: const BorderSide(
-  //                 color: Colors.grey, // Outline border color
-  //                 width: 2, // Outline border
-  //               ),
-  //             ),
-  //             focusedBorder: OutlineInputBorder(
-  //               borderRadius: const BorderRadius.only(
-  //                 topLeft: Radius.circular(34),
-  //                 topRight: Radius.circular(34),
-  //                 bottomLeft: Radius.circular(34),
-  //                 bottomRight: Radius.circular(34),
-  //               ), // Border radius for focused state
-  //               borderSide: const BorderSide(
-  //                 color: Color.fromARGB(
-  //                     255, 238, 80, 159), // Border color when focused
-  //                 width: 2, // Border width when focused
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 }

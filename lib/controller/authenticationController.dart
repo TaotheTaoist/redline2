@@ -59,35 +59,6 @@ class Authenticationcontroller extends GetxController {
     });
   }
 
-  // Future<User?> loginWithGoogle() async {
-  //   try {
-  //     // Trigger the Google Sign-In flow
-  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-  //     if (googleUser == null) {
-  //       return null; // If the user cancels the login
-  //     }
-
-  //     // Obtain the Google auth details
-  //     final GoogleSignInAuthentication googleAuth =
-  //         await googleUser.authentication;
-
-  //     // Create a new credential
-  //     final OAuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-
-  //     // Sign in to Firebase with the Google credentials
-  //     UserCredential userCredential =
-  //         await _auth.signInWithCredential(credential);
-  //     return userCredential.user;
-  //   } catch (e) {
-  //     Get.snackbar("Error", "Google login failed. Please try again.");
-  //     print("Google sign-in error: $e");
-  //     return null;
-  //   }
-  // }
-
   Future<Map<String, String>> fetchUserBirthdayAndTime() async {
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -162,74 +133,28 @@ class Authenticationcontroller extends GetxController {
     return downloadUrlImage;
   }
 
-  // creatNewUserAccount(
-  //   File imageProfile,
-  //   String email,
-  //   String password,
-  //   String name,
-  //   List<String> interests,
-  //   List<String> imageUrls,
-  //   String sex,
-  //   String bdTime,
-  //   String birthday,
-  //   String sure,
-  //   int age,
-  //   List<String> selectedoccu,
-  //   List<String> selectmbti,
-  // ) async {
-  //   try {
-  //     // is this code being used? Yes, it need for usercreation
-  //     UserCredential credential = await FirebaseAuth.instance
-  //         .createUserWithEmailAndPassword(email: email, password: password);
-
-  //     //changed String to String? but original was String, to fit a new version of uploadImageToStorage
-  //     String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
-  //     personModel.Person personInstance = personModel.Person(
-  //         uid: FirebaseAuth.instance.currentUser!.uid,
-  //         imageProfile: urlOfDownloadImage,
-  //         email: email,
-  //         password: password,
-  //         name: name,
-  //         interests: interests,
-  //         imageUrls: imageUrls,
-  //         sex: sex,
-  //         bdTime: bdTime,
-  //         birthday: birthday,
-  //         sure: sure,
-  //         age: age,
-  //         occupation: selectedoccu,
-  //         mbti: selectmbti);
-
-  //     await FirebaseFirestore.instance
-  //         .collection('users')
-  //         .doc(FirebaseAuth.instance.currentUser!.uid)
-  //         .set(personInstance.toJson());
-  //   } catch (errorMsg) {
-  //     Get.snackbar("title", ":$errorMsg");
-  //   }
-  // }
-
   Future<void> creatNewUserAccount(
-    String email,
-    String password,
-    String name,
-    List<String> interests,
-    List<String> imageUrls,
-    String sex,
-    String bdTime,
-    String birthday,
-    String sure,
-    String age,
-    List<String> selectedoccu,
-    List<String> selectmbti,
-    List<String> language,
-    List<String> religion,
-    List<String> education,
-    List<String> bloodtype,
-    List<String> lookingfor,
-    List<String> exercise,
-    List<String> selectdiet,
-  ) async {
+      String email,
+      String password,
+      String name,
+      List<String> interests,
+      List<String> imageUrls,
+      String sex,
+      String bdTime,
+      String birthday,
+      String sure,
+      String age,
+      List<String> selectedoccu,
+      List<String> selectmbti,
+      List<String> language,
+      List<String> religion,
+      List<String> education,
+      List<String> bloodtype,
+      List<String> lookingfor,
+      List<String> exercise,
+      List<String> selectdiet,
+      double latitude,
+      double longitude) async {
     try {
       // Attempt to create a new user
       UserCredential credential = await FirebaseAuth.instance
@@ -240,27 +165,28 @@ class Authenticationcontroller extends GetxController {
 
       // Create a Person object
       personModel.Person personInstance = personModel.Person(
-        uid: FirebaseAuth.instance.currentUser!.uid,
-        email: email,
-        password: password,
-        name: name,
-        interests: interests,
-        imageUrls: imageUrls,
-        sex: sex,
-        bdTime: bdTime,
-        birthday: birthday,
-        sure: sure,
-        age: age,
-        occupation: selectedoccu,
-        mbti: selectmbti,
-        language: language,
-        religion: religion,
-        education: education,
-        bloodtype: bloodtype,
-        lookingfor: lookingfor,
-        exercise: exercise,
-        diet: selectdiet,
-      );
+          uid: FirebaseAuth.instance.currentUser!.uid,
+          email: email,
+          password: password,
+          name: name,
+          interests: interests,
+          imageUrls: imageUrls,
+          sex: sex,
+          bdTime: bdTime,
+          birthday: birthday,
+          sure: sure,
+          age: age,
+          occupation: selectedoccu,
+          mbti: selectmbti,
+          language: language,
+          religion: religion,
+          education: education,
+          bloodtype: bloodtype,
+          lookingfor: lookingfor,
+          exercise: exercise,
+          diet: selectdiet,
+          latitude: latitude,
+          longitude: longitude);
 
       // Save the user data to Firestore
       await FirebaseFirestore.instance
@@ -343,18 +269,6 @@ class Authenticationcontroller extends GetxController {
       );
     }
   }
-
-  // checkIfUserIsLoggedIn(User? currentUser) {
-  //   print("checking if user logged, fn at authenticationController");
-  //   print("who is the currentUser$currentUser at authenticationController");
-  //   if (currentUser != null) {
-  //     Get.offAll(() => HomeScreen());
-  //   } else {
-  //     // If no user is logged in, navigate to LoginScreen
-  //     // Get.offAll(LoginScreen());
-  //     Get.offAll(() => LoginScreen());
-  //   }
-  // }
 
   void checkIfUserIsLoggedIn(User? currentUser) async {
     print("Checking if user is logged in at authenticationController");

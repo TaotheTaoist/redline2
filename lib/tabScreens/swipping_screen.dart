@@ -44,23 +44,6 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
   CarouselController carouselController = CarouselController();
 
-  // Function to cache the image using CachedNetworkImage
-  // Future<void> _cacheImage(String imageUrl) async {
-  //   await CachedNetworkImageProvider(imageUrl).obtainKey(ImageConfiguration());
-  //   print('Image cached: $imageUrl');
-  // }
-
-  // ----------- dont use Ever in init, this didchangeDependecies fix the tab change issue
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   Profilecontroller profileController = Get.find<Profilecontroller>();
-
-  //   // Set up the listener after the widget dependencies are ready
-  //   ever(profileController.usersProfileList, (_) {
-  //     updateSwipeItemsInitonly(); // Perform action when data changes
-  //   });
-  // }
   Future<Map<String, List<String>>> generateUserImageUrlsMap(
       Profilecontroller profileController) async {
     // Initialize an empty map to store UIDs and corresponding image URLs
@@ -131,36 +114,36 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   Future<void> updateSwipeItemsInitonly() async {
     await Future.delayed(Duration(milliseconds: 2000));
     final stopwatch = Stopwatch()..start();
-    // Profilecontroller profileController = Get.find<Profilecontroller>();
     print(
         "check profileController.allUserProfileList again at updateSwipeItemsInitonly() ${profileController.allUserProfileList}");
+
     if (profileController.allUserProfileList.isNotEmpty) {
       print("List is not empty, continuing...");
       await validateAndCleanUpUserProfiles(profileController);
       await generateUserImageUrlsMap(profileController);
 
       print("profilekeys $profileKeys swiping screen");
+
       if (otherUserImageUrlsMap.isNotEmpty) {
-        setState(() {
-          selectedUserUid = otherUserImageUrlsMap.keys.first;
-          profileKeys = otherUserImageUrlsMap.keys.toList();
-          // isLoading = false;
-          print("profilekeys $profileKeys swiping screen");
-        });
+        // Check if the widget is still mounted before calling setState
+        if (mounted) {
+          setState(() {
+            selectedUserUid = otherUserImageUrlsMap.keys.first;
+            profileKeys = otherUserImageUrlsMap.keys.toList();
+            print("profilekeys $profileKeys swiping screen");
+
+            print(
+                "setState called at updateSwipeItemsInitonly() profile Keys loop swiping screen");
+          });
+        }
         print(
             "selectedUserUid assigned to ${otherUserImageUrlsMap.keys.first} Function finished at: ${DateTime.now()} build, swipping_screen");
-
         print(
             "selectedUserUid: $selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen");
         print(
             "profileController.otherUserImageUrlsMap.value[selectedUserUid]  ${profileController.otherUserImageUrlsMap.value[selectedUserUid]}");
 
-        // both works
         images = otherUserImageUrlsMap[selectedUserUid]!;
-        // both works
-        // images =
-        //     profileController.otherUserImageUrlsMap.value[selectedUserUid] ??
-        //         [];
       } else {
         print("otherUserImageUrlsMap is empty");
       }
@@ -170,6 +153,52 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     print(
         "Time taken to fetch and cache images: ${stopwatch.elapsed} updateSwipeItemsInitonly()");
   }
+
+  // Future<void> updateSwipeItemsInitonly() async {
+  //   await Future.delayed(Duration(milliseconds: 2000));
+  //   final stopwatch = Stopwatch()..start();
+  //   // Profilecontroller profileController = Get.find<Profilecontroller>();
+  //   print(
+  //       "check profileController.allUserProfileList again at updateSwipeItemsInitonly() ${profileController.allUserProfileList}");
+  //   if (profileController.allUserProfileList.isNotEmpty) {
+  //     print("List is not empty, continuing...");
+  //     await validateAndCleanUpUserProfiles(profileController);
+  //     await generateUserImageUrlsMap(profileController);
+
+  //     print("profilekeys $profileKeys swiping screen");
+  //     if (otherUserImageUrlsMap.isNotEmpty) {
+  //       setState(() {
+  //         selectedUserUid = otherUserImageUrlsMap.keys.first;
+  //         profileKeys = otherUserImageUrlsMap.keys.toList();
+  //         // isLoading = false;
+  //         print("profilekeys $profileKeys swiping screen");
+
+  //         print(
+  //             "setState called at updateSwipeItemsInitonly() profile Keys loop swipping screen");
+  //       });
+  //       print(
+  //           "selectedUserUid assigned to ${otherUserImageUrlsMap.keys.first} Function finished at: ${DateTime.now()} build, swipping_screen");
+
+  //       print(
+  //           "selectedUserUid: $selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen");
+  //       print(
+  //           "profileController.otherUserImageUrlsMap.value[selectedUserUid]  ${profileController.otherUserImageUrlsMap.value[selectedUserUid]}");
+
+  //       // both works
+  //       images = otherUserImageUrlsMap[selectedUserUid]!;
+  //       // both works
+  //       // images =
+  //       //     profileController.otherUserImageUrlsMap.value[selectedUserUid] ??
+  //       //         [];
+  //     } else {
+  //       print("otherUserImageUrlsMap is empty");
+  //     }
+  //   } else {
+  //     print("profileController.allUserProfileList.is 無");
+  //   }
+  //   print(
+  //       "Time taken to fetch and cache images: ${stopwatch.elapsed} updateSwipeItemsInitonly()");
+  // }
 
   @override
   void initState() {
@@ -185,15 +214,21 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         print(
             " currentUserID = user.uid; Set the global variable at init siwping screen ");
         readUserData(); // Fetch user data after login
-        setState(() {
-          updateSwipeItemsInitonly();
-        });
+        if (mounted) {
+          setState(() {
+            updateSwipeItemsInitonly();
+            print(
+                "setState called at updateSwipeItemsInitonly(); swipping screen");
+          });
+        }
       } else {
         // User is logged out
         currentUserID = ''; // Clear the current user ID
-        setState(() {
-          print("User logged out. Current User ID cleared.");
-        });
+        // setState(() {
+        print("User logged out. Current User ID cleared.");
+        print(
+            "setState called at clearing uid, currentUserID = ''; swipping screen");
+        // });
       }
     });
     print("Current User ID: $currentUserID swipping_screen.dart");
@@ -207,11 +242,16 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     loadCachedProfiles();
     // print(
     // " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
-    checkAlignment(otherUserImageUrlsMap, cachedProfiles);
+    // checkAlignment(otherUserImageUrlsMap, cachedProfiles);
     Future.delayed(Duration(seconds: 3), () {
-      setState(() {
-        isLoading = false; // Set loading to false after 3 seconds
-      });
+      if (mounted) {
+        // Ensure the widget is still in the tree
+        setState(() {
+          isLoading = false; // Set loading to false after 3 seconds
+          print(
+              "setState called at Future.delayed(Duration(seconds: 3) swipping screen");
+        });
+      }
     });
   }
 
@@ -231,6 +271,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         // Print the specific field value (senderName)
         print(
             "Sender name: $senderName sender means current userswiping screen");
+        print("setState called at readUserData() swipping screen");
       });
     }).catchError((error) {
       // Handle potential errors (optional)
@@ -253,6 +294,8 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         for (var profile in cachedProfiles) {
           print("Profile: $profile loadCachedProfiles() swiping page ");
         }
+
+        print("setState called at loadCachedProfiles() swipping_screen");
       });
       print('Loaded ${cachedProfiles.length} profiles from cache.');
     } else {
@@ -528,7 +571,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                 SizedBox(width: 8),
                                                 ElevatedButton(
                                                   child: Text(
-                                                    'Seoul',
+                                                    'Not Set',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                     ),

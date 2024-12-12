@@ -948,7 +948,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
           // Directly assign the fetched image URLs without adding placeholders
           urlsList =
               List.from(imageUrls); // Keep it as is, without placeholders
-          print("Updated urlsList: $urlsList");
+          print("Updated urlsList: $urlsList accountSettingScreen");
         });
       } else {
         print("No document found for user ID: ${widget.userID}");
