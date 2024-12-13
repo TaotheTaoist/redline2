@@ -134,27 +134,29 @@ class Authenticationcontroller extends GetxController {
   }
 
   Future<void> creatNewUserAccount(
-      String email,
-      String password,
-      String name,
-      List<String> interests,
-      List<String> imageUrls,
-      String sex,
-      String bdTime,
-      String birthday,
-      String sure,
-      String age,
-      List<String> selectedoccu,
-      List<String> selectmbti,
-      List<String> language,
-      List<String> religion,
-      List<String> education,
-      List<String> bloodtype,
-      List<String> lookingfor,
-      List<String> exercise,
-      List<String> selectdiet,
-      double latitude,
-      double longitude) async {
+    String email,
+    String password,
+    String name,
+    List<String> interests,
+    List<String> imageUrls,
+    String sex,
+    String bdTime,
+    String birthday,
+    String sure,
+    String age,
+    List<String> selectedoccu,
+    List<String> selectmbti,
+    List<String> language,
+    List<String> religion,
+    List<String> education,
+    List<String> bloodtype,
+    List<String> lookingfor,
+    List<String> exercise,
+    List<String> selectdiet,
+    double latitude,
+    double longitude,
+    String aboutme,
+  ) async {
     try {
       // Attempt to create a new user
       UserCredential credential = await FirebaseAuth.instance
@@ -186,7 +188,8 @@ class Authenticationcontroller extends GetxController {
           exercise: exercise,
           diet: selectdiet,
           latitude: latitude,
-          longitude: longitude);
+          longitude: longitude,
+          aboutme: aboutme);
 
       // Save the user data to Firestore
       await FirebaseFirestore.instance
@@ -264,8 +267,8 @@ class Authenticationcontroller extends GetxController {
       // Show an error message if login fails
       Get.snackbar(
         "Login Unsuccessful",
-        "Error Occurred: ${error.toString()}",
-        backgroundColor: Colors.orange,
+        "Error Occurred: ${error.toString()} loginUser()",
+        backgroundColor: const Color.fromARGB(255, 182, 109, 0),
       );
     }
   }

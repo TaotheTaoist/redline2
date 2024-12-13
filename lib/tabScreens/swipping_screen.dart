@@ -119,7 +119,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
     if (profileController.allUserProfileList.isNotEmpty) {
       print("List is not empty, continuing...");
-      await validateAndCleanUpUserProfiles(profileController);
+      // await validateAndCleanUpUserProfiles(profileController);
       await generateUserImageUrlsMap(profileController);
 
       print("profilekeys $profileKeys swiping screen");
@@ -203,7 +203,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   @override
   void initState() {
     super.initState();
-
+    final stopwatch = Stopwatch()..start();
 // Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
 // I/flutter (11412): Like icon tapped!
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
@@ -232,17 +232,17 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
       }
     });
     print("Current User ID: $currentUserID swipping_screen.dart");
-    // readUserData();
 
     print("currentIndex: $currentIndex at init - swipingdart");
 
     final storage = GetStorage();
     print("storage.getValues()${storage.getValues()}");
-
+    print(
+        "Time taken to fetch and cache images: ${stopwatch.elapsed} initState() swipping screen");
     loadCachedProfiles();
     // print(
     // " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
-    // checkAlignment(otherUserImageUrlsMap, cachedProfiles);
+    checkAlignment(otherUserImageUrlsMap, cachedProfiles);
     Future.delayed(Duration(seconds: 3), () {
       if (mounted) {
         // Ensure the widget is still in the tree
@@ -266,7 +266,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         senderName = dataSnapshot.data()?["name"]?.toString() ?? "No name";
 
         // Print the entire document data
-        // print("readUserData() - Data snapshot: ${dataSnapshot.data()}");
+        print("readUserData() - Data snapshot: ${dataSnapshot.data()}");
 
         // Print the specific field value (senderName)
         print(

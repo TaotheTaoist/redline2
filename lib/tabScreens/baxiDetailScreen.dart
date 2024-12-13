@@ -201,6 +201,14 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
     regularCalculating();
     xingXuo = lunarDate.getSolar().getXingZuo();
     print("xingXuo:$xingXuo");
+
+    double lat1 = 37.4219983; // Example latitude 1
+    double lon1 = -122.084; // Example longitude 1
+    double lat2 = 34.0522; // Example latitude 2
+    double lon2 = -118.2437; // Example longitude 2
+
+    double distance = calculateDistance(lat1, lon1, lat2, lon2);
+    print('Distance: $distance meters');
   }
 
   Future<void> _getCurrentLocation() async {
@@ -252,6 +260,10 @@ class _BaxiDetailsScreenState extends State<BaxiDetailsScreen> {
       });
       print("Error: $e");
     }
+  }
+
+  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    return Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
   }
 
   // 確認時間

@@ -18,12 +18,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final Profilecontroller profileController = Get.put(Profilecontroller());
   final String currentUserId = currentUserID;
 
-  // @override
-  // void dispose() {
-  //   profileController.dispose();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     profileController.setUserId(currentUserId);
@@ -261,7 +255,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     // });
 
                     // something the app wont complete log out, u need to terminate it
-                    await FirebaseFirestore.instance.clearPersistence();
+                    // await FirebaseFirestore.instance.clearPersistence();
                     await FirebaseFirestore.instance.terminate();
 
                     // Navigator.pushReplacement(

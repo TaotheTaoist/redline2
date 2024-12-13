@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:redline/global.dart';
 import 'package:redline/models/person.dart';
@@ -20,6 +21,10 @@ class Profilecontroller extends GetxController {
 
   List<Person> get allUserProfileList => usersProfileList.value;
 
+  final Rx<List<Person>> filterEdusersProfileList = Rx<List<Person>>([]);
+
+  List<Person> get filterEdallUserProfileList => usersProfileList.value;
+
 // about to get swipped users' properties
   // final Rx<List<String>> OtherProfileimageListaBtTogetLoop =
   //     Rx<List<String>>([]);
@@ -28,6 +33,7 @@ class Profilecontroller extends GetxController {
       Rx<Map<String, List<String>>>({});
 
 // currentUser's properties
+  Person? currentUserpersonData;
   final storage = GetStorage();
   RxString name = ''.obs;
   RxString email = ''.obs;
@@ -101,7 +107,7 @@ class Profilecontroller extends GetxController {
     super.onInit();
     GetStorage.init();
 
-    // loadCachedData();
+    loadCachedData();
 
     fetchAndCacheCurrentUserData();
 
@@ -122,49 +128,48 @@ class Profilecontroller extends GetxController {
         listenToCurrentUserDataChanges();
       }
     });
-
-    // listenToCurrentUserDataChanges();
-    // cachedallOtherUserImage();
-    //
-  }
-
-  void fetchAndCacheCurrentUserData() async {
-    // Fetch current user data from Firestore
-    try {
-      User? currentUser = FirebaseAuth.instance.currentUser;
-
-      if (currentUser == null) {
-        print("No user is currently logged in.");
-        return; // Exit the function if no user is logged in
-      }
-
-      String currentUserUid = currentUser.uid;
-      DocumentSnapshot currentUserSnapshot =
-          await _firestore.collection("users").doc(currentUserUid).get();
-
-      if (currentUserSnapshot.exists) {
-        Map<String, dynamic> currentUserData =
-            currentUserSnapshot.data() as Map<String, dynamic>;
-
-        // Assuming Person.fromJson() can handle the structure of the current user data
-        Person currentUser = Person.fromDataSnapshot(currentUserSnapshot);
-
-        // Cache current user data
-        storage.write('currentUserData', currentUser.toJson());
-        print("Current user data saved to cache. :${currentUserData}");
-        print(storage.read("currentUserData"));
-      } else {
-        print("Current user document does not exist.");
-      }
-    } catch (e) {
-      print(
-          "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
-    }
   }
 
   // void fetchAndCacheCurrentUserData() async {
   //   // Fetch current user data from Firestore
+  //   final stopwatch = Stopwatch()..start();
+  //   try {
+  //     User? currentUser = FirebaseAuth.instance.currentUser;
 
+  //     if (currentUser == null) {
+  //       print("No user is currently logged in.");
+  //       return; // Exit the function if no user is logged in
+  //     }
+
+  //     String currentUserUid = currentUser.uid;
+  //     DocumentSnapshot currentUserSnapshot =
+  //         await _firestore.collection("users").doc(currentUserUid).get();
+
+  //     if (currentUserSnapshot.exists) {
+  //       Map<String, dynamic> currentUserData =
+  //           currentUserSnapshot.data() as Map<String, dynamic>;
+
+  //       // Assuming Person.fromJson() can handle the structure of the current user data
+  //       Person currentUser = Person.fromDataSnapshot(currentUserSnapshot);
+
+  //       // Cache current user data
+  //       storage.write('currentUserData', currentUser.toJson());
+  //       print("Current user data saved to cache. :${currentUserData}");
+  //       print(storage.read("currentUserData"));
+  //     } else {
+  //       print("Current user document does not exist.");
+  //     }
+  //   } catch (e) {
+  //     print(
+  //         "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
+  //   }
+  //   print(
+  //       "Time taken to fetch and cache images: ${stopwatch.elapsed} fetchAndCacheCurrentUserData()");
+  // }
+
+  // void fetchAndCacheCurrentUserData() async {
+  //   // Fetch current user data from Firestore
+  //   final stopwatch = Stopwatch()..start();
   //   try {
   //     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
   //     DocumentSnapshot currentUserSnapshot =
@@ -188,7 +193,50 @@ class Profilecontroller extends GetxController {
   //     print(
   //         "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
   //   }
+  //   print(
+  //       "Time taken to fetch and cache images: ${stopwatch.elapsed} fetchAndCacheCurrentUserData()");
   // }
+  void fetchAndCacheCurrentUserData() async {
+    final stopwatch = Stopwatch()..start();
+    try {
+      // Get the current user from Firebase Authentication
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      // Check if the user is logged in
+      if (currentUser == null) {
+        print("No user is currently logged in.");
+        return; // Exit the function if no user is logged in
+      }
+
+      // Proceed with fetching user data from Firestore if the user is logged in
+      String currentUserUid = currentUser.uid;
+      DocumentSnapshot currentUserSnapshot =
+          await _firestore.collection("users").doc(currentUserUid).get();
+
+      if (currentUserSnapshot.exists) {
+        Map<String, dynamic> currentUserData =
+            currentUserSnapshot.data() as Map<String, dynamic>;
+        // print(
+        //     "currentUserData: $currentUserData fetchAndCacheCurrentUserData()");
+
+        // Assuming Person.fromJson() can handle the structure of the current user data
+        currentUserpersonData = Person.fromDataSnapshot(currentUserSnapshot);
+        print(
+            "currentUserpersonData: $currentUserpersonData fetchAndCacheCurrentUserData()");
+        // Cache current user data
+        storage.write('currentUserData', currentUserpersonData!.toJson());
+        print("Current user data saved to cache: $currentUserData");
+        print(storage.read("currentUserData"));
+      } else {
+        print("Current user document does not exist.");
+      }
+    } catch (e) {
+      print(
+          "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
+    }
+    print(
+        "Time taken to fetch and cache images: ${stopwatch.elapsed} fetchAndCacheCurrentUserData()");
+  }
 
   Future<void> cachedallOtherUserImage() async {
     final stopwatch = Stopwatch()..start();
@@ -198,15 +246,15 @@ class Profilecontroller extends GetxController {
     } else {
       for (var user in allUserProfileList) {
         if (user.uid != null) {
-          print(
-              "Fetching user images for user ID: ${user.uid}  cachedallOtherUserImage()");
+          // print(
+          //     "Fetching user images for user ID: ${user.uid}  cachedallOtherUserImage()");
           var snapshot = await FirebaseFirestore.instance
               .collection("users")
               .doc(user.uid)
               .get();
           if (snapshot.exists) {
-            print(
-                "Snapshot exists for user ID: ${user.uid} cachedallOtherUserImage()");
+            // print(
+            //     "Snapshot exists for user ID: ${user.uid} cachedallOtherUserImage()");
 
             print(
                 "Snapshot data for user ID ${user.uid}: ${snapshot.data()} cachedallOtherUserImage()");
@@ -221,15 +269,15 @@ class Profilecontroller extends GetxController {
                 await _cacheImage(imageUrl);
               }
 
-              // Log the retrieved imageUrls
-              print(
-                  "Image URLs for user ID ${user.uid}: $imageUrls cachedallOtherUserImage()");
+              // // Log the retrieved imageUrls
+              // print(
+              //     "Image URLs for user ID ${user.uid}: $imageUrls cachedallOtherUserImage()");
 
               // Update the map only if imageUrls is not empty
               // otherUserImageUrlsMap[user.uid!] = imageUrls;
             } else {
-              print(
-                  "No image URLs found for user ID: ${user.uid} swiping screen ");
+              // print(
+              //     "No image URLs found for user ID: ${user.uid} cachedallOtherUserImage()");
             }
           }
         }
@@ -269,7 +317,7 @@ class Profilecontroller extends GetxController {
           "Error setting up listener for current user data: $e  profile-controller");
     }
   }
-
+// working version
 // 這個function 是來看裡面的data有沒有改變而已 最主要的是cache() 可是不包過正在使用的用戶UID
   // Stream<List<Person>> _fetchOhterUsersProfilesFromFirestore() {
   //   final stopwatch = Stopwatch()..start();
@@ -324,7 +372,8 @@ class Profilecontroller extends GetxController {
     // Safely check if the current user is logged in
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
-      print("No user is currently logged in.");
+      print(
+          "No user is currently logged in. fetchOhterUsersProfilesFromFirestore()");
       return Stream.value([]); // Return an empty stream if no user is logged in
     }
 
@@ -376,6 +425,7 @@ class Profilecontroller extends GetxController {
 
 // 把firebase 資料存在storage裡面
   void cacheDataForSwippingScreen() {
+    final stopwatch = Stopwatch()..start();
     if (usersProfileList.value.isNotEmpty) {
       print('Saving profiles to cache...');
 
@@ -395,9 +445,12 @@ class Profilecontroller extends GetxController {
 
     debugPrint(
         "Caching profiles: ${usersProfileList.value.map((p) => p.toJson()).toList()} cacheData() profile controller");
+    print(
+        "Time taken to fetch and cache images: ${stopwatch.elapsed}  cacheDataForSwippingScreen()");
   }
 
   void loadCachedData() {
+    final stopwatch = Stopwatch()..start();
     try {
       var cachedProfiles = storage.read('cachedProfiles');
       print('Raw cached profiles: $cachedProfiles');
@@ -418,6 +471,8 @@ class Profilecontroller extends GetxController {
     } catch (error) {
       print('Error loading cached data: $error');
     }
+    print(
+        "Time taken to fetch and cache images: ${stopwatch.elapsed} loadCachedData()");
   }
 
   Future<void> fetchUserImageUrlsMap() async {
@@ -427,6 +482,7 @@ class Profilecontroller extends GetxController {
     try {
       final stopwatch = Stopwatch()..start();
       if (allUserProfileList.isEmpty) {
+        print("fetchUserImageUrlsMap() is empty atfetchUserImageUrlsMap() ");
         usersProfileList.bindStream(_firestore
             .collection("users")
             .where("uid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
@@ -551,24 +607,44 @@ class Profilecontroller extends GetxController {
     }
   }
 
-  Future<List<String>> fetchProfileUserInterests(String profileUserId) async {
-    DocumentSnapshot profileUserSnapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(profileUserId)
-        .get();
+  List<Person> filterProfilesByDistance(
+    Person currentUser, // Accept Person object
+    List<Person> cachedProfiles,
+    double minDistance,
+    double maxDistance,
+  ) {
+    // Get the current user's latitude and longitude
+    double currentUserLat = currentUser.latitude ?? 0.0;
+    double currentUserLon = currentUser.longitude ?? 0.0;
 
-    List<String> profileUserInterests = [];
-    if (profileUserSnapshot.exists) {
-      Map<String, dynamic>? data =
-          profileUserSnapshot.data() as Map<String, dynamic>?;
+    // Create a new list to store filtered profiles
+    List<Person> filteredProfiles = [];
 
-      profileUserInterests = List<String>.from(data?['interests'] ?? []);
-      print("Profile User Interests for $profileUserId: $profileUserInterests");
-    } else {
-      print("Profile user document does not exist.");
+    for (var profile in cachedProfiles) {
+      // Get the latitude and longitude of the profile
+      double profileLat = profile.latitude ?? 24.1630;
+      double profileLon = profile.longitude ?? 120.6746;
+
+      // Calculate the distance in miles between the current user and the profile
+      double distanceInMiles = Geolocator.distanceBetween(
+            currentUserLat,
+            currentUserLon,
+            profileLat,
+            profileLon,
+          ) /
+          1609.34; // Convert meters to miles
+
+      // Add the profile to the filtered list if the distance is within the range
+      if (distanceInMiles >= minDistance && distanceInMiles <= maxDistance) {
+        filteredProfiles.add(profile);
+      }
     }
 
-    return profileUserInterests;
+    return filteredProfiles;
+  }
+
+  void updateUserProfiles(List<Person> profiles) {
+    filterEdusersProfileList.value = profiles;
   }
 
   // Function to cache the image using CachedNetworkImage

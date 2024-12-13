@@ -1144,7 +1144,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                               double.parse(locationController.text
                                   .split(',')[1]
                                   .split(':')[1]
-                                  .trim()) // Longitude
+                                  .trim()),
+                              "" // Longitude
                               );
 
                           if (mounted) {

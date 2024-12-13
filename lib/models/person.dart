@@ -205,33 +205,39 @@ class Person {
   List<String>? diet;
   double? latitude;
   double? longitude;
+  String? aboutme;
 
-  Person({
-    this.uid,
-    this.email,
-    this.password,
-    this.name,
-    this.photoNo,
-    this.publishedDateTime,
-    this.interests,
-    this.imageUrls,
-    this.sex,
-    this.bdTime,
-    this.birthday,
-    this.sure,
-    this.age,
-    this.occupation,
-    this.mbti,
-    this.language,
-    this.religion,
-    this.education,
-    this.bloodtype,
-    this.lookingfor,
-    this.exercise,
-    this.diet,
-    this.latitude,
-    this.longitude,
-  });
+  Person(
+      {this.uid,
+      this.email,
+      this.password,
+      this.name,
+      this.photoNo,
+      this.publishedDateTime,
+      this.interests,
+      this.imageUrls,
+      this.sex,
+      this.bdTime,
+      this.birthday,
+      this.sure,
+      this.age,
+      this.occupation,
+      this.mbti,
+      this.language,
+      this.religion,
+      this.education,
+      this.bloodtype,
+      this.lookingfor,
+      this.exercise,
+      this.diet,
+      this.latitude,
+      this.longitude,
+      this.aboutme});
+  @override
+  @override
+  String toString() {
+    return 'Person(uid: $uid, name: $name, email: $email, interests: ${interests?.join(", ")}, imageUrls: ${imageUrls?.join(", ")}, sex: $sex, bdTime: $bdTime, birthday: $birthday, age: $age, occupation: ${occupation?.join(", ")}, mbti: ${mbti?.join(", ")}, language: ${language?.join(", ")}, religion: ${religion?.join(", ")}, education: ${education?.join(", ")}, bloodtype: ${bloodtype?.join(", ")}, lookingfor: ${lookingfor?.join(", ")}, exercise: ${exercise?.join(", ")}, diet: ${diet?.join(", ")}, latitude: $latitude, longitude: $longitude, aboutme: $aboutme)';
+  }
 
   // Update the JSON serialization and deserialization methods
   static Person fromDataSnapshot(DocumentSnapshot snapshot) {
@@ -284,6 +290,7 @@ class Person {
           : [],
       latitude: dataSnapshot["latitude"] as double?,
       longitude: dataSnapshot["longitude"] as double?,
+      aboutme: dataSnapshot["aboutme"] as String?,
     );
   }
 
@@ -312,6 +319,7 @@ class Person {
         "diet": diet,
         "latitude": latitude,
         "longitude": longitude,
+        "aboutme": aboutme,
       };
 
   factory Person.fromJson(Map<String, dynamic> json) {
@@ -358,6 +366,7 @@ class Person {
       diet: json["diet"] != null ? List<String>.from(json["diet"] as List) : [],
       latitude: json["latitude"] as double?,
       longitude: json["longitude"] as double?,
+      aboutme: json["aboutme"] as String?,
     );
   }
 }
