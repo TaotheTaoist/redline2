@@ -42,19 +42,57 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
   bool isLoading = true;
 
-  // String senderName = "";
-  // Profilecontroller profileController = Get.put(Profilecontroller());
-
   CarouselController carouselController = CarouselController();
+
+  @override
+  void initState() {
+    super.initState();
+    print("DateTime.now() ${DateTime.now()} build swipping_screen.dart  ");
+    initCounter++; // Increment the counter
+    print("initState has been called $initCounter time(s)");
+
+    final stopwatch = Stopwatch()..start();
+    profileController.initializeProfileList();
+
+    updateSwipeItemsInitonly();
+    print(
+        "DateTime.now() at: ${DateTime.now()}  Current User ID: $currentUserID Function finished  build swipping_screen.dart  DateTime.now()");
+
+    print(
+        "currentIndex: $currentIndex at init Function finished at: ${DateTime.now()} build - swipingdart");
+
+    final storage = GetStorage();
+    print("storage.getValues()${storage.getValues()}");
+    print(
+        "Time taken to fetch and cache images: ${stopwatch.elapsed} initState() swipping screen");
+    loadCachedProfiles();
+
+    // print(
+    // " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
+    // checkAlignment(otherUserImageUrlsMap, cachedProfiles);
+    Future.delayed(Duration(seconds: 3), () {
+      if (mounted) {
+        // Ensure the widget is still in the tree
+        setState(() {
+          readUserData();
+          isLoading = false; // Set loading to false after 3 seconds
+          print(
+              "setState called at Future.delayed(Duration(seconds: 3) swipping screen");
+        });
+      }
+    });
+  }
 
   Future<Map<String, List<String>>> generateUserImageUrlsMap(
       Profilecontroller profileController) async {
     // Initialize an empty map to store UIDs and corresponding image URLs
-
+    print(
+        "DateTime.now() ${DateTime.now()} - generateUserImageUrlsMap started");
     if (profileController.allUserProfileList.isEmpty) {
       print("No user profiles found in the list. generateUserImageUrlsMap");
       return otherUserImageUrlsMap;
     }
+
     final String currentUserId =
         FirebaseAuth.instance.currentUser!.uid; // Get current user ID
     final stopwatch = Stopwatch()..start();
@@ -81,7 +119,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
               (data["imageUrls"] as List).isNotEmpty) {
             List<String> imageUrls = List<String>.from(data["imageUrls"] ?? []);
             for (String imageUrl in imageUrls) {
-              // await _cacheImage(imageUrl); // Cache each image URL
+              await _cacheImage(imageUrl); // Cache each image URL
             }
 
             // Log the retrieved imageUrls
@@ -102,8 +140,11 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
               "No data found for user ID: ${user.uid} generateUserImageUrlsMap swiping screen");
         }
         stopwatch.stop();
+        // print(
+        //     "Time taken to fetch and cache images: ${stopwatch.elapsed} generateUserImageUrlsMap");
+
         print(
-            "Time taken to fetch and cache images: ${stopwatch.elapsed} generateUserImageUrlsMap");
+            " DateTime.now() ${DateTime.now()} - generateUserImageUrlsMap  ends");
       }
     }
 
@@ -125,7 +166,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
     if (profileController.allUserProfileList.isNotEmpty) {
       print("List is not empty, continuing...");
-      // await validateAndCleanUpUserProfiles(profileController);
+      await validateAndCleanUpUserProfiles(profileController);
       await generateUserImageUrlsMap(profileController);
 
       if (otherUserImageUrlsMap.isNotEmpty) {
@@ -168,70 +209,6 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     }
     print(
         "Time taken to fetch and cache images: ${stopwatch.elapsed} updateSwipeItemsInitonly()");
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    initCounter++; // Increment the counter
-    print("initState has been called $initCounter time(s)");
-    final stopwatch = Stopwatch()..start();
-    profileController.initializeProfileList();
-
-// Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
-// I/flutter (11412): Like icon tapped!
-    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    //   if (user != null) {
-    //     // User is logged in
-    //     currentUserID = user.uid; // Set the global variable
-
-    //     print(
-    //         " currentUserID = user.uid; Set the global variable at init siwping screen ");
-    //     readUserData(); // Fetch user data after login
-    //     if (mounted) {
-    //       setState(() {
-    //         updateSwipeItemsInitonly();
-    //         print(
-    //             "setState called at updateSwipeItemsInitonly(); swipping screen");
-    //       });
-    //     }
-    //   } else {
-    //     // User is logged out
-    //     currentUserID = ''; // Clear the current user ID
-    //     // setState(() {
-    //     print("User logged out. Current User ID cleared.");
-    //     print(
-    //         "setState called at clearing uid, currentUserID = ''; swipping screen");
-    //     // });
-    //   }
-    // });
-
-    updateSwipeItemsInitonly();
-    print(
-        "Current User ID: $currentUserID Function finished at: ${DateTime.now()} build swipping_screen.dart ");
-
-    print(
-        "currentIndex: $currentIndex at init Function finished at: ${DateTime.now()} build - swipingdart");
-
-    final storage = GetStorage();
-    print("storage.getValues()${storage.getValues()}");
-    print(
-        "Time taken to fetch and cache images: ${stopwatch.elapsed} initState() swipping screen");
-    loadCachedProfiles();
-    // print(
-    // " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
-    // checkAlignment(otherUserImageUrlsMap, cachedProfiles);
-    Future.delayed(Duration(seconds: 3), () {
-      if (mounted) {
-        // Ensure the widget is still in the tree
-        setState(() {
-          isLoading = false; // Set loading to false after 3 seconds
-          print(
-              "setState called at Future.delayed(Duration(seconds: 3) swipping screen");
-        });
-      }
-    });
   }
 
   readUserData() async {
@@ -369,7 +346,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
     // images = profileController.otherUserImageUrlsMap.value[selectedUserUid] ?? [];
 
-    print("Function finished at: ${DateTime.now()} build, swipping_screen");
+    // print("Function finished at: ${DateTime.now()} build, swipping_screen");
 
     return Scaffold(
       appBar: PreferredSize(
@@ -492,97 +469,97 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                             bottom: 0,
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment.start,
                                               children: [
-                                                ElevatedButton(
-                                                  child: Text(
-                                                    _getDisplayText(
-                                                        cachedProfiles[
-                                                            currentIndex],
-                                                        carouselIndex),
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  onPressed: () {
-                                                    profileController
-                                                        .LikeSentReceieved(
-                                                      "eachProfileInfo.uid.toString()",
-                                                      senderName,
-                                                    );
-                                                    print('Like icon tapped!');
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape: StadiumBorder(),
-                                                    padding: EdgeInsets.all(10),
-                                                    backgroundColor:
-                                                        Color.fromARGB(
-                                                                255, 82, 82, 82)
-                                                            .withOpacity(0.8),
-                                                    shadowColor:
-                                                        const Color.fromARGB(
-                                                                255,
-                                                                212,
-                                                                211,
-                                                                211)
-                                                            .withOpacity(0.3),
-                                                    elevation: 5,
+                                                // ElevatedButton(
+                                                // child:
+                                                Text(
+                                                  _getDisplayText(
+                                                      cachedProfiles[
+                                                          currentIndex],
+                                                      carouselIndex),
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        24, // Adjust the size of the text
+                                                    fontFamily:
+                                                        'YourFontFamily', // Specify the font family (if custom font is available)
+                                                    fontWeight: FontWeight
+                                                        .bold, // Optional: Make the text bold
+                                                    letterSpacing:
+                                                        1.5, // Optional: Adjust spacing between letters
                                                   ),
                                                 ),
+                                                //   onPressed: () {
+                                                //     profileController
+                                                //         .LikeSentReceieved(
+                                                //       "eachProfileInfo.uid.toString()",
+                                                //       senderName,
+                                                //     );
+                                                //     print('Like icon tapped!');
+                                                //   },
+                                                //   style:
+                                                //       ElevatedButton.styleFrom(
+                                                //     shape: StadiumBorder(),
+                                                //     padding: EdgeInsets.all(10),
+                                                //     backgroundColor:
+                                                //         Color.fromARGB(
+                                                //                 255, 82, 82, 82)
+                                                //             .withOpacity(0.8),
+                                                //     shadowColor:
+                                                //         const Color.fromARGB(
+                                                //                 255,
+                                                //                 212,
+                                                //                 211,
+                                                //                 211)
+                                                //             .withOpacity(0.3),
+                                                //     elevation: 5,
+                                                //   ),
+                                                // ),
                                                 SizedBox(width: 8),
-                                                ElevatedButton(
-                                                  child: Text(
-                                                    "",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  onPressed: () {
-                                                    profileController
-                                                        .LikeSentReceieved(
-                                                      "eachProfileInfo.uid.toString()",
-                                                      senderName,
-                                                    );
-                                                    print('Like icon tapped!');
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape: StadiumBorder(),
-                                                    padding: EdgeInsets.all(10),
-                                                    backgroundColor:
-                                                        Color.fromARGB(
-                                                                255, 82, 82, 82)
-                                                            .withOpacity(0.8),
-                                                    shadowColor: Colors.black
-                                                        .withOpacity(0.3),
-                                                    elevation: 5,
+                                                // ElevatedButton(
+                                                Text(
+                                                  _getDisplayText2(
+                                                      cachedProfiles[
+                                                          currentIndex],
+                                                      carouselIndex),
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        24, // Adjust the size of the text
+                                                    fontFamily:
+                                                        'YourFontFamily', // Specify the font family (if custom font is available)
+                                                    fontWeight: FontWeight
+                                                        .bold, // Optional: Make the text bold
+                                                    letterSpacing:
+                                                        1.5, // Optional: Adjust spacing between letters
                                                   ),
                                                 ),
-                                                SizedBox(width: 8),
-                                                ElevatedButton(
-                                                  child: Text(
-                                                    'Not Set',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  onPressed: () {
-                                                    print('Close icon tapped!');
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape: StadiumBorder(),
-                                                    padding: EdgeInsets.all(10),
-                                                    backgroundColor:
-                                                        Color.fromARGB(
-                                                                255, 82, 82, 82)
-                                                            .withOpacity(0.8),
-                                                    shadowColor: Colors.black
-                                                        .withOpacity(0.3),
-                                                    elevation: 5,
-                                                  ),
-                                                ),
+
+                                                // SizedBox(width: 8),
+                                                // ElevatedButton(
+                                                //   child: Text(
+                                                //     'Not Set',
+                                                //     style: TextStyle(
+                                                //       color: Colors.white,
+                                                //     ),
+                                                //   ),
+                                                //   onPressed: () {
+                                                //     print('Close icon tapped!');
+                                                //   },
+                                                //   style:
+                                                //       ElevatedButton.styleFrom(
+                                                //     shape: StadiumBorder(),
+                                                //     padding: EdgeInsets.all(10),
+                                                //     backgroundColor:
+                                                //         Color.fromARGB(
+                                                //                 255, 82, 82, 82)
+                                                //             .withOpacity(0.8),
+                                                //     shadowColor: Colors.black
+                                                //         .withOpacity(0.3),
+                                                //     elevation: 5,
+                                                //   ),
+                                                // ),
                                               ],
                                             ),
                                           ),
@@ -727,6 +704,14 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     setState(() {});
   }
 
+  Future<void> _cacheImage(String imageUrl) async {
+    // print(" DateTime.now() ${DateTime.now()} - cacheImage start");
+    await CachedNetworkImageProvider(imageUrl).obtainKey(ImageConfiguration());
+    print('Image cached: $imageUrl _cacheImage profileContoller.dart');
+
+    // print(" DateTime.now() ${DateTime.now()} - cacheImage ends");
+  }
+
   String _getDisplayText(Person profile, int carouselIndex) {
     switch (carouselIndex) {
       case 1:
@@ -737,6 +722,32 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         return profile.email ?? "No City";
       default:
         return profile.name ?? "No Name";
+    }
+  }
+
+  String _getDisplayText2(Person profile, int carouselIndex) {
+    switch (carouselIndex) {
+      case 1:
+        return "Test";
+      case 2:
+        return profile.age ?? "No Age";
+      case 3:
+        return profile.email ?? "No City";
+      default:
+        return profile.age ?? "No Age";
+    }
+  }
+
+  String _getDisplayText3(Person profile, int carouselIndex) {
+    switch (carouselIndex) {
+      case 1:
+        return "Test";
+      case 2:
+        return profile.age ?? "No Age";
+      case 3:
+        return profile.email ?? "No City";
+      default:
+        return profile.age ?? "No Age";
     }
   }
 }
