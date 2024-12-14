@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:redline/custom_popup/custom_popup.dart';
 import 'package:redline/global.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,6 +22,8 @@ class SwipeableProfiles extends StatefulWidget {
 
 class _SwipeableProfilesState extends State<SwipeableProfiles> {
   Profilecontroller profileController = Get.find<Profilecontroller>();
+  static int initCounter = 0;
+
   // =============================================================================================
   List<String> interestList = [];
 
@@ -39,7 +42,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
   bool isLoading = true;
 
-  String senderName = "";
+  // String senderName = "";
   // Profilecontroller profileController = Get.put(Profilecontroller());
 
   CarouselController carouselController = CarouselController();
@@ -112,8 +115,11 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
   }
 
   Future<void> updateSwipeItemsInitonly() async {
-    await Future.delayed(Duration(milliseconds: 2000));
     final stopwatch = Stopwatch()..start();
+
+    print("${DateTime.now()} - updateSwipeItemsInitonly() started");
+    await Future.delayed(Duration(milliseconds: 2000));
+    print("${DateTime.now()} - Delay completed in updateSwipeItemsInitonly()");
     print(
         "check profileController.allUserProfileList again at updateSwipeItemsInitonly() ${profileController.allUserProfileList}");
 
@@ -122,26 +128,36 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
       // await validateAndCleanUpUserProfiles(profileController);
       await generateUserImageUrlsMap(profileController);
 
-      print("profilekeys $profileKeys swiping screen");
-
       if (otherUserImageUrlsMap.isNotEmpty) {
         // Check if the widget is still mounted before calling setState
-        if (mounted) {
-          setState(() {
-            selectedUserUid = otherUserImageUrlsMap.keys.first;
-            profileKeys = otherUserImageUrlsMap.keys.toList();
-            print("profilekeys $profileKeys swiping screen");
+        // if (mounted) {
+        //   setState(() {
+        selectedUserUid = otherUserImageUrlsMap.keys.first;
+        print(
+            "otherUserImageUrlsMap.keys.first inside of a setState inside of updateSwipeItemsInitonly ${otherUserImageUrlsMap.keys.first}");
+        // profileKeys = otherUserImageUrlsMap.keys.toList();
 
-            print(
-                "setState called at updateSwipeItemsInitonly() profile Keys loop swiping screen");
-          });
+        List<String> tempProfileKeys = otherUserImageUrlsMap.keys.toList();
+        if (tempProfileKeys.isNotEmpty) {
+          profileKeys = tempProfileKeys;
+          print("profilekeys updated to: $profileKeys swiping screen");
+        } else {
+          print("No valid profile keys found; profileKeys remains unchanged.");
         }
+
+        print("profilekeys $profileKeys swiping screen");
+        print("${DateTime.now()} - Updated profileKeys: $profileKeys");
+
+        // print(
+        //     "setState called at updateSwipeItemsInitonly() profile Keys loop swiping screen");
+        //   });
+        // }
         print(
             "selectedUserUid assigned to ${otherUserImageUrlsMap.keys.first} Function finished at: ${DateTime.now()} build, swipping_screen");
         print(
-            "selectedUserUid: $selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen");
+            "selectedUserUid: $selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen Function finished at: ${DateTime.now()}");
         print(
-            "profileController.otherUserImageUrlsMap.value[selectedUserUid]  ${profileController.otherUserImageUrlsMap.value[selectedUserUid]}");
+            "profileController.otherUserImageUrlsMap.value[selectedUserUid]  ${profileController.otherUserImageUrlsMap.value[selectedUserUid]} Function finished at: ${DateTime.now()}");
 
         images = otherUserImageUrlsMap[selectedUserUid]!;
       } else {
@@ -154,86 +170,49 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         "Time taken to fetch and cache images: ${stopwatch.elapsed} updateSwipeItemsInitonly()");
   }
 
-  // Future<void> updateSwipeItemsInitonly() async {
-  //   await Future.delayed(Duration(milliseconds: 2000));
-  //   final stopwatch = Stopwatch()..start();
-  //   // Profilecontroller profileController = Get.find<Profilecontroller>();
-  //   print(
-  //       "check profileController.allUserProfileList again at updateSwipeItemsInitonly() ${profileController.allUserProfileList}");
-  //   if (profileController.allUserProfileList.isNotEmpty) {
-  //     print("List is not empty, continuing...");
-  //     await validateAndCleanUpUserProfiles(profileController);
-  //     await generateUserImageUrlsMap(profileController);
-
-  //     print("profilekeys $profileKeys swiping screen");
-  //     if (otherUserImageUrlsMap.isNotEmpty) {
-  //       setState(() {
-  //         selectedUserUid = otherUserImageUrlsMap.keys.first;
-  //         profileKeys = otherUserImageUrlsMap.keys.toList();
-  //         // isLoading = false;
-  //         print("profilekeys $profileKeys swiping screen");
-
-  //         print(
-  //             "setState called at updateSwipeItemsInitonly() profile Keys loop swipping screen");
-  //       });
-  //       print(
-  //           "selectedUserUid assigned to ${otherUserImageUrlsMap.keys.first} Function finished at: ${DateTime.now()} build, swipping_screen");
-
-  //       print(
-  //           "selectedUserUid: $selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen");
-  //       print(
-  //           "profileController.otherUserImageUrlsMap.value[selectedUserUid]  ${profileController.otherUserImageUrlsMap.value[selectedUserUid]}");
-
-  //       // both works
-  //       images = otherUserImageUrlsMap[selectedUserUid]!;
-  //       // both works
-  //       // images =
-  //       //     profileController.otherUserImageUrlsMap.value[selectedUserUid] ??
-  //       //         [];
-  //     } else {
-  //       print("otherUserImageUrlsMap is empty");
-  //     }
-  //   } else {
-  //     print("profileController.allUserProfileList.is 無");
-  //   }
-  //   print(
-  //       "Time taken to fetch and cache images: ${stopwatch.elapsed} updateSwipeItemsInitonly()");
-  // }
-
   @override
   void initState() {
     super.initState();
+
+    initCounter++; // Increment the counter
+    print("initState has been called $initCounter time(s)");
     final stopwatch = Stopwatch()..start();
+    profileController.initializeProfileList();
+
 // Error while sending like: 'package:redline/controller/profile-controller.dart': Failed assertion: line 334 pos 14: 'currentUserID.isNotEmpty': currentUserID is empty
 // I/flutter (11412): Like icon tapped!
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user != null) {
-        // User is logged in
-        currentUserID = user.uid; // Set the global variable
+    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    //   if (user != null) {
+    //     // User is logged in
+    //     currentUserID = user.uid; // Set the global variable
 
-        print(
-            " currentUserID = user.uid; Set the global variable at init siwping screen ");
-        readUserData(); // Fetch user data after login
-        if (mounted) {
-          setState(() {
-            updateSwipeItemsInitonly();
-            print(
-                "setState called at updateSwipeItemsInitonly(); swipping screen");
-          });
-        }
-      } else {
-        // User is logged out
-        currentUserID = ''; // Clear the current user ID
-        // setState(() {
-        print("User logged out. Current User ID cleared.");
-        print(
-            "setState called at clearing uid, currentUserID = ''; swipping screen");
-        // });
-      }
-    });
-    print("Current User ID: $currentUserID swipping_screen.dart");
+    //     print(
+    //         " currentUserID = user.uid; Set the global variable at init siwping screen ");
+    //     readUserData(); // Fetch user data after login
+    //     if (mounted) {
+    //       setState(() {
+    //         updateSwipeItemsInitonly();
+    //         print(
+    //             "setState called at updateSwipeItemsInitonly(); swipping screen");
+    //       });
+    //     }
+    //   } else {
+    //     // User is logged out
+    //     currentUserID = ''; // Clear the current user ID
+    //     // setState(() {
+    //     print("User logged out. Current User ID cleared.");
+    //     print(
+    //         "setState called at clearing uid, currentUserID = ''; swipping screen");
+    //     // });
+    //   }
+    // });
 
-    print("currentIndex: $currentIndex at init - swipingdart");
+    updateSwipeItemsInitonly();
+    print(
+        "Current User ID: $currentUserID Function finished at: ${DateTime.now()} build swipping_screen.dart ");
+
+    print(
+        "currentIndex: $currentIndex at init Function finished at: ${DateTime.now()} build - swipingdart");
 
     final storage = GetStorage();
     print("storage.getValues()${storage.getValues()}");
@@ -242,7 +221,7 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     loadCachedProfiles();
     // print(
     // " current cached cachedProfiles: ${cachedProfiles[currentIndex].name}");
-    checkAlignment(otherUserImageUrlsMap, cachedProfiles);
+    // checkAlignment(otherUserImageUrlsMap, cachedProfiles);
     Future.delayed(Duration(seconds: 3), () {
       if (mounted) {
         // Ensure the widget is still in the tree
@@ -279,7 +258,9 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     });
   }
 
-  void loadCachedProfiles() {
+  Future<void> loadCachedProfiles() async {
+    await Future.delayed(Duration(milliseconds: 2000));
+    final stopwatch = Stopwatch()..start();
     final storage = GetStorage();
     List<dynamic> cachedProfilesData = storage.read('cachedProfiles') ?? [];
 
@@ -297,10 +278,14 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
 
         print("setState called at loadCachedProfiles() swipping_screen");
       });
-      print('Loaded ${cachedProfiles.length} profiles from cache.');
+      print(
+          'Loaded ${cachedProfiles.length} profiles from cache. swipping_screen');
     } else {
-      print('No cached profiles found.');
+      print('No cached profiles found.swipping_screen ');
     }
+    print(
+        "Time taken to fetch and cache images: ${stopwatch.elapsed} checkAlignment");
+    stopwatch.stop();
   }
 
 // 這個function很重要 它查看firebase所有uid 跟alluserprofileList裡面的UID, 如果多餘的直接移除
@@ -373,9 +358,9 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
         print('UID ${profile.uid} is not found in otherUserImageUrlsMap.');
       }
     }
-    stopwatch.stop();
     print(
         "Time taken to fetch and cache images: ${stopwatch.elapsed} checkAlignment");
+    stopwatch.stop();
   }
 
   @override
@@ -404,7 +389,13 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                   color: const Color.fromARGB(255, 107, 107, 107), // Icon color
                 ),
                 onPressed: () {
-                  _showPopup(context); // Call the popup function when clicked
+                  // Show the CustomPopup when the icon is pressed
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomPopup(); // Use the CustomPopup widget here
+                    },
+                  );
                 },
               ),
             ),
@@ -636,24 +627,26 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                 ElevatedButton(
                                                   onPressed: () {
                                                     setState(() {
-                                                      profileController
-                                                          .LikeSentReceieved(
-                                                              selectedUserUid,
-                                                              senderName);
-                                                      currentIndex++;
-                                                      print(
-                                                          "currentIndex: $currentIndex at likedReceivebutton swipingdart");
-                                                      print(
-                                                          'Like heart tapped!');
-                                                      selectedUserUid =
-                                                          profileKeys[
-                                                              currentIndex];
-                                                      print(
-                                                          'selectedUserUid:$selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen"');
-                                                      images =
-                                                          otherUserImageUrlsMap[
-                                                                  selectedUserUid] ??
-                                                              [];
+                                                      handleLikeReceived();
+
+                                                      // profileController
+                                                      //     .LikeSentReceieved(
+                                                      //         selectedUserUid,
+                                                      //         senderName);
+                                                      // currentIndex++;
+                                                      // print(
+                                                      //     "currentIndex: $currentIndex at likedReceivebutton swipingdart");
+                                                      // print(
+                                                      //     'Like heart tapped!');
+                                                      // selectedUserUid =
+                                                      //     profileKeys[
+                                                      //         currentIndex];
+                                                      // print(
+                                                      //     'selectedUserUid:$selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen"');
+                                                      // images =
+                                                      //     otherUserImageUrlsMap[
+                                                      //             selectedUserUid] ??
+                                                      //         [];
                                                     });
                                                   },
                                                   style:
@@ -662,21 +655,16 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
                                                     padding: EdgeInsets.all(10),
                                                     backgroundColor:
                                                         const Color.fromARGB(
-                                                                255,
-                                                                110,
-                                                                110,
-                                                                110)
-                                                            .withOpacity(0.7),
-                                                    shadowColor: Colors.black
-                                                        .withOpacity(0.3),
+                                                            255, 255, 121, 121),
                                                     elevation: 5,
                                                   ),
-                                                  child: Icon(
-                                                    Icons.favorite,
-                                                    color: const Color.fromARGB(
-                                                        255, 255, 134, 134),
-                                                    size: 30,
-                                                  ),
+                                                  child: Icon(Icons.favorite,
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              110,
+                                                              110,
+                                                              110)),
                                                 ),
                                                 SizedBox(width: 4),
                                                 ElevatedButton(
@@ -723,24 +711,20 @@ class _SwipeableProfilesState extends State<SwipeableProfiles> {
     );
   }
 
-  void _showPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Popup Title'),
-          content: Text('This is a simple pop-up dialog!'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
+  void handleLikeReceived() {
+    // First, update all necessary variables and logic
+    profileController.LikeSentReceieved(selectedUserUid, senderName);
+    print('Like heart tapped!');
+    print("Before increment, currentIndex: $currentIndex");
+    currentIndex++;
+    print("After increment, currentIndex: $currentIndex");
+    selectedUserUid = profileKeys[currentIndex];
+    print(
+        'selectedUserUid:$selectedUserUid Function finished at: ${DateTime.now()} build, swipping_screen');
+    images = otherUserImageUrlsMap[selectedUserUid] ?? [];
+
+    // Then call setState() to trigger the rebuild
+    setState(() {});
   }
 
   String _getDisplayText(Person profile, int carouselIndex) {

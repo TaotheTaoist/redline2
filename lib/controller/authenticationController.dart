@@ -134,40 +134,48 @@ class Authenticationcontroller extends GetxController {
   }
 
   Future<void> creatNewUserAccount(
-    String email,
-    String password,
-    String name,
-    List<String> interests,
-    List<String> imageUrls,
-    String sex,
-    String bdTime,
-    String birthday,
-    String sure,
-    String age,
-    List<String> selectedoccu,
-    List<String> selectmbti,
-    List<String> language,
-    List<String> religion,
-    List<String> education,
-    List<String> bloodtype,
-    List<String> lookingfor,
-    List<String> exercise,
-    List<String> selectdiet,
-    double latitude,
-    double longitude,
-    String aboutme,
-  ) async {
+      String email,
+      String password,
+      String name,
+      List<String> interests,
+      List<String> imageUrls,
+      String sex,
+      String bdTime,
+      String birthday,
+      String sure,
+      String age,
+      List<String> selectedoccu,
+      List<String> selectmbti,
+      List<String> language,
+      List<String> religion,
+      List<String> education,
+      List<String> bloodtype,
+      List<String> lookingfor,
+      List<String> exercise,
+      List<String> selectdiet,
+      double latitude,
+      double longitude,
+      String aboutme,
+      int maxDistance, // Keep maxDistance as a positional parameter
+      {required Map<String, int> ageRange}) async {
     try {
-      // Attempt to create a new user
+      // UserCredential credential = await FirebaseAuth.instance
+      //     .createUserWithEmailAndPassword(email: email, password: password);
       UserCredential credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      // Ensure the user is properly signed in and UID is accessible
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw FirebaseAuthException(
+          code: 'user-not-found',
+          message: 'The user could not be authenticated after creation.',
+        );
+      }
 
-      // Upload the profile image
-      // String urlOfDownloadImage = await uploadImageToStorage(imageProfile);
-
+      String uid = currentUser.uid;
       // Create a Person object
       personModel.Person personInstance = personModel.Person(
-          uid: FirebaseAuth.instance.currentUser!.uid,
+          uid: uid,
           email: email,
           password: password,
           name: name,
@@ -189,7 +197,9 @@ class Authenticationcontroller extends GetxController {
           diet: selectdiet,
           latitude: latitude,
           longitude: longitude,
-          aboutme: aboutme);
+          aboutme: aboutme,
+          maxDistance: maxDistance,
+          ageRange: ageRange);
 
       // Save the user data to Firestore
       await FirebaseFirestore.instance
@@ -275,27 +285,50 @@ class Authenticationcontroller extends GetxController {
 
   void checkIfUserIsLoggedIn(User? currentUser) async {
     print("Checking if user is logged in at authenticationController");
-    print("Who is the currentUser $currentUser at authenticationController");
 
     if (currentUser != null) {
       // Check if the user exists in the Firebase database
       bool userExists = await checkIfUserExistsInDatabase(currentUser.uid);
 
       if (userExists) {
-        // Navigate to the HomeScreen if the user exists in the database
-        print("User exists in the database. Navigating to HomeScreen.");
-        Get.offAll(() => HomeScreen());
+        // Check if we're already on the HomeScreen
+        if (Get.currentRoute != "/home" && Get.currentRoute != "/HomeScreen") {
+          print("User exists in the database. Navigating to HomeScreen.");
+          Get.offAll(() => HomeScreen());
+        }
       } else {
-        // If the user does not exist in the database, stay on the login screen
         print("User does not exist in the database. Staying on LoginScreen.");
         Get.offAll(() => LoginScreen());
       }
     } else {
-      // If no user is logged in, navigate to LoginScreen
       print("No user is logged in. Navigating to LoginScreen.");
       Get.offAll(() => LoginScreen());
     }
   }
+
+  // void checkIfUserIsLoggedIn(User? currentUser) async {
+  //   print("Checking if user is logged in at authenticationController");
+  //   print("Who is the currentUser $currentUser at authenticationController");
+
+  //   if (currentUser != null) {
+  //     // Check if the user exists in the Firebase database
+  //     bool userExists = await checkIfUserExistsInDatabase(currentUser.uid);
+
+  //     if (userExists) {
+  //       // Navigate to the HomeScreen if the user exists in the database
+  //       print("User exists in the database. Navigating to HomeScreen.");
+  //       Get.offAll(() => HomeScreen());
+  //     } else {
+  //       // If the user does not exist in the database, stay on the login screen
+  //       print("User does not exist in the database. Staying on LoginScreen.");
+  //       Get.offAll(() => LoginScreen());
+  //     }
+  //   } else {
+  //     // If no user is logged in, navigate to LoginScreen
+  //     print("No user is logged in. Navigating to LoginScreen.");
+  //     Get.offAll(() => LoginScreen());
+  //   }
+  // }
 
   Future<bool> checkIfUserExistsInDatabase(String uid) async {
     try {
@@ -328,7 +361,7 @@ class Authenticationcontroller extends GetxController {
       if (currentUser != null) {
         print("User is already logged in: ${currentUser.email}");
       } else {
-        print("No user is logged in");
+        print("No user is logged in authentica controller");
       }
 
       // Call your method to handle screen changes, etc.

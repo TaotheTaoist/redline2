@@ -12,7 +12,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 import 'package:get_storage/get_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Profilecontroller extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -53,7 +52,9 @@ class Profilecontroller extends GetxController {
   RxList<String> language = <String>[].obs;
   RxList<String> lookingFor = <String>[].obs;
   RxList<String> religion = <String>[].obs;
-
+  Rxn<int> maxAge = Rxn<int>();
+  Rxn<int> minAge = Rxn<int>();
+  Rxn<int> maxDistance = Rxn<int>();
   // Current User ID
   String uid = "";
 
@@ -65,6 +66,7 @@ class Profilecontroller extends GetxController {
 
   // Fetch user data from Firestore
   void fetchCurrentUserProfile() {
+    final stopwatch = Stopwatch()..start();
     print("Listening for updates for UID: $uid");
 
     FirebaseFirestore.instance
@@ -73,7 +75,8 @@ class Profilecontroller extends GetxController {
         .snapshots()
         .listen((dataSnapshot) {
       if (dataSnapshot.exists) {
-        print("User data updated: ${dataSnapshot.data()}"); // Debug log
+        print(
+            "User data updated: ${dataSnapshot.data()} fetchCurrentUserProfile()"); // Debug log
 
         // Populate reactive variables
         name.value = dataSnapshot["name"] ?? '';
@@ -94,12 +97,17 @@ class Profilecontroller extends GetxController {
         language.value = List<String>.from(dataSnapshot["language"] ?? []);
         lookingFor.value = List<String>.from(dataSnapshot["lookingfor"] ?? []);
         religion.value = List<String>.from(dataSnapshot["religion"] ?? []);
+        maxAge = dataSnapshot["maxAge"] ?? 50;
+        minAge = dataSnapshot["maxAge"] ?? 18;
+        maxDistance = dataSnapshot["maxDistance"] ?? 18;
       } else {
         print("User document does not exist."); // Debug log
       }
     }).onError((error) {
       print("Error fetching user data: $error"); // Debug log
     });
+    print(
+        "Time taken to fetch and cache images: ${stopwatch.elapsed} fetchCurrentUserProfile()");
   }
 
   @override
@@ -107,97 +115,49 @@ class Profilecontroller extends GetxController {
     super.onInit();
     GetStorage.init();
 
-    loadCachedData();
+    // readUserData();
+    // initializeProfileList();
+    // loadCachedData();
 
-    fetchAndCacheCurrentUserData();
+    // fetchAndCacheCurrentUserData();
 
     // Bind Firestore stream to keep the list updated
-    usersProfileList.bindStream(_fetchOhterUsersProfilesFromFirestore());
+    // usersProfileList.bindStream(_fetchOhterUsersProfilesFromFirestore());
 
-    ever(usersProfileList, (_) async {
-      if (usersProfileList.value.isNotEmpty) {
-        // Run cachedAllOtherUserImage only after usersProfileList is updated
-        await cachedallOtherUserImage();
-      }
-    });
+    // ever(usersProfileList, (_) async {
+    //   if (usersProfileList.value.isNotEmpty) {
+    //     // Run cachedAllOtherUserImage only after usersProfileList is updated
+    //     await cachedallOtherUserImage();
+    //   }
+    // });
 
     // Observe profile list and fetch image URLs when profiles are loaded
-    ever(usersProfileList, (_) {
-      if (usersProfileList.value.isNotEmpty) {
-        fetchUserImageUrlsMap();
-        listenToCurrentUserDataChanges();
-      }
-    });
+    // ever(usersProfileList, (_) {
+    //   if (usersProfileList.value.isNotEmpty) {
+    //     fetchUserImageUrlsMap();
+    //     // listenToCurrentUserDataChanges();
+    //   }
+    // });
   }
 
-  // void fetchAndCacheCurrentUserData() async {
-  //   // Fetch current user data from Firestore
-  //   final stopwatch = Stopwatch()..start();
-  //   try {
-  //     User? currentUser = FirebaseAuth.instance.currentUser;
+  Future<void> initializeProfileList() async {
+    // Bind the stream to usersProfileList
+    usersProfileList.bindStream(_fetchOhterUsersProfilesFromFirestore());
+    // await Future.delayed(Duration(milliseconds: 500));
+    ever(usersProfileList, (_) async {
+      if (usersProfileList.value.isNotEmpty) {
+        // await loadCachedData();
+        // await fetchAndCacheCurrentUserData();
 
-  //     if (currentUser == null) {
-  //       print("No user is currently logged in.");
-  //       return; // Exit the function if no user is logged in
-  //     }
+        print("usersProfileList.value.isNotEmpty");
+      }
+    });
+    // await Future.delayed(Duration(milliseconds: 500));
+  }
 
-  //     String currentUserUid = currentUser.uid;
-  //     DocumentSnapshot currentUserSnapshot =
-  //         await _firestore.collection("users").doc(currentUserUid).get();
-
-  //     if (currentUserSnapshot.exists) {
-  //       Map<String, dynamic> currentUserData =
-  //           currentUserSnapshot.data() as Map<String, dynamic>;
-
-  //       // Assuming Person.fromJson() can handle the structure of the current user data
-  //       Person currentUser = Person.fromDataSnapshot(currentUserSnapshot);
-
-  //       // Cache current user data
-  //       storage.write('currentUserData', currentUser.toJson());
-  //       print("Current user data saved to cache. :${currentUserData}");
-  //       print(storage.read("currentUserData"));
-  //     } else {
-  //       print("Current user document does not exist.");
-  //     }
-  //   } catch (e) {
-  //     print(
-  //         "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
-  //   }
-  //   print(
-  //       "Time taken to fetch and cache images: ${stopwatch.elapsed} fetchAndCacheCurrentUserData()");
-  // }
-
-  // void fetchAndCacheCurrentUserData() async {
-  //   // Fetch current user data from Firestore
-  //   final stopwatch = Stopwatch()..start();
-  //   try {
-  //     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
-  //     DocumentSnapshot currentUserSnapshot =
-  //         await _firestore.collection("users").doc(currentUserUid).get();
-
-  //     if (currentUserSnapshot.exists) {
-  //       Map<String, dynamic> currentUserData =
-  //           currentUserSnapshot.data() as Map<String, dynamic>;
-
-  //       // Assuming Person.fromJson() can handle the structure of the current user data
-  //       Person currentUser = Person.fromDataSnapshot(currentUserSnapshot);
-
-  //       // Cache current user data
-  //       storage.write('currentUserData', currentUser.toJson());
-  //       print("Current user data saved to cache. :${currentUserData}");
-  //       print(storage.read("currentUserData"));
-  //     } else {
-  //       print("Current user document does not exist.");
-  //     }
-  //   } catch (e) {
-  //     print(
-  //         "Error fetching current user data: $e fetchAndCacheCurrentUserData()");
-  //   }
-  //   print(
-  //       "Time taken to fetch and cache images: ${stopwatch.elapsed} fetchAndCacheCurrentUserData()");
-  // }
-  void fetchAndCacheCurrentUserData() async {
+  fetchAndCacheCurrentUserData() async {
     final stopwatch = Stopwatch()..start();
+
     try {
       // Get the current user from Firebase Authentication
       User? currentUser = FirebaseAuth.instance.currentUser;
@@ -205,6 +165,8 @@ class Profilecontroller extends GetxController {
       // Check if the user is logged in
       if (currentUser == null) {
         print("No user is currently logged in.");
+        print(
+            "Time taken to fetch and cache images: ${stopwatch.elapsed} fetchAndCacheCurrentUserData()");
         return; // Exit the function if no user is logged in
       }
 
@@ -291,31 +253,45 @@ class Profilecontroller extends GetxController {
     try {
       String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
-      // Fetch current user data once (instead of using snapshots.listen)
-      DocumentSnapshot documentSnapshot =
-          await _firestore.collection("users").doc(currentUserUid).get();
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUserUid)
+          .get();
 
       if (documentSnapshot.exists) {
-        Map<String, dynamic> currentUserData =
-            documentSnapshot.data() as Map<String, dynamic>;
-
-        // Assuming Person.fromJson() can handle the structure of the current user data
         Person currentUser = Person.fromDataSnapshot(documentSnapshot);
 
         // Cache the updated user data
         await storage.write('currentUserData', currentUser.toJson());
         print(
-            "new Updated for current user and saved to cache: $currentUserData profile-controller");
-
-        // Optionally return the current user if needed elsewhere
-        return; // Can return currentUser if needed
+            "Updated current user and saved to cache: ${currentUser.toJson()}");
       } else {
-        print("Current user document no longer exists.  profile-controller");
+        print("Current user document no longer exists.");
       }
     } catch (e) {
-      print(
-          "Error setting up listener for current user data: $e  profile-controller");
+      print("Error setting up listener for current user data: $e");
     }
+  }
+
+  readUserData() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUserID)
+        .get()
+        .then((dataSnapshot) {
+      // Retrieve and set the sender's name
+      senderName = dataSnapshot.data()?["name"]?.toString() ?? "No name";
+
+      // Print the entire document data
+      print("readUserData() - Data snapshot: ${dataSnapshot.data()}");
+
+      // Print the specific field value (senderName)
+      print("Sender name: $senderName sender means current profileController");
+      print("setState called at readUserData() profileController");
+    }).catchError((error) {
+      // Handle potential errors (optional)
+      print("Error fetching data: $error");
+    });
   }
 // working version
 // 這個function 是來看裡面的data有沒有改變而已 最主要的是cache() 可是不包過正在使用的用戶UID
@@ -366,12 +342,16 @@ class Profilecontroller extends GetxController {
   //         'Error fetching profiles: $error - _fetchProfilesFromFirestore() profile controller');
   //   });
   // }
+
+  // working version
+// 這個function 是來看裡面的data有沒有改變而已 最主要的是cache() 可是不包過正在使用的用戶UID
   Stream<List<Person>> _fetchOhterUsersProfilesFromFirestore() {
     final stopwatch = Stopwatch()..start();
-
+    print(
+        " usersProfileList.bindStream(_fetchOhterUsersProfilesFromFirestore()); start fetchOhterUsersProfilesFromFirestore()");
     // Safely check if the current user is logged in
     User? currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
+    if (currentUserID == "") {
       print(
           "No user is currently logged in. fetchOhterUsersProfilesFromFirestore()");
       return Stream.value([]); // Return an empty stream if no user is logged in
@@ -379,8 +359,7 @@ class Profilecontroller extends GetxController {
 
     return _firestore
         .collection("users")
-        .where("uid",
-            isNotEqualTo: currentUser.uid) // Use the current user's UID
+        .where("uid", isNotEqualTo: currentUserID)
         .snapshots()
         .map((QuerySnapshot querySnapshot) {
       List<Person> profilesList = [];
@@ -403,19 +382,22 @@ class Profilecontroller extends GetxController {
 
       // Assign the list to the observable value and cache the data
       usersProfileList.value = profilesList;
+      // print(
+      // "usersProfileList: $usersProfileList fetchOhterUsersProfilesFromFirestore() profile controller");
+
       print(
-          "usersProfileList: $usersProfileList fetchOhterUsersProfilesFromFirestore() profile controller");
+          "Time taken to fetch and cache images: ${stopwatch.elapsed}  usersProfileList generated at fetchOhterUsersProfilesFromFirestore()");
       print(
           "usersProfileList.value: ${usersProfileList.value} fetchOhterUsersProfilesFromFirestore() profile controller");
       if (profilesList.isNotEmpty) {
         print(
             'Profiles added: ${profilesList.length} profiles. - fetchOhterUsersProfilesFromFirestore() profile controller');
-        cacheDataForSwippingScreen(); // Optional: cache the profiles
+        cacheDataForSwippingScreen();
       } else {
         print('No profiles fetched.');
       }
       print(
-          "Time taken to fetch and cache images: ${stopwatch.elapsed}  fetchOhterUsersProfilesFromFirestore()");
+          "Time taken to fetch and cache images: ${stopwatch.elapsed} func ends at fetchOhterUsersProfilesFromFirestore()");
       return profilesList;
     }).handleError((error) {
       print(
@@ -424,16 +406,18 @@ class Profilecontroller extends GetxController {
   }
 
 // 把firebase 資料存在storage裡面
-  void cacheDataForSwippingScreen() {
+  Future<void> cacheDataForSwippingScreen() async {
     final stopwatch = Stopwatch()..start();
     if (usersProfileList.value.isNotEmpty) {
       print('Saving profiles to cache...');
-
+      await Future.delayed(Duration(milliseconds: 400));
       storage.write('cachedProfiles',
           usersProfileList.value.map((p) => p.toJson()).toList());
 
       print(
           "Cache successfully saved. Profiles: ${usersProfileList.value.length} profiles saved. cacheData() profile controller");
+      print(
+          "Time taken to fetch and cache images: ${stopwatch.elapsed} storage.write('cachedProfiles', cacheDataForSwippingScreen()");
 
       int uidCount = usersProfileList.value.map((p) => p.uid).toSet().length;
 
@@ -446,10 +430,11 @@ class Profilecontroller extends GetxController {
     debugPrint(
         "Caching profiles: ${usersProfileList.value.map((p) => p.toJson()).toList()} cacheData() profile controller");
     print(
-        "Time taken to fetch and cache images: ${stopwatch.elapsed}  cacheDataForSwippingScreen()");
+        "Time taken to fetch and cache images: ${stopwatch.elapsed}  func ends cacheDataForSwippingScreen()");
   }
 
-  void loadCachedData() {
+  loadCachedData() async {
+    await Future.delayed(Duration(milliseconds: 2000));
     final stopwatch = Stopwatch()..start();
     try {
       var cachedProfiles = storage.read('cachedProfiles');
@@ -457,7 +442,7 @@ class Profilecontroller extends GetxController {
 
       if (cachedProfiles != null && cachedProfiles.isNotEmpty) {
         // Check the raw data before mapping
-        print('Checking the first profile: ${cachedProfiles[0]}');
+        print('Checking the first profile: ${cachedProfiles}');
 
         usersProfileList.value = cachedProfiles
             .map<Person>((profile) => Person.fromJson(profile))

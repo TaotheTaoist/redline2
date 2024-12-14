@@ -255,7 +255,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     // });
 
                     // something the app wont complete log out, u need to terminate it
-                    // await FirebaseFirestore.instance.clearPersistence();
+
+                    await Future.delayed(
+                        Duration(seconds: 1)); // Ensure sign-out has completed
+                    await FirebaseFirestore.instance.clearPersistence();
+
                     await FirebaseFirestore.instance.terminate();
 
                     // Navigator.pushReplacement(

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:redline/controller/authenticationController.dart';
 import 'package:redline/controller/profile-controller.dart';
 import 'package:redline/tabScreens/PersonCarousel.dart';
@@ -23,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static int initCount = 0;
   int screenIndex = 0;
 
   // List of tab screens
@@ -77,6 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    initCount++;
+    debugPrint("HomeScreen initState called ${initCount} time(s)");
+    // Get.put(Profilecontroller());
     _fetchBaxiDetailsData();
     _listenToBaxiDetailsData();
   }

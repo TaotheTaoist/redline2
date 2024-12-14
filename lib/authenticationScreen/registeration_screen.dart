@@ -1118,35 +1118,37 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
 
                           // Attempt to create the account
                           await authenticationcontroller.creatNewUserAccount(
-                              email,
-                              passwordlTextEditingController.text.trim(),
-                              nameTextEditingController.text.trim(),
-                              selectedInterests,
-                              imageUrls,
-                              sexController.text.trim(),
-                              timeController.text.trim(),
-                              birthdayController.text.trim(),
-                              timeController.text.isEmpty ? "false" : "true",
-                              age,
-                              selectedoccu,
-                              selectmbti,
-                              selectlanguage,
-                              selectreligion,
-                              selecteducation,
-                              selectbloodtype,
-                              selectlooking,
-                              selectexercise,
-                              selectdiet,
-                              double.parse(locationController.text
-                                  .split(',')[0]
-                                  .split(':')[1]
-                                  .trim()), // Latitude
-                              double.parse(locationController.text
-                                  .split(',')[1]
-                                  .split(':')[1]
-                                  .trim()),
-                              "" // Longitude
-                              );
+                            email,
+                            passwordlTextEditingController.text.trim(),
+                            nameTextEditingController.text.trim(),
+                            selectedInterests,
+                            imageUrls,
+                            sexController.text.trim(),
+                            timeController.text.trim(),
+                            birthdayController.text.trim(),
+                            timeController.text.isEmpty ? "false" : "true",
+                            age,
+                            selectedoccu,
+                            selectmbti,
+                            selectlanguage,
+                            selectreligion,
+                            selecteducation,
+                            selectbloodtype,
+                            selectlooking,
+                            selectexercise,
+                            selectdiet,
+                            double.parse(locationController.text
+                                .split(',')[0]
+                                .split(':')[1]
+                                .trim()), // Latitude
+                            double.parse(locationController.text
+                                .split(',')[1]
+                                .split(':')[1]
+                                .trim()),
+                            "", 50,
+
+                            ageRange: {'min': 1, 'max': 50},
+                          );
 
                           if (mounted) {
                             setState(() {
